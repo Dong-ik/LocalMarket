@@ -1,4 +1,4 @@
-package org.embed.local.configuration;
+package org.embed.configuration;
 
 import javax.sql.DataSource;
 
