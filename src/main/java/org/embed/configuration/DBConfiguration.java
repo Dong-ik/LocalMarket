@@ -32,7 +32,7 @@ public class DBConfiguration {
    public DataSource dataSource() throws Exception {
       
       DataSource dataSource = new HikariDataSource(hikariConfig());
-      System.out.println(dataSource.toString() + "1111111111111");
+      System.out.println(dataSource.toString());
       return dataSource;
    }
    
