@@ -1,15 +1,14 @@
 package com.localmarket.service;
 
+import com.localmarket.dto.TraditionalMarketDto;
 import com.localmarket.entity.Market;
 import com.localmarket.repository.MarketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
-@Transactional
 public class MarketService {
 
     @Autowired
@@ -26,7 +25,7 @@ public class MarketService {
                 .orElseThrow(() -> new RuntimeException("시장을 찾을 수 없습니다."));
     }
 
-    // 시장 이름으로 검색
+    // 시장명으로 검색
     public List<Market> searchMarketsByName(String marketName) {
         return marketRepository.findByMarketNameContaining(marketName);
     }
@@ -36,8 +35,8 @@ public class MarketService {
         return marketRepository.findByMarketLocal(marketLocal);
     }
 
-    // 지역별 시장 검색 (부분 일치)
-    public List<Market> searchMarketsByLocal(String marketLocal) {
+    // 지역명으로 시장 검색
+    public List<Market> searchMarketsByLocation(String marketLocal) {
         return marketRepository.findByMarketLocalContaining(marketLocal);
     }
 
@@ -71,8 +70,8 @@ public class MarketService {
         if (market.getMarketFilename() != null) {
             existingMarket.setMarketFilename(market.getMarketFilename());
         }
-        if (market.getMarketURL() != null) {
-            existingMarket.setMarketURL(market.getMarketURL());
+        if (market.getMarketUrl() != null) {
+            existingMarket.setMarketUrl(market.getMarketUrl());
         }
         
         return marketRepository.save(existingMarket);
@@ -86,8 +85,70 @@ public class MarketService {
         marketRepository.deleteById(marketId);
     }
 
-    // 특정 지역의 시장 수 조회
-    public Long getMarketCountByLocal(String marketLocal) {
-        return marketRepository.countByMarketLocal(marketLocal);
+    // 시장명과 지역으로 복합 검색
+    public List<Market> searchMarkets(String marketName, String marketLocal) {
+        if (marketName != null && !marketName.isEmpty() && marketLocal != null && !marketLocal.isEmpty()) {
+            return marketRepository.findByMarketNameContainingAndMarketLocalContaining(marketName, marketLocal);
+        } else if (marketName != null && !marketName.isEmpty()) {
+            return searchMarketsByName(marketName);
+        } else if (marketLocal != null && !marketLocal.isEmpty()) {
+            return searchMarketsByLocation(marketLocal);
+        } else {
+            return getAllMarkets();
+        }
+    }
+    
+    // 지역별 시장 수 조회 (대시보드용)
+    public List<Object[]> getMarketCountByLocation() {
+        return marketRepository.getMarketCountByLocation();
+    }
+    
+    /**
+     * 전통시장 데이터를 일반시장으로 가져오기
+     */
+    public List<Market> importTraditionalMarkets(List<TraditionalMarketDto> traditionalMarkets) {
+        List<Market> importedMarkets = new ArrayList<>();
+        
+        for (TraditionalMarketDto traditionalMarket : traditionalMarkets) {
+            // 이미 존재하는 시장인지 확인 (시장명과 지역으로 체크)
+            List<Market> existingMarkets = marketRepository.findByMarketNameContainingAndMarketLocalContaining(
+                traditionalMarket.getMarketName(), traditionalMarket.getSiDoName());
+            
+            if (existingMarkets.isEmpty()) {
+                // 새로운 시장이면 추가
+                Market newMarket = traditionalMarket.toMarket();
+                Market savedMarket = marketRepository.save(newMarket);
+                importedMarkets.add(savedMarket);
+            }
+        }
+        
+        return importedMarkets;
+    }
+    
+    /**
+     * 특정 지역의 전통시장 데이터를 일반시장으로 가져오기
+     */
+    public List<Market> importTraditionalMarketsByRegion(List<TraditionalMarketDto> traditionalMarkets, String region) {
+        List<Market> importedMarkets = new ArrayList<>();
+        
+        for (TraditionalMarketDto traditionalMarket : traditionalMarkets) {
+            // 지역 필터링
+            if (region != null && !region.isEmpty() && 
+                (traditionalMarket.getSiDoName() == null || !traditionalMarket.getSiDoName().contains(region))) {
+                continue;
+            }
+            
+            // 이미 존재하는 시장인지 확인
+            List<Market> existingMarkets = marketRepository.findByMarketNameContainingAndMarketLocalContaining(
+                traditionalMarket.getMarketName(), traditionalMarket.getSiDoName());
+            
+            if (existingMarkets.isEmpty()) {
+                Market newMarket = traditionalMarket.toMarket();
+                Market savedMarket = marketRepository.save(newMarket);
+                importedMarkets.add(savedMarket);
+            }
+        }
+        
+        return importedMarkets;
     }
 }

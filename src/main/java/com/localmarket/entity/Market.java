@@ -35,7 +35,7 @@ public class Market {
     private String marketFilename;
     
     @Column(name = "market_URL")
-    private String marketURL;
+    private String marketUrl;
     
     @Column(name = "created_date")
     private LocalDateTime createdDate;
@@ -46,6 +46,6 @@ public class Market {
     }
     
     // 연관관계 매핑
-    @OneToMany(mappedBy = "market", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "market", cascade = CascadeType.ALL)
     private List<Store> stores;
 }

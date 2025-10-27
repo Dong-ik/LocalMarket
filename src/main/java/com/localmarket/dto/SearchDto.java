@@ -13,6 +13,7 @@ public class SearchDto {
     private String category;
     private Integer marketId;
     private String local;
+    private String location; // location 필드 추가
     private String minPrice;
     private String maxPrice;
     private String sortBy; // name, price, popular, latest

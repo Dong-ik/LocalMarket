@@ -4,118 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LocalMarket - 전통시장 온라인 쇼핑몰</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        .navbar-brand {
-            font-weight: bold;
-            color: #28a745 !important;
-        }
-        .hero-section {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            padding: 80px 0;
-            text-align: center;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .search-bar {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .section-title {
-            color: #28a745;
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-        .market-card {
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .market-image {
-            height: 200px;
-            background-size: cover;
-            background-position: center;
-            background-color: #f8f9fa;
-        }
-        .stats-section {
-            background-color: #f8f9fa;
-            padding: 60px 0;
-        }
-        .stat-item {
-            text-align: center;
-            padding: 20px;
-        }
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #28a745;
-        }
-        .footer {
-            background-color: #f8f9fa;
-            padding: 40px 0;
-            margin-top: 50px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
 </head>
 <body>
-    <!-- 네비게이션 바 -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-store"></i> LocalMarket
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/markets">시장</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/stores">가게</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/products">상품</a>
-                    </li>
-                </ul>
-                
-                <!-- 검색바 -->
-                <form class="d-flex me-3" action="/search" method="get">
-                    <input class="form-control me-2" type="search" name="keyword" placeholder="시장, 가게, 상품 검색">
-                    <button class="btn btn-outline-success" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </form>
-                
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/cart/1">
-                            <i class="fas fa-shopping-cart"></i> 장바구니
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/members/login">로그인</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/members/register">회원가입</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- 헤더 영역 -->
+    <div th:replace="~{layout :: header}"></div>
 
     <!-- 히어로 섹션 -->
     <section class="hero-section">
@@ -127,11 +22,182 @@
             <div class="search-bar">
                 <form action="/search" method="get" class="d-flex">
                     <input type="text" name="keyword" class="form-control form-control-lg me-2" 
-                           placeholder="찾고 싶은 시장, 가게, 상품을 입력하세요">
+                           placeholder="찾고 싶은 가게, 상품을 입력하세요">
                     <button type="submit" class="btn btn-warning btn-lg">
                         <i class="fas fa-search"></i> 검색
                     </button>
                 </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 전통시장 정보 배너 -->
+    <section class="traditional-market-banner py-5 traditional-market-section" style="background: linear-gradient(45deg, #f8f9fa, #e9ecef);">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="banner-content slide-in-left">
+                        <h2 class="section-title mb-3">
+                            <i class="fas fa-store text-success"></i> 
+                            LocalMarket - 전통시장 온라인 플랫폼
+                        </h2>
+                        <p class="lead text-muted mb-4">
+                            🏪 전국 전통시장 정보를 한 곳에서 확인하세요.<br>
+                            📍 각 시장의 위치, 편의시설, 특산품, 영업시간 등 상세 정보를 제공합니다.
+                        </p>
+                        <div class="market-stats mb-4">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="stat-card text-center p-3 bg-white rounded shadow-sm">
+                                        <i class="fas fa-map-marker-alt text-primary fa-2x mb-2"></i>
+                                        <h4 class="text-primary mb-1" th:text="${totalTraditionalMarkets ?: '11'} + '개'">11개</h4>
+                                        <small class="text-muted">등록된 시장</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-card text-center p-3 bg-white rounded shadow-sm">
+                                        <i class="fas fa-city text-info fa-2x mb-2"></i>
+                                        <h4 class="text-info mb-1" th:text="${totalRegions ?: '4'} + '개'">4개</h4>
+                                        <small class="text-muted">지역 (시도)</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-card text-center p-3 bg-white rounded shadow-sm">
+                                        <i class="fas fa-tools text-warning fa-2x mb-2"></i>
+                                        <h4 class="text-warning mb-1" th:text="${marketsWithFacilities ?: '13'} + '개'">13개</h4>
+                                        <small class="text-muted">편의시설 보유 시장</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="banner-buttons">
+                            <a href="/markets/traditional" class="btn btn-success btn-lg me-3">
+                                <i class="fas fa-list"></i> 전체 시장 보기
+                            </a>
+                            <a href="/markets/traditional-region" class="btn btn-outline-success btn-lg me-3">
+                                <i class="fas fa-filter"></i> 지역별 조회
+                            </a>
+                            <a href="/markets/traditional/facilities" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-wheelchair"></i> 편의시설 검색
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="banner-image text-center">
+                        <div class="feature-box p-4 bg-white rounded shadow slide-in-right">
+                            <i class="fas fa-shopping-basket text-success fa-4x mb-3"></i>
+                            <h5 class="text-success mb-3">주요 특징</h5>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    실시간 시장 정보 제공
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    편의시설 상세 정보
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    지역별 필터링 기능
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    교통 접근성 정보
+                                </li>
+                                <li class="mb-0">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    영업시간 및 연락처
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 일반시장 섹션 -->
+    <section class="py-5 bg-light general-market-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="banner-content slide-in-left">
+                        <h2 class="section-title">
+                            <i class="fas fa-store me-3"></i>일반시장
+                        </h2>
+                        <p class="lead mb-4">
+                            🏪 지역 상권과 다양한 판매자들의 상품을 만나보세요.<br>
+                            📍 각 시장의 가게 정보, 상품, 리뷰 등을 확인할 수 있습니다.
+                        </p>
+                        <div class="market-stats mb-4" th:if="${popularMarkets != null and !popularMarkets.isEmpty()}">
+                            <h5 class="mb-3">
+                                <i class="fas fa-fire text-danger me-2"></i>인기 시장
+                            </h5>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-6 mb-3" th:each="market : ${#lists.size(popularMarkets) > 6 ? #lists.subList(popularMarkets, 0, 6) : popularMarkets}">
+                                    <div class="market-card card h-100">
+                                        <div class="market-image" 
+                                             th:style="'background-image: url(' + (${market.marketFilename != null and !market.marketFilename.isEmpty()} ? @{'/images/markets/' + ${market.marketFilename}} : '/images/default-market.jpg') + ')'">
+                                        </div>
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title text-truncate mb-2" th:text="${market.marketName}">시장명</h6>
+                                            <p class="card-text small text-muted mb-2">
+                                                <i class="fas fa-map-marker-alt me-1"></i>
+                                                <span th:text="${market.marketLocal}">지역</span>
+                                            </p>
+                                            <a th:href="@{/markets/detail/{id}(id=${market.marketId})}" 
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-eye me-1"></i>보기
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="banner-buttons">
+                            <a href="/markets/list" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-list"></i> 전체 시장 보기
+                            </a>
+                            <a href="/stores/list" class="btn btn-outline-primary btn-lg me-3">
+                                <i class="fas fa-store"></i> 가게 둘러보기
+                            </a>
+                            <a href="/products/list" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-shopping-bag"></i> 상품 보기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="banner-image text-center">
+                        <div class="feature-box p-4 bg-white rounded shadow slide-in-right">
+                            <i class="fas fa-shopping-cart text-primary fa-4x mb-3"></i>
+                            <h5 class="text-primary mb-3">주요 특징</h5>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-primary me-2"></i>
+                                    다양한 지역 상권 탐색
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-primary me-2"></i>
+                                    가게별 상품 관리
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-primary me-2"></i>
+                                    온라인 주문 시스템
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-primary me-2"></i>
+                                    고객 리뷰 및 평점
+                                </li>
+                                <li class="mb-0">
+                                    <i class="fas fa-check-circle text-primary me-2"></i>
+                                    장바구니 및 찜 기능
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -142,8 +208,14 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="stat-item">
-                        <div class="stat-number" th:text="${marketCount ?: '12'}">12</div>
-                        <p class="text-muted">등록된 시장</p>
+                        <div class="stat-number" th:text="${totalGeneralMarkets ?: '0'}">0</div>
+                        <p class="text-muted">일반시장</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number" th:text="${totalTraditionalMarkets ?: '11'}">11</div>
+                        <p class="text-muted">전통시장</p>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -158,99 +230,6 @@
                         <p class="text-muted">판매 상품</p>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-number" th:text="${memberCount ?: '1,234'}">1,234</div>
-                        <p class="text-muted">회원 수</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 인기 시장 섹션 -->
-    <section class="py-5">
-        <div class="container">
-            <h2 class="section-title text-center">인기 시장</h2>
-            <div class="row">
-                <div class="col-md-4 mb-4" th:each="market : ${markets}">
-                    <div class="card market-card">
-                        <div class="market-image" 
-                             th:style="'background-image: url(' + ${market.imageUrl ?: '/images/default-market.jpg'} + ')'">
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title" th:text="${market.marketName}">시장명</h5>
-                            <p class="card-text text-muted" th:text="${market.location}">시장 위치</p>
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    <i class="fas fa-store"></i> 
-                                    <span th:text="${market.storeCount ?: '0'}">0</span>개 가게
-                                </small>
-                            </p>
-                            <a th:href="@{/markets/{id}(id=${market.marketId})}" class="btn btn-success">
-                                시장 둘러보기
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 기본 시장 데이터 (markets가 비어있을 때) -->
-                <div class="col-md-4 mb-4" th:if="${#lists.isEmpty(markets)}">
-                    <div class="card market-card">
-                        <div class="market-image" style="background-image: url('/images/default-market.jpg')">
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">남대문시장</h5>
-                            <p class="card-text text-muted">서울 중구 남대문로</p>
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    <i class="fas fa-store"></i> 25개 가게
-                                </small>
-                            </p>
-                            <a href="/markets/1" class="btn btn-success">시장 둘러보기</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4 mb-4" th:if="${#lists.isEmpty(markets)}">
-                    <div class="card market-card">
-                        <div class="market-image" style="background-image: url('/images/default-market.jpg')">
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">동대문시장</h5>
-                            <p class="card-text text-muted">서울 동대문구 을지로</p>
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    <i class="fas fa-store"></i> 18개 가게
-                                </small>
-                            </p>
-                            <a href="/markets/2" class="btn btn-success">시장 둘러보기</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4 mb-4" th:if="${#lists.isEmpty(markets)}">
-                    <div class="card market-card">
-                        <div class="market-image" style="background-image: url('/images/default-market.jpg')">
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">광장시장</h5>
-                            <p class="card-text text-muted">서울 종로구 예지동</p>
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    <i class="fas fa-store"></i> 32개 가게
-                                </small>
-                            </p>
-                            <a href="/markets/3" class="btn btn-success">시장 둘러보기</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="text-center mt-4">
-                <a href="/markets" class="btn btn-outline-success btn-lg">
-                    모든 시장 보기 <i class="fas fa-arrow-right"></i>
-                </a>
             </div>
         </div>
     </section>

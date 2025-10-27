@@ -20,6 +20,13 @@
 - 가게 정보 및 카테고리별 검색
 - 시장/가게 찜하기 기능
 
+### 🆕 공공데이터 활용 전통시장 정보
+- **소상공인시장진흥공단 전통시장 현황 API 연동**
+- 전국 전통시장 실시간 데이터 조회
+- 지역별 전통시장 검색
+- 편의시설 보유 시장 조회 (아케이드, 엘리베이터, 에스컬레이터, 고객지원센터, 화장실, 주차장)
+- 시장별 편의시설 통계 및 시각화
+
 ### 상품 관리
 - 상품 등록/수정/삭제 (판매자)
 - 상품 검색 및 필터링
@@ -141,6 +148,45 @@ spring.datasource.password=your_password
 ### 계층형 댓글 시스템
 - 댓글과 대댓글을 하나의 테이블로 관리
 - 자기참조 관계를 통한 무한 계층 댓글 지원
+
+## 🆕 공공데이터 API 연동
+
+### 소상공인시장진흥공단 전통시장 현황 API
+이 애플리케이션은 공공데이터포털의 전통시장 현황 데이터를 실시간으로 연동하여 제공합니다.
+
+#### 설정 방법
+1. [공공데이터포털](https://www.data.go.kr/)에서 회원가입 및 API 키 발급
+2. `application.properties`에 API 키 설정
+```properties
+public.data.api.key=YOUR_API_KEY_HERE
+public.data.api.url=http://api.data.go.kr/openapi/tn_pubr_public_trditnal_mrkt_api
+```
+
+#### API 엔드포인트
+
+##### 웹 페이지
+- `GET /markets/traditional` - 전국 전통시장 현황 페이지
+- `GET /markets/traditional/region` - 지역별 전통시장 검색 페이지
+- `GET /markets/traditional/facilities` - 편의시설 보유 시장 페이지
+
+##### REST API
+- `GET /markets/api/traditional` - 전통시장 데이터 조회 (JSON)
+  - 매개변수: `siDoName`, `siGunGuName`, `pageNo`, `numOfRows`
+- `GET /markets/api/traditional/region/{region}` - 지역별 전통시장 검색
+- `GET /markets/api/traditional/search?name={marketName}` - 시장명으로 검색
+- `GET /markets/api/traditional/facilities` - 편의시설 보유 시장 목록
+
+#### 제공 데이터
+- **기본 정보**: 시장명, 시도명, 시군구명, 시장유형, 상세주소
+- **편의시설**: 아케이드, 엘리베이터, 에스컬레이터, 고객지원센터, 화장실, 주차장
+- **통계 정보**: 편의시설별 보유 현황 및 비율
+
+#### 주요 특징
+- 실시간 공공데이터 연동
+- 편의시설별 필터링 기능
+- 지역별 통계 시각화
+- 반응형 웹 디자인
+- Bootstrap 기반 현대적 UI/UX
 
 ## 개발자 정보
 

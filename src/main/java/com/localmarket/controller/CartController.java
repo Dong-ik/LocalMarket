@@ -27,7 +27,7 @@ public class CartController {
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("memberNum", memberNum);
-        return "cart/list";
+        return "cart/view";
     }
 
     // 장바구니에 상품 추가

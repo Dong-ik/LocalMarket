@@ -1,0 +1,1389 @@
+/* ====================================
+   LocalMarket 메인 스타일시트
+   Created: 2025-10-27
+   ==================================== */
+
+/* ====================================
+   기본 스타일
+   ==================================== */
+
+.navbar-brand {
+    font-weight: bold;
+    color: #28a745 !important;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.search-bar {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.section-title {
+    color: #28a745;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.footer {
+    background-color: #f8f9fa;
+    padding: 40px 0;
+    margin-top: 50px;
+}
+
+/* ====================================
+   카드 스타일
+   ==================================== */
+
+.card:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.market-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.market-image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    background-color: #f8f9fa;
+}
+
+.stat-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.feature-box {
+    transition: transform 0.3s ease;
+}
+
+.feature-box:hover {
+    transform: translateY(-5px);
+}
+
+/* ====================================
+   섹션 스타일
+   ==================================== */
+
+.stats-section {
+    background-color: #f8f9fa;
+    padding: 60px 0;
+}
+
+.traditional-market-banner {
+    border-bottom: 3px solid #28a745;
+}
+
+.banner-content .section-title {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+
+.banner-buttons .btn {
+    margin-bottom: 10px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 20px;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+/* ====================================
+   일반시장 섹션 스타일
+   ==================================== */
+
+.general-market-section {
+    background-color: #f8f9fa;
+    padding: 60px 0;
+}
+
+.general-market-section .section-title {
+    color: #007bff;
+}
+
+.general-market-section .feature-box i {
+    color: #007bff;
+}
+
+.general-market-section .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.general-market-section .btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.general-market-section .btn-outline-primary:hover {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* ====================================
+   전통시장 섹션 스타일
+   ==================================== */
+
+.traditional-market-section {
+    padding: 60px 0;
+}
+
+.traditional-market-section .section-title {
+    color: #28a745;
+}
+
+.traditional-market-section .feature-box i {
+    color: #28a745;
+}
+
+.traditional-market-section .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.traditional-market-section .btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.traditional-market-section .btn-outline-success:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* ====================================
+   반응형 디자인
+   ==================================== */
+
+@media (max-width: 768px) {
+    .banner-buttons .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .market-stats .col-md-4 {
+        margin-bottom: 20px;
+    }
+    
+    .hero-section {
+        padding: 50px 0;
+    }
+    
+    .banner-content .section-title {
+        font-size: 1.8rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .stats-section {
+        padding: 40px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section {
+        padding: 30px 0;
+    }
+    
+    .banner-content .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+    }
+    
+    .market-card {
+        margin-bottom: 20px;
+    }
+}
+
+/* ====================================
+   애니메이션 효과
+   ==================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.6s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+}
+
+/* ====================================
+   유틸리티 클래스
+   ==================================== */
+
+.text-primary-custom {
+    color: #28a745 !important;
+}
+
+.text-secondary-custom {
+    color: #007bff !important;
+}
+
+.bg-primary-custom {
+    background-color: #28a745 !important;
+}
+
+.bg-secondary-custom {
+    background-color: #007bff !important;
+}
+
+.border-primary-custom {
+    border-color: #28a745 !important;
+}
+
+.border-secondary-custom {
+    border-color: #007bff !important;
+}
+
+.shadow-custom {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+.shadow-hover {
+    transition: box-shadow 0.3s ease;
+}
+
+.shadow-hover:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+/* ====================================
+   스크롤 효과
+   ==================================== */
+
+.scroll-smooth {
+    scroll-behavior: smooth;
+}
+
+/* ====================================
+   로딩 스피너
+   ==================================== */
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #28a745;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ====================================
+   버튼 커스텀 스타일
+   ==================================== */
+
+.btn-custom-primary {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-custom-primary:hover {
+    background: linear-gradient(135deg, #20c997, #28a745);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-custom-secondary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-custom-secondary:hover {
+    background: linear-gradient(135deg, #0056b3, #007bff);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+/* ====================================
+   가게 목록 페이지 스타일
+   ==================================== */
+
+.store-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.store-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.store-image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    background-color: #f8f9fa;
+    position: relative;
+    overflow: hidden;
+}
+
+.store-image:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+.store-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(40, 167, 69, 0.9);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.store-info {
+    padding: 20px;
+}
+
+.store-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.store-location {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.store-description {
+    color: #495057;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.store-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.status-open {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-closed {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.store-rating {
+    color: #ffc107;
+}
+
+.store-contact {
+    font-size: 0.85rem;
+    color: #6c757d;
+    border-top: 1px solid #e9ecef;
+    padding-top: 10px;
+    margin-top: 10px;
+}
+
+/* ====================================
+   상품 목록 페이지 스타일
+   ==================================== */
+
+.product-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+    background: white;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.product-image {
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+    background-color: #f8f9fa;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-image:hover::before {
+    opacity: 1;
+}
+
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.product-badge.sale {
+    background: rgba(220, 53, 69, 0.9);
+}
+
+.product-badge.new {
+    background: rgba(40, 167, 69, 0.9);
+}
+
+.product-badge.popular {
+    background: rgba(255, 193, 7, 0.9);
+    color: #212529;
+}
+
+.product-info {
+    padding: 20px;
+}
+
+.product-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.product-store {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.product-description {
+    color: #495057;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    height: 2.8em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.product-price {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.price-current {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.price-original {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-decoration: line-through;
+    margin-left: 8px;
+}
+
+.price-discount {
+    background: #e74c3c;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.product-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-cart {
+    flex: 1;
+    background: #28a745;
+    border-color: #28a745;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-cart:hover {
+    background: #218838;
+    border-color: #1e7e34;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-favorite {
+    background: white;
+    border: 2px solid #dee2e6;
+    color: #6c757d;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-favorite:hover {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.btn-favorite.active {
+    background: #e74c3c;
+    border-color: #e74c3c;
+    color: white;
+}
+
+.product-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+}
+
+.status-available {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.status-soldout {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* ====================================
+   회원 관리 페이지 스타일
+   ==================================== */
+
+.login-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.login-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+    max-width: 450px;
+    width: 100%;
+}
+
+.login-header {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.login-header h2 {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.login-form {
+    padding: 40px 30px;
+}
+
+.form-control-lg {
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-control-lg:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.btn-login {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+.login-divider {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+}
+
+.login-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #dee2e6;
+}
+
+.login-divider span {
+    background: white;
+    padding: 0 15px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.social-login {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-social {
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.3s ease;
+}
+
+.btn-social:hover {
+    transform: translateY(-1px);
+}
+
+.btn-google {
+    background: #db4437;
+    color: white;
+}
+
+.btn-naver {
+    background: #03c75a;
+    color: white;
+}
+
+.btn-kakao {
+    background: #fee500;
+    color: #191919;
+}
+
+.login-footer {
+    text-align: center;
+    padding: 20px 30px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+.login-footer a {
+    color: #28a745;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+.register-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 20px 0;
+}
+
+.register-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.register-header {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.register-header h2 {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.register-form {
+    padding: 30px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.required {
+    color: #e74c3c;
+}
+
+.form-control {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+}
+
+.form-select {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+}
+
+.btn-register {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+    width: 100%;
+}
+
+.btn-register:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+}
+
+.btn-reset {
+    background: #6c757d;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-reset:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.register-footer {
+    text-align: center;
+    padding: 20px 30px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+.register-footer a {
+    color: #e74c3c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ====================================
+   장바구니 페이지 스타일
+   ==================================== */
+
+.cart-header {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.cart-header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.cart-item {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.cart-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.cart-item-image {
+    width: 120px;
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.cart-item-info {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.cart-item-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.cart-item-store {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.cart-item-description {
+    color: #495057;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+.cart-item-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.cart-item-original-price {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-decoration: line-through;
+    margin-left: 8px;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.quantity-btn {
+    width: 35px;
+    height: 35px;
+    border: 2px solid #dee2e6;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.quantity-btn:hover {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.quantity-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quantity-input {
+    width: 60px;
+    text-align: center;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 8px;
+    font-weight: bold;
+}
+
+.quantity-input:focus {
+    border-color: #28a745;
+    outline: none;
+}
+
+.cart-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-remove {
+    background: #dc3545;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-remove:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.order-summary {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 20px;
+}
+
+.summary-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 8px 0;
+}
+
+.summary-label {
+    color: #495057;
+    font-size: 1rem;
+}
+
+.summary-value {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.summary-total {
+    border-top: 2px solid #e9ecef;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.summary-total .summary-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.summary-total .summary-value {
+    font-size: 1.4rem;
+    color: #e74c3c;
+}
+
+.discount-amount {
+    color: #28a745;
+}
+
+.btn-order {
+    width: 100%;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-order:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-order:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 80px 20px;
+    color: #6c757d;
+}
+
+.empty-cart-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-cart h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.empty-cart p {
+    font-size: 1rem;
+    margin-bottom: 30px;
+}
+
+.btn-continue-shopping {
+    background: #28a745;
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.btn-continue-shopping:hover {
+    background: #218838;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* ====================================
+   필터 및 검색 공통 스타일
+   ==================================== */
+
+.filter-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.filter-title {
+    color: #28a745;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.filter-group {
+    margin-bottom: 15px;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.btn-filter {
+    background: #28a745;
+    border-color: #28a745;
+    padding: 8px 20px;
+    font-weight: 500;
+}
+
+.btn-filter:hover {
+    background: #218838;
+    border-color: #1e7e34;
+}
+
+.product-filters {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.filter-option {
+    background: white;
+    border: 2px solid #dee2e6;
+    color: #495057;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-option:hover {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.filter-option.active {
+    background: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.sort-section {
+    display: flex;
+    align-items: center;
+    justify-content: between;
+    margin-bottom: 20px;
+}
+
+.sort-options {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.sort-btn {
+    background: white;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sort-btn:hover,
+.sort-btn.active {
+    background: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+/* ====================================
+   추가 반응형 스타일
+   ==================================== */
+
+@media (max-width: 768px) {
+    .store-card,
+    .product-card {
+        margin-bottom: 20px;
+    }
+    
+    .store-image,
+    .product-image {
+        height: 150px;
+    }
+    
+    .store-info,
+    .product-info {
+        padding: 15px;
+    }
+    
+    .filter-section,
+    .product-filters {
+        padding: 15px;
+    }
+    
+    .filter-options {
+        gap: 8px;
+    }
+    
+    .sort-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .sort-options {
+        margin-left: 0;
+        justify-content: center;
+    }
+    
+    .login-container,
+    .register-container {
+        padding: 10px;
+    }
+    
+    .login-card,
+    .register-card {
+        margin: 10px 0;
+    }
+    
+    .login-header,
+    .register-header {
+        padding: 20px 15px;
+    }
+    
+    .login-form,
+    .register-form {
+        padding: 20px 15px;
+    }
+    
+    .cart-header {
+        padding: 40px 0;
+    }
+    
+    .cart-header h1 {
+        font-size: 2rem;
+    }
+    
+    .cart-item {
+        padding: 15px;
+        flex-direction: column;
+    }
+    
+    .cart-item-image {
+        width: 100%;
+        height: 200px;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
+    .cart-item-info {
+        padding-right: 0;
+    }
+    
+    .order-summary {
+        position: static;
+        margin-top: 30px;
+    }
+    
+    .cart-actions {
+        justify-content: center;
+        margin-top: 15px;
+    }
+    
+    .quantity-controls {
+        justify-content: center;
+    }
+}
