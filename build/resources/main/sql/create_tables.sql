@@ -16,6 +16,7 @@ USE localmarket;
 CREATE TABLE member (
     member_num INT PRIMARY KEY AUTO_INCREMENT,
     member_id VARCHAR(50) UNIQUE NOT NULL,
+    member_name VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     birth DATE,
     gender VARCHAR(10),

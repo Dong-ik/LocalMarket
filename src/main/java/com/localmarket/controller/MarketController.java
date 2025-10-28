@@ -32,12 +32,13 @@ public class MarketController {
     
     // =============== 일반시장 기능 ===============
     
-    // 일반시장 목록 페이지
+    // 시장 목록 페이지 (일반시장 + 전통시장 통합)
     @GetMapping("/list")
     public String getMarketList(Model model,
                                @RequestParam(required = false) String search,
                                @RequestParam(required = false) String location) {
         
+        // 일반시장 데이터
         List<Market> markets;
         
         if (search != null && !search.trim().isEmpty()) {
@@ -48,7 +49,11 @@ public class MarketController {
             markets = marketService.getAllMarkets();
         }
         
+        // 전통시장 데이터 (공공API)
+        List<TraditionalMarketDto> traditionalMarkets = publicDataService.getTraditionalMarkets(null, null, 1, 100);
+        
         model.addAttribute("markets", markets);
+        model.addAttribute("traditionalMarkets", traditionalMarkets);
         model.addAttribute("searchTerm", search);
         model.addAttribute("selectedLocation", location);
         
@@ -199,14 +204,6 @@ public class MarketController {
     }
     
     // =============== 전통시장 공공데이터 API 기능 ===============
-    
-    // 전통시장 현황 페이지
-    @GetMapping("/traditional")
-    public String traditionalMarkets(Model model) {
-        List<TraditionalMarketDto> traditionalMarkets = publicDataService.getTraditionalMarkets(null, null, 1, 100);
-        model.addAttribute("traditionalMarkets", traditionalMarkets);
-        return "markets/traditional";
-    }
     
     // 지역별 전통시장 페이지
     @GetMapping("/traditional/region")
