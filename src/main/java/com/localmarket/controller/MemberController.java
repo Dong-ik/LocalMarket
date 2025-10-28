@@ -1,6 +1,7 @@
 package com.localmarket.controller;
 
 import com.localmarket.entity.Member;
+import com.localmarket.dto.MemberDto;
 import com.localmarket.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +21,32 @@ public class MemberController {
     // 회원 가입 페이지
     @GetMapping("/register")
     public String registerForm(Model model) {
-        model.addAttribute("member", new Member());
+        model.addAttribute("memberDto", new MemberDto());
         return "members/register";
     }
 
     // 회원 가입 처리
     @PostMapping("/register")
-    public String register(@ModelAttribute Member member, Model model) {
+    public String register(@ModelAttribute MemberDto memberDto, Model model) {
         try {
+            // DTO를 Entity로 변환
+            Member member = new Member();
+            member.setMemberId(memberDto.getMemberId());
+            member.setMemberName(memberDto.getMemberName());
+            member.setPassword(memberDto.getPassword());
+            member.setBirth(memberDto.getBirth());
+            member.setGender(memberDto.getGender());
+            member.setNational(memberDto.getNational());
+            member.setPhone(memberDto.getPhone());
+            member.setMemberAddress(memberDto.getMemberAddress());
+            member.setEmail(memberDto.getEmail());
+            member.setMemberGrade(memberDto.getMemberGrade());
+            
             memberService.registerMember(member);
             return "redirect:/members/login?success";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
+            model.addAttribute("memberDto", memberDto);
             return "members/register";
         }
     }

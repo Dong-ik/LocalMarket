@@ -60,6 +60,9 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
         
         // 수정 가능한 필드만 업데이트
+        if (member.getMemberName() != null) {
+            existingMember.setMemberName(member.getMemberName());
+        }
         if (member.getPhone() != null) {
             existingMember.setPhone(member.getPhone());
         }

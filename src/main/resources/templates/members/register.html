@@ -23,6 +23,18 @@
                             <form th:action="@{/members/register}" method="post" th:object="${memberDto}">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
+                                        <label for="memberId" class="form-label">
+                                            <i class="fas fa-user-circle"></i> 아이디 <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="memberId" 
+                                               th:field="*{memberId}" required 
+                                               placeholder="아이디를 입력하세요">
+                                        <div th:if="${#fields.hasErrors('memberId')}" 
+                                             class="text-danger small mt-1" th:errors="*{memberId}"></div>
+                                        <div class="form-text">로그인 시 사용할 아이디입니다.</div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
                                         <label for="memberName" class="form-label">
                                             <i class="fas fa-user"></i> 이름 <span class="text-danger">*</span>
                                         </label>
@@ -32,7 +44,9 @@
                                         <div th:if="${#fields.hasErrors('memberName')}" 
                                              class="text-danger small mt-1" th:errors="*{memberName}"></div>
                                     </div>
-                                    
+                                </div>
+                                
+                                <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="phone" class="form-label">
                                             <i class="fas fa-phone"></i> 휴대폰 번호 <span class="text-danger">*</span>
@@ -81,14 +95,14 @@
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="address" class="form-label">
+                                    <label for="memberAddress" class="form-label">
                                         <i class="fas fa-map-marker-alt"></i> 주소
                                     </label>
-                                    <input type="text" class="form-control" id="address" 
-                                           th:field="*{address}" 
+                                    <input type="text" class="form-control" id="memberAddress" 
+                                           th:field="*{memberAddress}" 
                                            placeholder="주소를 입력하세요">
-                                    <div th:if="${#fields.hasErrors('address')}" 
-                                         class="text-danger small mt-1" th:errors="*{address}"></div>
+                                    <div th:if="${#fields.hasErrors('memberAddress')}" 
+                                         class="text-danger small mt-1" th:errors="*{memberAddress}"></div>
                                 </div>
                                 
                                 <div class="mb-4">

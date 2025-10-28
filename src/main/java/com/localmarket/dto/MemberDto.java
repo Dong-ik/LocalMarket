@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class MemberDto {
     private Integer memberNum;
     private String memberId;
+    private String memberName;
     private String password;
     private LocalDate birth;
     private String gender;
