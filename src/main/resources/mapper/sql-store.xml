@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.localmarket.mapper.StoreMapper">
+
+    <!-- Store 결과 매핑 (조인된 데이터 포함) -->
+    <resultMap id="StoreResultMap" type="com.localmarket.domain.Store">
+        <id property="storeId" column="store_id"/>
+        <result property="storeName" column="store_name"/>
+        <result property="storeIndex" column="store_index"/>
+        <result property="storeCategory" column="store_category"/>
+        <result property="storeFilename" column="store_filename"/>
+        <result property="marketId" column="market_id"/>
+        <result property="memberNum" column="member_num"/>
+        <result property="createdDate" column="created_date"/>
+        <!-- 조인된 데이터 -->
+        <result property="marketName" column="market_name"/>
+        <result property="marketLocal" column="market_local"/>
+        <result property="memberName" column="member_name"/>
+        <result property="memberId" column="member_id"/>
+    </resultMap>
+
+    <!-- 가게 등록 -->
+    <insert id="insertStore" parameterType="com.localmarket.domain.Store">
+        INSERT INTO store (
+            store_name, 
+            store_index, 
+            store_category, 
+            store_filename, 
+            market_id, 
+            member_num, 
+            created_date
+        ) VALUES (
+            #{storeName}, 
+            #{storeIndex}, 
+            #{storeCategory}, 
+            #{storeFilename}, 
+            #{marketId}, 
+            #{memberNum}, 
+            #{createdDate}
+        )
+    </insert>
+
+    <!-- 가게 ID로 상세 조회 (조인 포함) -->
+    <select id="selectStoreById" parameterType="int" resultMap="StoreResultMap">
+        SELECT 
+            s.store_id,
+            s.store_name,
+            s.store_index,
+            s.store_category,
+            s.store_filename,
+            s.market_id,
+            s.member_num,
+            s.created_date,
+            m.market_name,
+            m.market_local,
+            mem.member_name,
+            mem.member_id
+        FROM store s
+        LEFT JOIN market m ON s.market_id = m.market_id
+        LEFT JOIN member mem ON s.member_num = mem.member_num
+        WHERE s.store_id = #{storeId}
+    </select>
+
+    <!-- 모든 가게 목록 조회 (관리자용) -->
+    <select id="selectAllStores" resultMap="StoreResultMap">
+        SELECT 
+            s.store_id,
+            s.store_name,
+            s.store_index,
+            s.store_category,
+            s.store_filename,
+            s.market_id,
+            s.member_num,
+            s.created_date,
+            m.market_name,
+            m.market_local,
+            mem.member_name,
+            mem.member_id
+        FROM store s
+        LEFT JOIN market m ON s.market_id = m.market_id
+        LEFT JOIN member mem ON s.member_num = mem.member_num
+        ORDER BY s.created_date DESC
+    </select>
+
+    <!-- 시장별 가게 목록 조회 -->
+    <select id="selectStoresByMarketId" parameterType="int" resultMap="StoreResultMap">
+        SELECT 
+            s.store_id,
+            s.store_name,
+            s.store_index,
+            s.store_category,
+            s.store_filename,
+            s.market_id,
+            s.member_num,
+            s.created_date,
+            m.market_name,
+            m.market_local,
+            mem.member_name,
+            mem.member_id
+        FROM store s
+        LEFT JOIN market m ON s.market_id = m.market_id
+        LEFT JOIN member mem ON s.member_num = mem.member_num
+        WHERE s.market_id = #{marketId}
+        ORDER BY s.store_name ASC
+    </select>
+
+    <!-- 판매자별 가게 목록 조회 -->
+    <select id="selectStoresByMemberNum" parameterType="int" resultMap="StoreResultMap">
+        SELECT 
+            s.store_id,
+            s.store_name,
+            s.store_index,
+            s.store_category,
+            s.store_filename,
+            s.market_id,
+            s.member_num,
+            s.created_date,
+            m.market_name,
+            m.market_local,
+            mem.member_name,
+            mem.member_id
+        FROM store s
+        LEFT JOIN market m ON s.market_id = m.market_id
+        LEFT JOIN member mem ON s.member_num = mem.member_num
+        WHERE s.member_num = #{memberNum}
+        ORDER BY s.created_date DESC
+    </select>
+
+    <!-- 카테고리별 가게 목록 조회 -->
+    <select id="selectStoresByCategory" parameterType="string" resultMap="StoreResultMap">
+        SELECT 
+            s.store_id,
+            s.store_name,
+            s.store_index,
+            s.store_category,
+            s.store_filename,
+            s.market_id,
+            s.member_num,
+            s.created_date,
+            m.market_name,
+            m.market_local,
+            mem.member_name,
+            mem.member_id
+        FROM store s
+        LEFT JOIN market m ON s.market_id = m.market_id
+        LEFT JOIN member mem ON s.member_num = mem.member_num
+        WHERE s.store_category = #{category}
+        ORDER BY s.store_name ASC
+    </select>
+
+    <!-- 가게명으로 정확 검색 -->
+    <select id="selectStoresByName" parameterType="string" resultMap="StoreResultMap">
+        SELECT 
+            s.store_id,
+            s.store_name,
+            s.store_index,
+            s.store_category,
+            s.store_filename,
+            s.market_id,
+            s.member_num,
+            s.created_date,
+            m.market_name,
+            m.market_local,
+            mem.member_name,
+            mem.member_id
+        FROM store s
+        LEFT JOIN market m ON s.market_id = m.market_id
+        LEFT JOIN member mem ON s.member_num = mem.member_num
+        WHERE s.store_name = #{storeName}
+        ORDER BY s.store_name ASC
+    </select>
+
+    <!-- 가게명으로 LIKE 검색 -->
+    <select id="selectStoresByNameLike" parameterType="string" resultMap="StoreResultMap">
+        SELECT 
+            s.store_id,
+            s.store_name,
+            s.store_index,
+            s.store_category,
+            s.store_filename,
+            s.market_id,
+            s.member_num,
+            s.created_date,
+            m.market_name,
+            m.market_local,
+            mem.member_name,
+            mem.member_id
+        FROM store s
+        LEFT JOIN market m ON s.market_id = m.market_id
+        LEFT JOIN member mem ON s.member_num = mem.member_num
+        WHERE s.store_name LIKE #{storeName}
+        ORDER BY s.store_name ASC
+    </select>
+
+    <!-- 가게 정보 수정 -->
+    <update id="updateStore" parameterType="com.localmarket.domain.Store">
+        UPDATE store 
+        SET 
+            store_name = #{storeName},
+            store_index = #{storeIndex},
+            store_category = #{storeCategory},
+            store_filename = #{storeFilename}
+        WHERE store_id = #{storeId}
+    </update>
+
+    <!-- 가게 삭제 -->
+    <delete id="deleteStore" parameterType="int">
+        DELETE FROM store 
+        WHERE store_id = #{storeId}
+    </delete>
+
+    <!-- 시장별 가게 수 조회 -->
+    <select id="countStoresByMarketId" parameterType="int" resultType="int">
+        SELECT COUNT(*) 
+        FROM store 
+        WHERE market_id = #{marketId}
+    </select>
+
+    <!-- 판매자별 가게 수 조회 -->
+    <select id="countStoresByMemberNum" parameterType="int" resultType="int">
+        SELECT COUNT(*) 
+        FROM store 
+        WHERE member_num = #{memberNum}
+    </select>
+
+    <!-- 전체 가게 수 조회 -->
+    <select id="countAllStores" resultType="int">
+        SELECT COUNT(*) 
+        FROM store
+    </select>
+
+    <!-- 가게명과 시장ID로 중복 체크 (카운트) -->
+    <select id="countStoreByNameAndMarketId" resultType="int">
+        SELECT COUNT(*) 
+        FROM store 
+        WHERE store_name = #{storeName} AND market_id = #{marketId}
+    </select>
+
+    <!-- 시장별 가게 수 조회 (기존명 유지) -->
+    <select id="selectStoreCountByMarketId" parameterType="int" resultType="int">
+        SELECT COUNT(*) 
+        FROM store 
+        WHERE market_id = #{marketId}
+    </select>
+
+    <!-- 판매자별 가게 수 조회 (기존명 유지) -->
+    <select id="selectStoreCountByMemberNum" parameterType="int" resultType="int">
+        SELECT COUNT(*) 
+        FROM store 
+        WHERE member_num = #{memberNum}
+    </select>
+
+    <!-- 전체 가게 수 조회 (기존명 유지) -->
+    <select id="selectTotalStoreCount" resultType="int">
+        SELECT COUNT(*) 
+        FROM store
+    </select>
+
+    <!-- 가게명과 시장ID로 중복 체크 (객체 반환) -->
+    <select id="selectStoreByNameAndMarketId" resultMap="StoreResultMap">
+        SELECT 
+            s.store_id,
+            s.store_name,
+            s.store_index,
+            s.store_category,
+            s.store_filename,
+            s.market_id,
+            s.member_num,
+            s.created_date,
+            m.market_name,
+            m.market_local,
+            mem.member_name,
+            mem.member_id
+        FROM store s
+        LEFT JOIN market m ON s.market_id = m.market_id
+        LEFT JOIN member mem ON s.member_num = mem.member_num
+        WHERE s.store_name = #{storeName} AND s.market_id = #{marketId}
+    </select>
+
+    <!-- 페이징을 위한 가게 목록 조회 -->
+    <select id="selectStoresWithPaging" resultMap="StoreResultMap">
+        SELECT 
+            s.store_id,
+            s.store_name,
+            s.store_index,
+            s.store_category,
+            s.store_filename,
+            s.market_id,
+            s.member_num,
+            s.created_date,
+            m.market_name,
+            m.market_local,
+            mem.member_name,
+            mem.member_id
+        FROM store s
+        LEFT JOIN market m ON s.market_id = m.market_id
+        LEFT JOIN member mem ON s.member_num = mem.member_num
+        ORDER BY s.created_date DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 시장별 페이징 가게 목록 조회 -->
+    <select id="selectStoresByMarketIdWithPaging" resultMap="StoreResultMap">
+        SELECT 
+            s.store_id,
+            s.store_name,
+            s.store_index,
+            s.store_category,
+            s.store_filename,
+            s.market_id,
+            s.member_num,
+            s.created_date,
+            m.market_name,
+            m.market_local,
+            mem.member_name,
+            mem.member_id
+        FROM store s
+        LEFT JOIN market m ON s.market_id = m.market_id
+        LEFT JOIN member mem ON s.member_num = mem.member_num
+        WHERE s.market_id = #{marketId}
+        ORDER BY s.created_date DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+</mapper>
