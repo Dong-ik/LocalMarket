@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지역별 전통시장 - LocalMarket</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 헤더 영역 -->
+    <div th:replace="~{layout :: header}"></div>
+    
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-map-marker-alt"></i> 지역별 전통시장</h2>
+                    <div>
+                        <a href="/markets/traditional" class="btn btn-outline-secondary me-2">
+                            <i class="fas fa-arrow-left"></i> 전체 시장
+                        </a>
+                        <a href="/markets/traditional/facilities" class="btn btn-outline-success">
+                            <i class="fas fa-wrench"></i> 편의시설 보유 시장
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 지역 선택 -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">지역 선택</h5>
+                        <form method="get" action="/markets/traditional/region" class="row g-3">
+                            <div class="col-md-8">
+                                <select name="region" class="form-select">
+                                    <option value="">전체 지역</option>
+                                    <option th:value="서울특별시" th:selected="${selectedRegion == '서울특별시'}">서울특별시</option>
+                                    <option th:value="부산광역시" th:selected="${selectedRegion == '부산광역시'}">부산광역시</option>
+                                    <option th:value="대구광역시" th:selected="${selectedRegion == '대구광역시'}">대구광역시</option>
+                                    <option th:value="인천광역시" th:selected="${selectedRegion == '인천광역시'}">인천광역시</option>
+                                    <option th:value="광주광역시" th:selected="${selectedRegion == '광주광역시'}">광주광역시</option>
+                                    <option th:value="대전광역시" th:selected="${selectedRegion == '대전광역시'}">대전광역시</option>
+                                    <option th:value="울산광역시" th:selected="${selectedRegion == '울산광역시'}">울산광역시</option>
+                                    <option th:value="세종특별자치시" th:selected="${selectedRegion == '세종특별자치시'}">세종특별자치시</option>
+                                    <option th:value="경기도" th:selected="${selectedRegion == '경기도'}">경기도</option>
+                                    <option th:value="강원도" th:selected="${selectedRegion == '강원도'}">강원도</option>
+                                    <option th:value="충청북도" th:selected="${selectedRegion == '충청북도'}">충청북도</option>
+                                    <option th:value="충청남도" th:selected="${selectedRegion == '충청남도'}">충청남도</option>
+                                    <option th:value="전라북도" th:selected="${selectedRegion == '전라북도'}">전라북도</option>
+                                    <option th:value="전라남도" th:selected="${selectedRegion == '전라남도'}">전라남도</option>
+                                    <option th:value="경상북도" th:selected="${selectedRegion == '경상북도'}">경상북도</option>
+                                    <option th:value="경상남도" th:selected="${selectedRegion == '경상남도'}">경상남도</option>
+                                    <option th:value="제주특별자치도" th:selected="${selectedRegion == '제주특별자치도'}">제주특별자치도</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search"></i> 지역별 검색
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- 검색 결과 -->
+                <div th:if="${selectedRegion != null and selectedRegion != ''}" class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong th:text="${selectedRegion}">선택된 지역</strong> 지역의 전통시장 
+                    <span th:text="${traditionalMarkets != null ? traditionalMarkets.size() : 0}">0</span>개가 검색되었습니다.
+                </div>
+                
+                <!-- 시장 목록 -->
+                <div class="row">
+                    <div th:if="${traditionalMarkets == null or #lists.isEmpty(traditionalMarkets)}" class="col-12">
+                        <div class="alert alert-warning text-center">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span th:if="${selectedRegion != null and selectedRegion != ''}">선택한 지역에 등록된 전통시장이 없습니다.</span>
+                            <span th:unless="${selectedRegion != null and selectedRegion != ''}">지역을 선택해주세요.</span>
+                        </div>
+                    </div>
+                    
+                    <div th:each="market : ${traditionalMarkets}" class="col-lg-6 col-xl-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary" th:text="${market.marketName}">시장명</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span th:text="${market.siDoName}">시도</span> 
+                                    <span th:text="${market.siGunGuName}">시군구</span>
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-tag"></i>
+                                        <span th:text="${market.marketType ?: '일반시장'}">시장유형</span>
+                                    </small>
+                                </div>
+                                
+                                <div th:if="${market.detailAddress}" class="mb-3">
+                                    <small>
+                                        <i class="fas fa-location-dot"></i>
+                                        <span th:text="${market.detailAddress}">상세주소</span>
+                                    </small>
+                                </div>
+                                
+                                <!-- 편의시설 정보 -->
+                                <div th:if="${market.hasAnyFacility()}" class="mb-3">
+                                    <div class="badge-container">
+                                        <span class="badge bg-success mb-1 me-1" th:if="${market.arcadeYn}">
+                                            <i class="fas fa-building"></i> 아케이드
+                                        </span>
+                                        <span class="badge bg-info mb-1 me-1" th:if="${market.elevatorYn}">
+                                            <i class="fas fa-elevator"></i> 엘리베이터
+                                        </span>
+                                        <span class="badge bg-warning mb-1 me-1" th:if="${market.escalatorYn}">
+                                            <i class="fas fa-stairs"></i> 에스컬레이터
+                                        </span>
+                                        <span class="badge bg-primary mb-1 me-1" th:if="${market.customerSupportCenterYn}">
+                                            <i class="fas fa-headset"></i> 고객지원센터
+                                        </span>
+                                        <span class="badge bg-secondary mb-1 me-1" th:if="${market.toiletYn}">
+                                            <i class="fas fa-restroom"></i> 화장실
+                                        </span>
+                                        <span class="badge bg-dark mb-1 me-1" th:if="${market.parkingYn}">
+                                            <i class="fas fa-parking"></i> 주차장
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div th:unless="${market.hasAnyFacility()}" class="mb-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle"></i> 편의시설 정보 없음
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        편의시설 <span th:text="${market.facilityCount}">0</span>개
+                                    </small>
+                                    <span class="badge bg-outline-primary">
+                                        <i class="fas fa-star"></i> 공공데이터
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 지역별 통계 -->
+                <div th:if="${selectedRegion != null and selectedRegion != '' and traditionalMarkets != null and not #lists.isEmpty(traditionalMarkets)}" class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <span th:text="${selectedRegion}">선택된 지역</span> 전통시장 편의시설 현황
+                                </h5>
+                                <div class="row text-center">
+                                    <div class="col-md-2">
+                                        <h4 class="text-primary" th:text="${traditionalMarkets.size()}">0</h4>
+                                        <p class="mb-0 small">총 시장 수</p>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h4 class="text-success" th:text="${#lists.size(traditionalMarkets.?[arcadeYn == true])}">0</h4>
+                                        <p class="mb-0 small">아케이드</p>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h4 class="text-info" th:text="${#lists.size(traditionalMarkets.?[elevatorYn == true])}">0</h4>
+                                        <p class="mb-0 small">엘리베이터</p>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h4 class="text-warning" th:text="${#lists.size(traditionalMarkets.?[escalatorYn == true])}">0</h4>
+                                        <p class="mb-0 small">에스컬레이터</p>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h4 class="text-secondary" th:text="${#lists.size(traditionalMarkets.?[toiletYn == true])}">0</h4>
+                                        <p class="mb-0 small">화장실</p>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h4 class="text-dark" th:text="${#lists.size(traditionalMarkets.?[parkingYn == true])}">0</h4>
+                                        <p class="mb-0 small">주차장</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 푸터 -->
+    <footer class="bg-light mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-store"></i> LocalMarket</h5>
+                    <p>전통시장의 맛과 정을 온라인으로 만나보세요.</p>
+                </div>
+                <div class="col-md-4">
+                    <h6>바로가기</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/about" class="text-decoration-none">소개</a></li>
+                        <li><a href="/help" class="text-decoration-none">도움말</a></li>
+                        <li><a href="/contact" class="text-decoration-none">연락처</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>정책</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/terms" class="text-decoration-none">이용약관</a></li>
+                        <li><a href="/privacy" class="text-decoration-none">개인정보처리방침</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2025 LocalMarket. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,144 +1,71 @@
 package com.localmarket.controller;
 
-import com.localmarket.entity.Member;
+import com.localmarket.domain.Member;
 import com.localmarket.dto.MemberDto;
 import com.localmarket.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
-@RequestMapping("/members")
+@RequestMapping("/member")
+@RequiredArgsConstructor
 public class MemberController {
-
-    @Autowired
-    private MemberService memberService;
-
-    // 회원 가입 페이지
+    
+    private final MemberService memberService;
+    
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("memberDto", new MemberDto());
         return "members/register";
     }
-
-    // 회원 가입 처리
+    
     @PostMapping("/register")
     public String register(@ModelAttribute MemberDto memberDto, Model model) {
-        try {
-            // DTO를 Entity로 변환
-            Member member = new Member();
-            member.setMemberId(memberDto.getMemberId());
-            member.setMemberName(memberDto.getMemberName());
-            member.setPassword(memberDto.getPassword());
-            member.setBirth(memberDto.getBirth());
-            member.setGender(memberDto.getGender());
-            member.setNational(memberDto.getNational());
-            member.setPhone(memberDto.getPhone());
-            member.setMemberAddress(memberDto.getMemberAddress());
-            member.setEmail(memberDto.getEmail());
-            member.setMemberGrade(memberDto.getMemberGrade());
-            
-            memberService.registerMember(member);
-            return "redirect:/members/login?success";
-        } catch (RuntimeException e) {
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("memberDto", memberDto);
+        boolean success = memberService.registerMember(memberDto);
+        if (success) {
+            return "redirect:/member/login";
+        } else {
+            model.addAttribute("error", "회원가입에 실패했습니다.");
             return "members/register";
         }
     }
-
-    // 로그인 페이지
+    
     @GetMapping("/login")
     public String loginForm() {
         return "members/login";
     }
-
-    // 로그인 처리
+    
     @PostMapping("/login")
-    public String login(@RequestParam String memberId, 
-                       @RequestParam String password, 
-                       Model model) {
-        try {
-            Member member = memberService.login(memberId, password);
-            // 세션에 회원 정보 저장 (실제 구현에서는 Spring Security 사용 권장)
+    public String login(@RequestParam String memberId, @RequestParam String password, Model model) {
+        Member member = memberService.loginMember(memberId, password);
+        if (member != null) {
             return "redirect:/";
-        } catch (RuntimeException e) {
-            model.addAttribute("error", e.getMessage());
+        } else {
+            model.addAttribute("error", "로그인에 실패했습니다.");
             return "members/login";
         }
     }
-
-    // 회원 정보 조회 페이지
-    @GetMapping("/profile/{memberId}")
-    public String profile(@PathVariable String memberId, Model model) {
-        try {
-            Member member = memberService.getMemberById(memberId);
-            model.addAttribute("member", member);
-            return "members/profile";
-        } catch (RuntimeException e) {
-            model.addAttribute("error", e.getMessage());
-            return "error";
-        }
-    }
-
-    // 회원 정보 수정 페이지
-    @GetMapping("/edit/{memberNum}")
-    public String editForm(@PathVariable Integer memberNum, Model model) {
-        try {
-            Member member = memberService.getMemberById(memberNum.toString());
-            model.addAttribute("member", member);
-            return "members/edit";
-        } catch (RuntimeException e) {
-            model.addAttribute("error", e.getMessage());
-            return "error";
-        }
-    }
-
-    // 회원 정보 수정 처리
-    @PostMapping("/edit")
-    public String updateMember(@ModelAttribute Member member, Model model) {
-        try {
-            memberService.updateMember(member);
-            return "redirect:/members/profile/" + member.getMemberId();
-        } catch (RuntimeException e) {
-            model.addAttribute("error", e.getMessage());
-            return "members/edit";
-        }
-    }
-
-    // REST API - 회원 ID 중복 확인
-    @GetMapping("/check-id")
-    @ResponseBody
-    public ResponseEntity<Boolean> checkIdAvailable(@RequestParam String memberId) {
-        boolean available = memberService.isIdAvailable(memberId);
-        return ResponseEntity.ok(available);
-    }
-
-    // REST API - 이메일 중복 확인
-    @GetMapping("/check-email")
-    @ResponseBody
-    public ResponseEntity<Boolean> checkEmailAvailable(@RequestParam String email) {
-        boolean available = memberService.isEmailAvailable(email);
-        return ResponseEntity.ok(available);
-    }
-
-    // REST API - 모든 회원 조회 (관리자용)
-    @GetMapping("/api/all")
-    @ResponseBody
-    public ResponseEntity<List<Member>> getAllMembers() {
+    
+    @GetMapping("/list")
+    public String memberList(Model model) {
         List<Member> members = memberService.getAllMembers();
-        return ResponseEntity.ok(members);
+        model.addAttribute("members", members);
+        return "members/list";
     }
-
-    // REST API - 회원 등급별 조회
-    @GetMapping("/api/grade/{grade}")
+    
+    @PostMapping("/check-id")
     @ResponseBody
-    public ResponseEntity<List<Member>> getMembersByGrade(@PathVariable String grade) {
-        List<Member> members = memberService.getMembersByGrade(grade);
-        return ResponseEntity.ok(members);
+    public ResponseEntity<Map<String, Object>> checkMemberId(@RequestParam String memberId) {
+        Map<String, Object> response = new HashMap<>();
+        boolean exists = memberService.checkMemberIdExists(memberId);
+        response.put("exists", exists);
+        return ResponseEntity.ok(response);
     }
 }
