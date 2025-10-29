@@ -1,0 +1,16 @@
+[
+  {
+    "marketName": "JSON테스트시장1",
+    "marketLocal": "인천광역시",
+    "marketAddress": "인천시 남동구 JSON로 100",
+    "marketIntroduce": "JSON으로 등록된 테스트시장",
+    "marketURL": "http://jsontest1.co.kr"
+  },
+  {
+    "marketName": "JSON테스트시장2", 
+    "marketLocal": "광주광역시",
+    "marketAddress": "광주시 서구 JSON대로 200",
+    "marketIntroduce": "JSON 파일 업로드 테스트",
+    "marketURL": "http://jsontest2.co.kr"
+  }
+]

@@ -10,6 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -148,6 +154,238 @@ public class MarketController {
     private boolean isValidMarketData(MarketDto marketDto) {
         return marketDto.getMarketName() != null && !marketDto.getMarketName().trim().isEmpty() &&
                marketDto.getMarketLocal() != null && !marketDto.getMarketLocal().trim().isEmpty();
+    }
+    
+    /**
+     * CSV 파일 업로드로 시장 데이터 가져오기
+     */
+    @PostMapping("/import-from-csv")
+    public ResponseEntity<Map<String, Object>> importMarketsFromCsv(@RequestParam("file") MultipartFile file) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            if (file.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "업로드된 파일이 비어있습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // CSV 파일 확장자 검사
+            String filename = file.getOriginalFilename();
+            if (filename == null || !filename.toLowerCase().endsWith(".csv")) {
+                response.put("success", false);
+                response.put("message", "CSV 파일만 업로드 가능합니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // CSV 파일 파싱
+            List<MarketDto> marketDtoList = parseCsvFile(file);
+            
+            if (marketDtoList.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "유효한 시장 데이터가 없습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // DB에 저장
+            boolean success = marketService.insertMultipleMarketsFromApi(marketDtoList);
+            
+            if (success) {
+                response.put("success", true);
+                response.put("message", "CSV 파일의 시장 데이터가 성공적으로 저장되었습니다.");
+                response.put("filename", filename);
+                response.put("totalRows", marketDtoList.size());
+                response.put("savedCount", marketDtoList.size());
+            } else {
+                response.put("success", false);
+                response.put("message", "데이터 저장에 실패했습니다.");
+            }
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            log.error("CSV 파일 처리 실패: {}", e.getMessage(), e);
+            response.put("success", false);
+            response.put("message", "CSV 파일 처리에 실패했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    /**
+     * JSON 파일 업로드로 시장 데이터 가져오기
+     */
+    @PostMapping("/import-from-json")
+    public ResponseEntity<Map<String, Object>> importMarketsFromJson(@RequestParam("file") MultipartFile file) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            if (file.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "업로드된 파일이 비어있습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // JSON 파일 확장자 검사
+            String filename = file.getOriginalFilename();
+            if (filename == null || !filename.toLowerCase().endsWith(".json")) {
+                response.put("success", false);
+                response.put("message", "JSON 파일만 업로드 가능합니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // JSON 파일 파싱
+            List<MarketDto> marketDtoList = parseJsonFile(file);
+            
+            if (marketDtoList.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "유효한 시장 데이터가 없습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // DB에 저장
+            boolean success = marketService.insertMultipleMarketsFromApi(marketDtoList);
+            
+            if (success) {
+                response.put("success", true);
+                response.put("message", "JSON 파일의 시장 데이터가 성공적으로 저장되었습니다.");
+                response.put("filename", filename);
+                response.put("totalRows", marketDtoList.size());
+                response.put("savedCount", marketDtoList.size());
+            } else {
+                response.put("success", false);
+                response.put("message", "데이터 저장에 실패했습니다.");
+            }
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            log.error("JSON 파일 처리 실패: {}", e.getMessage(), e);
+            response.put("success", false);
+            response.put("message", "JSON 파일 처리에 실패했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    /**
+     * CSV 파일 파싱
+     */
+    private List<MarketDto> parseCsvFile(MultipartFile file) throws Exception {
+        List<MarketDto> marketDtoList = new ArrayList<>();
+        
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+            
+            String line;
+            boolean isFirstLine = true;
+            String[] headers = null;
+            
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    // 첫 번째 줄은 헤더로 처리
+                    headers = line.split(",");
+                    isFirstLine = false;
+                    continue;
+                }
+                
+                String[] values = line.split(",");
+                if (values.length < 2) continue; // 최소 필수 필드 체크
+                
+                try {
+                    MarketDto marketDto = new MarketDto();
+                    
+                    // CSV 컬럼에 따라 매핑 (실제 CSV 구조에 맞게 조정 필요)
+                    if (values.length > 0) marketDto.setMarketName(cleanCsvValue(values[0]));
+                    if (values.length > 1) marketDto.setMarketLocal(cleanCsvValue(values[1]));
+                    if (values.length > 2) marketDto.setMarketAddress(cleanCsvValue(values[2]));
+                    if (values.length > 3) marketDto.setMarketIntroduce(cleanCsvValue(values[3]));
+                    if (values.length > 4) marketDto.setMarketURL(cleanCsvValue(values[4]));
+                    
+                    marketDto.setCreatedDate(LocalDateTime.now());
+                    
+                    if (isValidMarketData(marketDto)) {
+                        marketDtoList.add(marketDto);
+                        log.debug("CSV 시장 데이터 변환 완료: {}", marketDto.getMarketName());
+                    }
+                    
+                } catch (Exception e) {
+                    log.warn("CSV 행 파싱 실패: {} - {}", line, e.getMessage());
+                }
+            }
+        }
+        
+        log.info("CSV 파일에서 {}개의 시장 데이터 파싱 완료", marketDtoList.size());
+        return marketDtoList;
+    }
+    
+    /**
+     * JSON 파일 파싱
+     */
+    private List<MarketDto> parseJsonFile(MultipartFile file) throws Exception {
+        List<MarketDto> marketDtoList = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        
+        try {
+            // JSON 파일을 Map 리스트로 파싱
+            List<Map<String, Object>> jsonData = objectMapper.readValue(
+                file.getInputStream(), 
+                new TypeReference<List<Map<String, Object>>>() {}
+            );
+            
+            for (Map<String, Object> item : jsonData) {
+                try {
+                    MarketDto marketDto = new MarketDto();
+                    
+                    // JSON 필드에 따라 매핑
+                    marketDto.setMarketName(getStringValue(item, "marketName", "시장명", "name"));
+                    marketDto.setMarketLocal(getStringValue(item, "marketLocal", "지역", "local", "location"));
+                    marketDto.setMarketAddress(getStringValue(item, "marketAddress", "주소", "address"));
+                    marketDto.setMarketIntroduce(getStringValue(item, "marketIntroduce", "소개", "introduce", "description"));
+                    marketDto.setMarketURL(getStringValue(item, "marketURL", "웹사이트", "url", "website"));
+                    
+                    marketDto.setCreatedDate(LocalDateTime.now());
+                    
+                    if (isValidMarketData(marketDto)) {
+                        marketDtoList.add(marketDto);
+                        log.debug("JSON 시장 데이터 변환 완료: {}", marketDto.getMarketName());
+                    }
+                    
+                } catch (Exception e) {
+                    log.warn("JSON 항목 파싱 실패: {} - {}", item, e.getMessage());
+                }
+            }
+            
+        } catch (Exception e) {
+            log.error("JSON 파일 파싱 실패: {}", e.getMessage());
+            throw new Exception("JSON 파일 형식이 올바르지 않습니다: " + e.getMessage());
+        }
+        
+        log.info("JSON 파일에서 {}개의 시장 데이터 파싱 완료", marketDtoList.size());
+        return marketDtoList;
+    }
+    
+    /**
+     * CSV 값 정리 (따옴표 제거 등)
+     */
+    private String cleanCsvValue(String value) {
+        if (value == null) return null;
+        value = value.trim();
+        if (value.startsWith("\"") && value.endsWith("\"")) {
+            value = value.substring(1, value.length() - 1);
+        }
+        return value.isEmpty() ? null : value;
+    }
+    
+    /**
+     * JSON에서 여러 가능한 키로 값 가져오기
+     */
+    private String getStringValue(Map<String, Object> item, String... possibleKeys) {
+        for (String key : possibleKeys) {
+            Object value = item.get(key);
+            if (value != null && !value.toString().trim().isEmpty()) {
+                return value.toString().trim();
+            }
+        }
+        return null;
     }
     
     /**
