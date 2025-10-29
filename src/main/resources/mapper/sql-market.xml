@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.localmarket.mapper.MarketMapper">
+
+    <!-- Result Map -->
+    <resultMap id="marketResultMap" type="com.localmarket.domain.Market">
+        <id property="marketId" column="market_id"/>
+        <result property="marketName" column="market_name"/>
+        <result property="marketLocal" column="market_local"/>
+        <result property="marketAddress" column="market_address"/>
+        <result property="marketIntroduce" column="market_introduce"/>
+        <result property="marketFilename" column="market_filename"/>
+        <result property="marketURL" column="market_URL"/>
+        <result property="createdDate" column="created_date"/>
+    </resultMap>
+
+    <!-- 시장 등록 (API 데이터 삽입용) -->
+    <insert id="insertMarket" parameterType="com.localmarket.domain.Market">
+        INSERT INTO market (
+            market_name,
+            market_local,
+            market_address,
+            market_introduce,
+            market_filename,
+            market_URL,
+            created_date
+        ) VALUES (
+            #{marketName},
+            #{marketLocal},
+            #{marketAddress},
+            #{marketIntroduce},
+            #{marketFilename},
+            #{marketURL},
+            #{createdDate}
+        )
+    </insert>
+
+    <!-- 전체 시장 목록 조회 -->
+    <select id="selectAllMarkets" resultMap="marketResultMap">
+        SELECT 
+            market_id,
+            market_name,
+            market_local,
+            market_address,
+            market_introduce,
+            market_filename,
+            market_URL,
+            created_date
+        FROM market
+        ORDER BY created_date DESC
+    </select>
+
+    <!-- 지역별 시장 목록 조회 -->
+    <select id="selectMarketsByLocal" parameterType="string" resultMap="marketResultMap">
+        SELECT 
+            market_id,
+            market_name,
+            market_local,
+            market_address,
+            market_introduce,
+            market_filename,
+            market_URL,
+            created_date
+        FROM market
+        WHERE market_local = #{marketLocal}
+        ORDER BY created_date DESC
+    </select>
+
+    <!-- 시장 상세 조회 -->
+    <select id="selectMarketById" parameterType="int" resultMap="marketResultMap">
+        SELECT 
+            market_id,
+            market_name,
+            market_local,
+            market_address,
+            market_introduce,
+            market_filename,
+            market_URL,
+            created_date
+        FROM market
+        WHERE market_id = #{marketId}
+    </select>
+
+    <!-- 시장 이름으로 검색 -->
+    <select id="selectMarketsByName" parameterType="string" resultMap="marketResultMap">
+        SELECT 
+            market_id,
+            market_name,
+            market_local,
+            market_address,
+            market_introduce,
+            market_filename,
+            market_URL,
+            created_date
+        FROM market
+        WHERE market_name LIKE CONCAT('%', #{marketName}, '%')
+        ORDER BY created_date DESC
+    </select>
+
+    <!-- 시장 주소로 검색 -->
+    <select id="selectMarketsByAddress" parameterType="string" resultMap="marketResultMap">
+        SELECT 
+            market_id,
+            market_name,
+            market_local,
+            market_address,
+            market_introduce,
+            market_filename,
+            market_URL,
+            created_date
+        FROM market
+        WHERE market_address LIKE CONCAT('%', #{marketAddress}, '%')
+        ORDER BY created_date DESC
+    </select>
+
+    <!-- 최근 등록된 시장 목록 -->
+    <select id="selectRecentMarkets" parameterType="int" resultMap="marketResultMap">
+        SELECT 
+            market_id,
+            market_name,
+            market_local,
+            market_address,
+            market_introduce,
+            market_filename,
+            market_URL,
+            created_date
+        FROM market
+        ORDER BY created_date DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 시장 정보 수정 -->
+    <update id="updateMarket" parameterType="com.localmarket.domain.Market">
+        UPDATE market
+        SET 
+            market_name = #{marketName},
+            market_local = #{marketLocal},
+            market_address = #{marketAddress},
+            market_introduce = #{marketIntroduce},
+            market_filename = #{marketFilename},
+            market_URL = #{marketURL}
+        WHERE market_id = #{marketId}
+    </update>
+
+    <!-- 시장 삭제 -->
+    <delete id="deleteMarket" parameterType="int">
+        DELETE FROM market
+        WHERE market_id = #{marketId}
+    </delete>
+
+    <!-- 시장 총 개수 조회 -->
+    <select id="selectTotalMarketCount" resultType="int">
+        SELECT COUNT(*)
+        FROM market
+    </select>
+
+    <!-- 지역별 시장 개수 조회 -->
+    <select id="selectMarketCountByLocal" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM market
+        WHERE market_local = #{marketLocal}
+    </select>
+
+    <!-- API 데이터 중복 체크 (같은 이름과 주소) -->
+    <select id="selectMarketByNameAndAddress" resultMap="marketResultMap">
+        SELECT 
+            market_id,
+            market_name,
+            market_local,
+            market_address,
+            market_introduce,
+            market_filename,
+            market_URL,
+            created_date
+        FROM market
+        WHERE market_name = #{marketName}
+        AND market_address = #{marketAddress}
+        LIMIT 1
+    </select>
+
+</mapper>
