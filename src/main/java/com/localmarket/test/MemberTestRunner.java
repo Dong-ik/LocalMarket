@@ -6,10 +6,12 @@ import com.localmarket.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDate;
 
-//@Component
+@Component
+@Profile("test-member")
 public class MemberTestRunner implements CommandLineRunner {
 
     @Autowired
