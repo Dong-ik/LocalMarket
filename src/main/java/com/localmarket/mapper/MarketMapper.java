@@ -51,4 +51,7 @@ public interface MarketMapper {
     
     // 최근 등록된 시장 목록
     List<Market> selectRecentMarkets(@Param("limit") int limit);
+
+    // 인기시장(찜 많은 순) 조회
+    List<Market> selectPopularMarkets(@Param("limit") int limit);
 }

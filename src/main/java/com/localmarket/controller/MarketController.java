@@ -41,7 +41,7 @@ public class MarketController {
      */
     @GetMapping("/import-from-api")
     public ResponseEntity<Map<String, Object>> importMarketsFromApiGet(@RequestParam(defaultValue = "1") int page,
-                                                                       @RequestParam(defaultValue = "5") int perPage) {
+                                                                       @RequestParam(name = "perPage", defaultValue = "5") int perPage) {
         return importMarketsFromApi(page, perPage);
     }
     
@@ -50,7 +50,7 @@ public class MarketController {
      */
     @PostMapping("/import-from-api")
     public ResponseEntity<Map<String, Object>> importMarketsFromApi(@RequestParam(defaultValue = "1") int page,
-                                                                    @RequestParam(defaultValue = "100") int perPage) {
+                                                                    @RequestParam(name = "perPage", defaultValue = "100") int perPage) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -161,6 +161,7 @@ public class MarketController {
      */
     @PostMapping("/import-from-csv")
     public ResponseEntity<Map<String, Object>> importMarketsFromCsv(@RequestParam("file") MultipartFile file) {
+    // 이미 name 명시되어 있음 (file)
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -216,6 +217,7 @@ public class MarketController {
      */
     @PostMapping("/import-from-json")
     public ResponseEntity<Map<String, Object>> importMarketsFromJson(@RequestParam("file") MultipartFile file) {
+    // 이미 name 명시되어 있음 (file)
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -550,7 +552,7 @@ public class MarketController {
      * 최근 등록된 시장 목록
      */
     @GetMapping("/recent")
-    public ResponseEntity<Map<String, Object>> getRecentMarkets(@RequestParam(defaultValue = "10") int limit) {
+    public ResponseEntity<Map<String, Object>> getRecentMarkets(@RequestParam(name = "limit", defaultValue = "10") int limit) {
         Map<String, Object> response = new HashMap<>();
         
         try {

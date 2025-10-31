@@ -1,5 +1,6 @@
 package com.localmarket.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,14 @@ import java.util.HashMap;
  */
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
+
+    private final com.localmarket.service.StoreService storeService;
+    private final com.localmarket.service.ProductService productService;
+    private final com.localmarket.service.MemberService memberService;
+
+    private final com.localmarket.service.MarketService marketService;
 
     /**
      * 메인 페이지
@@ -23,13 +31,16 @@ public class HomeController {
     public String index(Model model) {
         try {
             log.info("메인 페이지 조회 시작");
-            
             // 통계 정보
             Map<String, Object> stats = new HashMap<>();
-            stats.put("marketCount", 35);  // 실제 카운트로 변경 가능
-            stats.put("storeCount", 156);
-            stats.put("productCount", 1240);
-            stats.put("memberCount", 8950);
+            int marketCount = marketService.getTotalMarketCount();
+            int storeCount = storeService.getTotalStoreCount();
+            int productCount = productService.getTotalProductCount();
+            int memberCount = memberService.getTotalMemberCount();
+            stats.put("marketCount", marketCount);
+            stats.put("storeCount", storeCount);
+            stats.put("productCount", productCount);
+            stats.put("memberCount", memberCount);
             model.addAttribute("stats", stats);
             
             // 인기 전통시장 (상위 6개)
@@ -63,7 +74,7 @@ public class HomeController {
      * 검색 페이지
      */
     @GetMapping("/search")
-    public String search(String keyword, Model model) {
+    public String search(@org.springframework.web.bind.annotation.RequestParam("keyword") String keyword, Model model) {
         try {
             log.info("검색 요청: {}", keyword);
             

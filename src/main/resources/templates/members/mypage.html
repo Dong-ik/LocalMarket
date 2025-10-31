@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지 - LocalMarket</title>
+    <link rel="stylesheet" th:href="@{/css/localmarket.css}">
+    <link rel="stylesheet" th:href="@{/css/mypage.css}">
+</head>
+<body>
+<div th:replace="~{common/header}"></div>
+<div class="container mypage-container">
+    <h2>마이페이지</h2>
+    <div th:if="${session.member != null}">
+        <div class="mypage-info">
+            <p><strong>아이디:</strong> <span th:text="${session.member.memberId}"></span></p>
+            <p><strong>이름:</strong> <span th:text="${session.member.memberName}"></span></p>
+            <p><strong>등급:</strong> <span th:text="${session.member.memberGrade}"></span></p>
+        </div>
+        <div class="mypage-menu">
+            <!-- 구매자(BUYER) 메뉴 -->
+            <div th:if="${session.member.memberGrade == 'BUYER'}">
+                <ul class="mypage-menu-horizontal">
+                    <li><a th:href="@{/favorites}">관심 시장/가게 목록</a></li>
+                    <li><a th:href="@{/orders}">주문 내역</a></li>
+                    <li><a th:href="@{/cart}">장바구니</a></li>
+                    <li><a th:href="@{/members/info}">내 정보 조회/수정</a></li>
+                    <li><a th:href="@{/members/withdraw}" class="withdraw-btn">회원 탈퇴</a></li>
+                </ul>
+            </div>
+            <!-- 판매자(SELLER) 메뉴 -->
+            <div th:if="${session.member.memberGrade == 'SELLER'}">
+                <ul class="mypage-menu-horizontal">
+                    <li><a th:href="@{/seller/orders}">내 가게 주문내역</a></li>
+                    <li><a th:href="@{/seller/products}">내 상품 관리</a></li>
+                    <li><a th:href="@{/seller/stores}">내 가게 관리</a></li>
+                    <li><a th:href="@{/members/info}">내 정보 조회/수정</a></li>
+                    <li><a th:href="@{/members/withdraw}" class="withdraw-btn">회원 탈퇴</a></li>
+                </ul>
+            </div>
+            <!-- 관리자(ADMIN) 메뉴 -->
+            <div th:if="${session.member.memberGrade == 'ADMIN'}">
+                <ul class="mypage-menu-horizontal">
+                    <li><a th:href="@{/members/list}">회원 목록 조회</a></li>
+                    <li><a th:href="@{/members/info}">회원 정보 조회/수정/삭제</a></li>
+                    <li><a th:href="@{/markets/list}">시장 목록/가게 관리</a></li>
+                    <li><a th:href="@{/products/list}">상품 관리</a></li>
+                    <li><a th:href="@{/orders/list}">주문/결제 관리</a></li>
+                    <li><a th:href="@{/boards/list}">게시글/리뷰 관리</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div th:if="${session.member == null}">
+        <p>로그인이 필요합니다. <a th:href="@{/members/login}">로그인</a></p>
+    </div>
+</div>
+<div th:replace="~{common/footer}"></div>
+</body>
+</html>

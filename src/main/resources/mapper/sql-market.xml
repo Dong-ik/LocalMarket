@@ -2,6 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.localmarket.mapper.MarketMapper">
 
+        <!-- 인기시장(찜 많은 순) 조회 -->
+    <select id="selectPopularMarkets" resultMap="marketWithFavoriteResultMap">
+        SELECT 
+            m.market_id,
+            m.market_name,
+            m.market_local,
+            m.market_address,
+            m.market_introduce,
+            m.market_filename,
+            m.market_URL,
+            m.created_date,
+            IFNULL(v.favorite_count, 0) AS favorite_count
+        FROM market m
+        LEFT JOIN view_market_favorite_stats v ON m.market_id = v.market_id
+        ORDER BY v.favorite_count DESC, m.created_date DESC
+        LIMIT #{limit}
+    </select>
 
     <!-- 복합 조건(검색+지역) + 찜 개수 포함 목록 조회 -->
     <select id="selectMarketsWithFavoriteBySearchAndLocal" resultMap="marketWithFavoriteResultMap">

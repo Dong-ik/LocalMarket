@@ -19,6 +19,17 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class MarketViewController {
+    /**
+     * 인기 전통시장 페이지
+     * GET /markets/popular
+     */
+    @GetMapping("/popular")
+    public String popularMarkets(Model model) {
+        // 인기순(찜 많은 순) 상위 5개 시장 조회
+        List<Market> popularMarkets = marketService.getPopularMarkets(5);
+        model.addAttribute("popularMarkets", popularMarkets);
+        return "markets/popular";
+    }
     
     private final MarketService marketService;
     
@@ -28,11 +39,11 @@ public class MarketViewController {
      */
     @GetMapping
     public String marketList(
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false) String local,
-            @RequestParam(defaultValue = "popular") String sort,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "local", required = false) String local,
+            @RequestParam(name = "sort", defaultValue = "popular") String sort,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "12") int size,
             Model model) {
         
         try {

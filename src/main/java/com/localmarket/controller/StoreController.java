@@ -331,7 +331,7 @@ public class StoreController {
      */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getStoresWithPaging(@RequestParam(defaultValue = "1") int page,
-                                                                  @RequestParam(defaultValue = "10") int size) {
+                                                                  @RequestParam(name = "size", defaultValue = "10") int size) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -361,8 +361,8 @@ public class StoreController {
      */
     @GetMapping("/market/{marketId}/paging")
     public ResponseEntity<Map<String, Object>> getStoresByMarketWithPaging(@PathVariable Integer marketId,
-                                                                          @RequestParam(defaultValue = "1") int page,
-                                                                          @RequestParam(defaultValue = "10") int size) {
+                                                                          @RequestParam(name = "page", defaultValue = "1") int page,
+                                                                          @RequestParam(name = "size", defaultValue = "10") int size) {
         Map<String, Object> response = new HashMap<>();
         
         try {

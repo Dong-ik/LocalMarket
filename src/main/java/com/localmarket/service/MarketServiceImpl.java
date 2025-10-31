@@ -1,4 +1,3 @@
-// ...existing code...
 package com.localmarket.service;
 
 import com.localmarket.domain.Market;
@@ -17,6 +16,8 @@ import java.util.List;
 @Slf4j
 @Transactional
 public class MarketServiceImpl implements MarketService {
+    private final MarketMapper marketMapper;
+
     @Override
     public List<Market> getMarketsWithFavoriteBySearchAndLocal(String search, String local) {
         try {
@@ -26,7 +27,6 @@ public class MarketServiceImpl implements MarketService {
             throw new RuntimeException("복합 조건 시장 목록 조회에 실패했습니다.", e);
         }
     }
-    private final MarketMapper marketMapper;
 
     @Override
     public List<Market> getAllMarketsWithFavorite() {
@@ -258,5 +258,15 @@ public class MarketServiceImpl implements MarketService {
         market.setMarketURL(marketDto.getMarketURL());
         market.setCreatedDate(marketDto.getCreatedDate());
         return market;
+    }
+
+    @Override
+    public List<Market> getPopularMarkets(int limit) {
+        try {
+            return marketMapper.selectPopularMarkets(limit);
+        } catch (Exception e) {
+            log.error("인기시장(찜 많은 순) 조회 중 오류 발생 - 제한수: {}, 오류: {}", limit, e.getMessage(), e);
+            throw new RuntimeException("인기시장 조회에 실패했습니다.", e);
+        }
     }
 }

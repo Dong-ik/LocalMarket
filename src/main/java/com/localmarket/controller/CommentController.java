@@ -400,7 +400,7 @@ public class CommentController {
      * GET /api/comments/recent?limit={limit}
      */
     @GetMapping("/recent")
-    public ResponseEntity<Map<String, Object>> getRecentComments(@RequestParam(defaultValue = "10") int limit) {
+    public ResponseEntity<Map<String, Object>> getRecentComments(@RequestParam(name = "limit", defaultValue = "10") int limit) {
         log.info("최신 댓글 조회 요청 - 개수: {}", limit);
         
         Map<String, Object> response = new HashMap<>();

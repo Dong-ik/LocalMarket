@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>인기 전통시장 - LocalMarket</title>
+    <link rel="stylesheet" th:href="@{/css/localmarket.css}">
+    <link rel="stylesheet" th:href="@{/css/market-list.css}">
+    <link rel="stylesheet" th:href="@{/css/popular-market.css}">
+</head>
+<body>
+<div th:replace="~{common/header}"></div>
+<div class="container popular-market-container">
+    <h2>인기 전통시장</h2>
+    <div class="popular-market-grid">
+        <div th:if="${popularMarkets != null and #lists.size(popularMarkets) > 0}">
+            <div class="popular-market-card" th:each="market : ${popularMarkets}">
+                <img th:src="@{'/images/market/' + ${market.marketFilename}}" alt="시장 이미지" class="popular-market-img" onerror="this.src='/images/noimg.png'">
+                <div class="popular-market-info">
+                    <h3 th:text="${market.marketName}"></h3>
+                    <p th:text="${market.marketLocal}"></p>
+                    <p th:text="${market.marketIntroduce}"></p>
+                    <div class="popular-market-favorite">
+                        <i class="fas fa-heart"></i> <span th:text="${market.favoriteCount}"></span>명 찜
+                    </div>
+                    <a th:href="@{'/markets/' + ${market.marketId}}" class="popular-market-detail-btn">시장 상세보기</a>
+                </div>
+            </div>
+        </div>
+        <div th:if="${popularMarkets == null or #lists.size(popularMarkets) == 0}">
+            <p>인기 시장 데이터가 없습니다.</p>
+        </div>
+    </div>
+</div>
+<div th:replace="~{common/footer}"></div>
+</body>
+</html>

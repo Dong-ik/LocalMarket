@@ -33,6 +33,9 @@ public interface MarketService {
     // 통계 관련
     int getTotalMarketCount();
     int getMarketCountByLocal(String marketLocal);
+
+    // 인기시장(찜 많은 순) 조회
+    List<Market> getPopularMarkets(int limit);
     
     // 유틸리티 관련
     boolean checkMarketExists(String marketName, String marketAddress);

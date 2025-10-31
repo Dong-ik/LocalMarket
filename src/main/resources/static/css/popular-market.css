@@ -1,0 +1,91 @@
+/* 인기시장 전용 스타일 (popular-market.css) */
+
+.popular-market-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px 60px 20px;
+}
+
+.popular-market-container h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.popular-market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 36px 28px;
+}
+
+.popular-market-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.popular-market-card:hover {
+    box-shadow: 0 8px 32px rgba(44,62,80,0.13);
+    transform: translateY(-4px) scale(1.02);
+}
+
+.popular-market-img {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    background: #f4f4f4;
+}
+
+.popular-market-info {
+    padding: 22px 20px 18px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.popular-market-info h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #222;
+}
+
+.popular-market-info p {
+    margin: 0 0 2px 0;
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.popular-market-favorite {
+    color: #e74c3c;
+    font-weight: 500;
+    margin-top: 6px;
+    font-size: 1.05rem;
+}
+
+.popular-market-detail-btn {
+    margin-top: 12px;
+    align-self: flex-end;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.popular-market-detail-btn:hover {
+    background: #217dbb;
+}
