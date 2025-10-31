@@ -1,0 +1,202 @@
+    </main>
+    <!-- 메인 콘텐츠 영역 종료 -->
+
+    <!-- 푸터 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <!-- 회사 정보 -->
+                <div class="footer-section">
+                    <h3>LocalMarket</h3>
+                    <p style="color: #bdc3c7; line-height: 1.6; margin-bottom: 20px;">
+                        전통시장의 활성화를 위한 온라인 쇼핑몰<br>
+                        전국 전통시장과 소상공인을 연결하는<br>
+                        디지털 플랫폼입니다.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <!-- 빠른 링크 -->
+                <div class="footer-section">
+                    <h3>빠른 링크</h3>
+                    <ul>
+                        <li><a th:href="@{/about}">회사 소개</a></li>
+                        <li><a th:href="@{/markets}">전통시장 찾기</a></li>
+                        <li><a th:href="@{/products}">상품 둘러보기</a></li>
+                        <li><a th:href="@{/boards}">커뮤니티</a></li>
+                        <li><a th:href="@{/events}">이벤트</a></li>
+                        <li><a th:href="@{/notice}">공지사항</a></li>
+                    </ul>
+                </div>
+                
+                <!-- 고객 서비스 -->
+                <div class="footer-section">
+                    <h3>고객 서비스</h3>
+                    <ul>
+                        <li><a th:href="@{/faq}">자주 묻는 질문</a></li>
+                        <li><a th:href="@{/support}">고객 지원</a></li>
+                        <li><a th:href="@{/delivery}">배송 안내</a></li>
+                        <li><a th:href="@{/returns}">교환/환불</a></li>
+                        <li><a th:href="@{/seller/guide}">판매자 가이드</a></li>
+                        <li><a th:href="@{/terms}">이용약관</a></li>
+                    </ul>
+                </div>
+                
+                <!-- 연락처 정보 -->
+                <div class="footer-section">
+                    <h3>연락처</h3>
+                    <div class="footer-contact">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>서울특별시 중구 남대문로 123</span>
+                    </div>
+                    <div class="footer-contact">
+                        <i class="fas fa-phone"></i>
+                        <span>1588-1234</span>
+                    </div>
+                    <div class="footer-contact">
+                        <i class="fas fa-envelope"></i>
+                        <span>info@localmarket.co.kr</span>
+                    </div>
+                    <div class="footer-contact">
+                        <i class="fas fa-clock"></i>
+                        <span>평일 09:00 ~ 18:00</span>
+                    </div>
+                    <div class="footer-contact" style="margin-top: 10px;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span style="font-size: 0.9rem; color: #95a5a6;">주말, 공휴일 휴무</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 푸터 하단 -->
+            <div class="footer-bottom">
+                <p>
+                    &copy; 2025 LocalMarket. All rights reserved. 
+                    | <a href="/privacy" style="color: #95a5a6;">개인정보처리방침</a> 
+                    | <a href="/terms" style="color: #95a5a6;">이용약관</a>
+                </p>
+                <p style="margin-top: 10px; font-size: 0.8rem;">
+                    사업자등록번호: 123-45-67890 | 통신판매업신고: 2025-서울중구-0001 | 대표: 홍길동
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 페이지 로드 시 초기화
+        $(document).ready(function() {
+            // 현재 페이지 메뉴 활성화
+            const currentPath = window.location.pathname;
+            $('.nav-link').each(function() {
+                const linkPath = $(this).attr('href');
+                if (currentPath === linkPath || (linkPath !== '/' && currentPath.startsWith(linkPath))) {
+                    $(this).addClass('active');
+                }
+            });
+            
+            // 장바구니 및 관심목록 개수 업데이트
+            updateCartCount();
+            updateFavoriteCount();
+        });
+        
+        // 장바구니 개수 업데이트
+        function updateCartCount() {
+            $.get('/api/cart/count', function(data) {
+                if (data > 0) {
+                    $('.cart-icon .badge').text(data).show();
+                } else {
+                    $('.cart-icon .badge').hide();
+                }
+            }).fail(function() {
+                $('.cart-icon .badge').hide();
+            });
+        }
+        
+        // 관심목록 개수 업데이트
+        function updateFavoriteCount() {
+            $.get('/api/favorites/count', function(data) {
+                if (data > 0) {
+                    $('.favorites-icon .badge').text(data).show();
+                } else {
+                    $('.favorites-icon .badge').hide();
+                }
+            }).fail(function() {
+                $('.favorites-icon .badge').hide();
+            });
+        }
+        
+        // 장바구니 추가 함수
+        function addToCart(productId, quantity = 1) {
+            $.post('/api/cart/add', {
+                productId: productId,
+                quantity: quantity
+            }, function(response) {
+                if (response.success) {
+                    alert('장바구니에 상품이 추가되었습니다.');
+                    updateCartCount();
+                } else {
+                    alert(response.message || '장바구니 추가에 실패했습니다.');
+                }
+            }).fail(function() {
+                alert('로그인이 필요합니다.');
+                location.href = '/members/login';
+            });
+        }
+        
+        // 관심목록 토글 함수
+        function toggleFavorite(targetType, targetId, element) {
+            $.post('/api/favorites/toggle', {
+                targetType: targetType,
+                targetId: targetId
+            }, function(response) {
+                if (response.success) {
+                    $(element).toggleClass('active', response.isFavorite);
+                    if (response.isFavorite) {
+                        $(element).find('i').removeClass('far').addClass('fas');
+                    } else {
+                        $(element).find('i').removeClass('fas').addClass('far');
+                    }
+                    updateFavoriteCount();
+                } else {
+                    alert(response.message || '처리 중 오류가 발생했습니다.');
+                }
+            }).fail(function() {
+                alert('로그인이 필요합니다.');
+                location.href = '/members/login';
+            });
+        }
+        
+        // 검색 폼 개선
+        $('.search-form').on('submit', function(e) {
+            const keyword = $('.search-input').val().trim();
+            if (keyword === '') {
+                e.preventDefault();
+                alert('검색어를 입력해주세요.');
+                $('.search-input').focus();
+            }
+        });
+        
+        // 반응형 네비게이션 (모바일)
+        $(window).resize(function() {
+            if ($(window).width() <= 768) {
+                // 모바일 메뉴 처리
+            }
+        });
+        
+        // 스크롤 이벤트 (헤더 고정)
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 100) {
+                $('header').addClass('scrolled');
+            } else {
+                $('header').removeClass('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

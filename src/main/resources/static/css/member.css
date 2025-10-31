@@ -1,0 +1,233 @@
+/* 회원가입/로그인 폼 반응형 컨테이너 */
+.member-form-container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+    padding: 40px 32px 32px 32px;
+}
+
+@media (max-width: 600px) {
+    .member-form-container {
+        max-width: 98vw;
+        padding: 24px 8px 16px 8px;
+        margin: 16px auto;
+    }
+}
+/* ===== LocalMarket 회원 페이지 전용 스타일 ===== */
+
+.member-container, .login-container, .register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+}
+
+.member-card, .login-card, .register-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(44,62,80,0.08);
+    padding: 40px 32px 32px 32px;
+    width: 100%;
+    max-width: 420px;
+    margin: 40px auto;
+}
+
+.member-header, .login-header, .register-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.member-header h2, .login-header h2, .register-header h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #e74c3c;
+    margin-bottom: 8px;
+}
+
+.member-header p, .login-header p, .register-header p {
+    color: #7f8c8d;
+    font-size: 1rem;
+}
+
+.member-form label, .login-form label, .register-form label {
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #2c3e50;
+}
+
+.member-form input, .login-form input, .register-form input,
+.member-form select, .register-form select {
+    border-radius: 8px;
+    border: 1px solid #dfe6e9;
+    padding: 12px 14px;
+    font-size: 1rem;
+    margin-bottom: 16px;
+    width: 100%;
+    background: #f9fafb;
+    transition: border 0.2s;
+}
+
+.member-form input:focus, .login-form input:focus, .register-form input:focus {
+    border-color: #e74c3c;
+    outline: none;
+    background: #fff;
+}
+
+.btn-member, .btn-login, .btn-register, .btn-primary {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 8px;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(231,76,60,0.08);
+}
+
+.btn-member:hover, .btn-login:hover, .btn-register:hover, .btn-primary:hover {
+    background: #c0392b;
+}
+
+.text-link, .member-link, .register-link {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 0.98rem;
+    margin-top: 12px;
+    display: inline-block;
+}
+
+.text-link:hover, .member-link:hover, .register-link:hover {
+    text-decoration: underline;
+    color: #e74c3c;
+}
+
+.alert, .alert-danger, .alert-success {
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.alert-danger {
+    background: #fdecea;
+    color: #e74c3c;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+    background: #eafaf1;
+    color: #27ae60;
+    border: 1px solid #b7eacb;
+}
+
+/* 비밀번호 강도 표시 */
+.password-strength {
+    height: 6px;
+    border-radius: 4px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    background: #eee;
+    transition: background 0.2s;
+}
+.password-strength.strength-weak {
+    background: #e74c3c;
+}
+.password-strength.strength-medium {
+    background: #f1c40f;
+}
+.password-strength.strength-strong {
+    background: #27ae60;
+}
+
+/* 비밀번호 일치 메시지 */
+#passwordMatch {
+    font-size: 0.95rem;
+    margin-top: 2px;
+}
+#passwordMatch.text-success {
+    color: #27ae60;
+}
+#passwordMatch.text-danger {
+    color: #e74c3c;
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+    .member-card, .login-card, .register-card {
+        padding: 24px 8px 16px 8px;
+        max-width: 98vw;
+    }
+    main.container {
+        padding: 0 4px;
+    }
+}
+
+/* Bootstrap btn-check 라디오 버튼 숨김 (네이버 스타일 버튼 전용) */
+.btn-check {
+    position: absolute !important;
+    clip: rect(0,0,0,0) !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+/* 네이버 스타일 라디오 버튼 그룹 */
+.btn-group {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.btn-group .btn {
+    flex: 1;
+    padding: 12px 16px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid #d4d4d4;
+    background: #fff;
+    color: #666;
+    transition: all 0.2s;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-group .btn:hover {
+    border-color: #999;
+    background: #fafafa;
+}
+
+/* 선택된 버튼 - 주황색 스타일 */
+.btn-check:checked + .btn {
+    border-color: #ff6b00;
+    color: #ff6b00;
+    background: #fff;
+    font-weight: 600;
+}
+
+.btn-check:checked + .btn:hover {
+    border-color: #ff6b00;
+    background: #fff5f0;
+}
+
+/* 반응형 - 모바일에서 버튼 크기 조정 */
+@media (max-width: 600px) {
+    .btn-group .btn {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+}
+
+
+
+

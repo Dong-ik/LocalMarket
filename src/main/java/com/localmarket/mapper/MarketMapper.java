@@ -1,3 +1,4 @@
+
 package com.localmarket.mapper;
 
 import com.localmarket.domain.Market;
@@ -8,6 +9,8 @@ import java.util.List;
 
 @Mapper
 public interface MarketMapper {
+    // 복합 조건(검색+지역) 시장 목록 조회 (찜 개수 포함, 뷰 조인)
+    List<Market> selectMarketsWithFavoriteBySearchAndLocal(@Param("search") String search, @Param("local") String local);
     
     // 시장 등록 (API 데이터 삽입용)
     int insertMarket(Market market);
@@ -17,6 +20,9 @@ public interface MarketMapper {
     
     // 전체 시장 목록 조회
     List<Market> selectAllMarkets();
+
+    // 찜 개수 포함 전체 시장 목록 조회 (뷰 조인)
+    List<Market> selectAllMarketsWithFavorite();
     
     // 시장 상세 조회
     Market selectMarketById(@Param("marketId") Integer marketId);

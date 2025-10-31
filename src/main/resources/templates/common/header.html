@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalMarket - 전통시장 쇼핑몰</title>
+    
+    <!-- CSS 파일 -->
+    <link rel="stylesheet" th:href="@{/css/localmarket.css}">
+    
+    <!-- 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 아이콘 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- jQuery -->
+        <!-- JavaScript Files -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script th:src="@{/js/common.js}"></script>
+</head>
+<body>
+    <header>
+        <!-- 헤더 상단 -->
+        <div class="header-top">
+            <div class="container">
+                <div class="header-info">
+                    <span><i class="fas fa-phone"></i>고객센터: 1588-1234</span>
+                    <span><i class="fas fa-clock" style="margin-left: 20px;"></i>평일 09:00~18:00</span>
+                </div>
+                <div class="header-actions">
+                    <!-- 로그인 상태에 따른 분기 처리 -->
+                    <div th:if="${session.member == null}">
+                        <a th:href="@{/members/login}">로그인</a>
+                        <a th:href="@{/members/register}">회원가입</a>
+                    </div>
+                    <div th:if="${session.member != null}">
+                        <span th:text="${session.member.memberName + '님 환영합니다'}"></span>
+                        <a th:href="@{/members/mypage}">마이페이지</a>
+                        <a th:href="@{/members/logout}">로그아웃</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 헤더 메인 -->
+        <div class="header-main">
+            <div class="container">
+                <div class="header-content">
+                    <!-- 로고 -->
+                    <a th:href="@{/}" class="logo">
+                        <i class="fas fa-store"></i>
+                        <div class="logo-text">
+                            <h1>LocalMarket</h1>
+                            <p>전통시장 쇼핑몰</p>
+                        </div>
+                    </a>
+                    
+                    <!-- 검색 섹션 -->
+                    <div class="search-section">
+                        <form class="search-form" th:action="@{/search}" method="get">
+                            <input type="text" class="search-input" name="keyword" 
+                                   placeholder="전통시장, 상품, 가게를 검색해보세요" 
+                                   th:value="${param.keyword}">
+                            <button type="submit" class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- 헤더 유틸리티 -->
+                    <div class="header-utils">
+                        <!-- 관심목록 -->
+                        <div class="favorites-icon" onclick="location.href='/favorites'">
+                            <i class="fas fa-heart"></i>
+                            <span class="badge" th:if="${session.favoriteCount > 0}" 
+                                  th:text="${session.favoriteCount}">0</span>
+                        </div>
+                        
+                        <!-- 장바구니 -->
+                        <div class="cart-icon" onclick="location.href='/cart'">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="badge" th:if="${session.cartCount > 0}" 
+                                  th:text="${session.cartCount}">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 네비게이션 바 -->
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-container">
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a th:href="@{/}" class="nav-link">
+                                <i class="fas fa-home"></i> 홈
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/markets}" class="nav-link">
+                                <i class="fas fa-map-marker-alt"></i> 전통시장
+                            </a>
+                            <div class="dropdown-menu">
+                                <a th:href="@{/markets}" class="nav-link">시장 목록</a>
+                                <a th:href="@{/markets/popular}">인기 시장</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/stores}" class="nav-link">
+                                <i class="fas fa-store-alt"></i> 가게
+                            </a>
+                            <div class="dropdown-menu">
+                                <a th:href="@{/stores}">전체 가게</a>
+                                <a th:href="@{/stores?category=식품}">식품</a>
+                                <a th:href="@{/stores?category=의류}">의류</a>
+                                <a th:href="@{/stores?category=잡화}">잡화</a>
+                                <a th:href="@{/stores/popular}">인기 가게</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/products}" class="nav-link">
+                                <i class="fas fa-shopping-bag"></i> 상품
+                            </a>
+                            <div class="dropdown-menu">
+                                <a th:href="@{/products}">전체 상품</a>
+                                <a th:href="@{/products?category=신선식품}">신선식품</a>
+                                <a th:href="@{/products?category=가공식품}">가공식품</a>
+                                <a th:href="@{/products?category=의류잡화}">의류잡화</a>
+                                <a th:href="@{/products/new}">신상품</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/boards}" class="nav-link">
+                                <i class="fas fa-comments"></i> 커뮤니티
+                            </a>
+                            <div class="dropdown-menu">
+                                <a th:href="@{/boards}">전체 게시글</a>
+                                <a th:href="@{/boards/reviews}">상품 리뷰</a>
+                                <a th:href="@{/boards/market-reviews}">시장 후기</a>
+                                <a th:href="@{/boards/popular}">인기 게시글</a>
+                            </div>
+                        </li>
+                        <li class="nav-item" th:if="${session.member != null and session.member.memberGrade == 'SELLER'}">
+                            <a th:href="@{/seller}" class="nav-link">
+                                <i class="fas fa-user-tie"></i> 판매자
+                            </a>
+                            <div class="dropdown-menu">
+                                <a th:href="@{/seller/products}">상품 관리</a>
+                                <a th:href="@{/seller/orders}">주문 관리</a>
+                                <a th:href="@{/seller/store}">가게 관리</a>
+                                <a th:href="@{/seller/statistics}">판매 통계</a>
+                            </div>
+                        </li>
+                        <li class="nav-item" th:if="${session.member != null and session.member.memberGrade == 'ADMIN'}">
+                            <a th:href="@{/admin}" class="nav-link">
+                                <i class="fas fa-cog"></i> 관리자
+                            </a>
+                            <div class="dropdown-menu">
+                                <a th:href="@{/admin/members}">회원 관리</a>
+                                <a th:href="@{/admin/markets}">시장 관리</a>
+                                <a th:href="@{/admin/stores}">가게 관리</a>
+                                <a th:href="@{/admin/products}">상품 관리</a>
+                                <a th:href="@{/admin/orders}">주문 관리</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 메인 콘텐츠 영역 시작 -->
+    <main>

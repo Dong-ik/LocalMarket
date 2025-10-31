@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전통시장 둘러보기</title>
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" th:href="@{/css/market-list.css}">
+</head>
+<body>
+    <!-- 헤더 Include -->
+    <div th:replace="~{common/header}"></div>
+
+    <!-- 페이지 타이틀 섹션 -->
+    <section class="page-title-section">
+    <div class="container">
+        <h1 class="page-title">전통시장 둘러보기</h1>
+        <p class="page-subtitle">전국의 활기찬 전통시장을 만나보세요</p>
+    </div>
+</section>
+
+<!-- 검색 및 필터 섹션 -->
+<section class="search-filter-section">
+    <div class="container">
+        <div class="search-filter-container">
+            <!-- 검색 바 -->
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="시장 이름이나 지역을 검색하세요" 
+                       th:value="${searchKeyword}">
+                <button class="search-btn" onclick="searchMarkets()">
+                    <i class="fas fa-search"></i> 검색
+                </button>
+            </div>
+            
+            <!-- 지역 필터 -->
+            <div class="filter-section">
+                <div class="filter-label">지역별 보기:</div>
+                <div class="filter-buttons">
+            <button class="filter-btn" th:classappend="${selectedLocal == null || selectedLocal == ''} ? 'active' : ''" 
+                onclick="filterByLocal('')">전체</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '서울'} ? 'active' : ''" onclick="filterByLocal('서울')">서울</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '부산'} ? 'active' : ''" onclick="filterByLocal('부산')">부산</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '대구'} ? 'active' : ''" onclick="filterByLocal('대구')">대구</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '인천'} ? 'active' : ''" onclick="filterByLocal('인천')">인천</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '광주'} ? 'active' : ''" onclick="filterByLocal('광주')">광주</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '대전'} ? 'active' : ''" onclick="filterByLocal('대전')">대전</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '울산'} ? 'active' : ''" onclick="filterByLocal('울산')">울산</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '세종'} ? 'active' : ''" onclick="filterByLocal('세종')">세종</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '경기'} ? 'active' : ''" onclick="filterByLocal('경기')">경기</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '강원'} ? 'active' : ''" onclick="filterByLocal('강원')">강원</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '충북'} ? 'active' : ''" onclick="filterByLocal('충북')">충북</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '충남'} ? 'active' : ''" onclick="filterByLocal('충남')">충남</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '전북'} ? 'active' : ''" onclick="filterByLocal('전북')">전북</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '전남'} ? 'active' : ''" onclick="filterByLocal('전남')">전남</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '경북'} ? 'active' : ''" onclick="filterByLocal('경북')">경북</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '경남'} ? 'active' : ''" onclick="filterByLocal('경남')">경남</button>
+            <button class="filter-btn" th:classappend="${selectedLocal == '제주'} ? 'active' : ''" onclick="filterByLocal('제주')">제주</button>
+                </div>
+            </div>
+            
+            <!-- 정렬 옵션 -->
+            <div class="sort-section">
+                <label for="sortSelect">정렬:</label>
+                <select id="sortSelect" onchange="sortMarkets(this.value)">
+                    <option value="popular">인기순</option>
+                    <option value="name">이름순</option>
+                    <option value="recent">최신순</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- 검색 결과 정보 -->
+        <div class="search-result-info" th:if="${markets != null}">
+            <p>
+                <span th:if="${selectedLocal != null && selectedLocal != ''}">
+                    <strong th:text="${selectedLocal}">서울</strong> 지역의 
+                </span>
+                <span th:if="${searchKeyword != null && searchKeyword != ''}">
+                    '<strong th:text="${searchKeyword}">검색어</strong>' 검색 결과 
+                </span>
+                총 <strong th:text="${markets.size()}">0</strong>개의 전통시장이 있습니다.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- 시장 목록 섹션 -->
+<section class="market-list-section">
+    <div class="container">
+        <!-- 로딩 상태 -->
+        <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i> 로딩 중...
+        </div>
+        
+        <!-- 시장 목록 그리드 -->
+        <div class="market-grid" id="marketGrid">
+            <div th:each="market : ${markets}" class="market-card" 
+                 th:onclick="'location.href=\'/markets/' + ${market.marketId} + '\''">
+                <div class="market-card-image" 
+                     th:style="'background-image: url(/images/markets/' + ${market.marketFilename ?: 'default-market.jpg'} + ')'">
+                    <!-- 찜(좋아요) 버튼: isFavorite 미구현으로 임시 비활성화 -->
+                    <!--
+                    <button class="favorite-btn" 
+                            th:onclick="'event.stopPropagation(); toggleFavorite(\'MARKET\', ' + ${market.marketId} + ', this)'"
+                            th:classappend="${market.isFavorite} ? 'active' : ''">
+                        <i th:class="${market.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"></i>
+                    </button>
+                    -->
+                    <div class="market-badge" th:if="${market.favoriteCount != null && market.favoriteCount > 10}">
+                        <i class="fas fa-fire"></i> 인기
+                    </div>
+                </div>
+                
+                <div class="market-card-content">
+                    <h3 class="market-name" th:text="${market.marketName}">남대문시장</h3>
+                    
+                    <p class="market-introduce" th:text="${market.marketIntroduce ?: '전통과 현대가 어우러진 전통시장'}">
+                        전통과 현대가 어우러진 전통시장
+                    </p>
+                    
+                    <div class="market-info">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span th:text="${market.marketLocal}">서울특별시</span>
+                        </div>
+                        <div class="info-item" th:if="${market.marketAddress != null}">
+                            <i class="fas fa-map"></i>
+                            <span th:text="${#strings.abbreviate(market.marketAddress, 30)}">서울시 중구 남대문로 21</span>
+                        </div>
+                    </div>
+                    
+                    <div class="market-footer">
+                        <div class="market-stats">
+                            <span class="stat-item" th:if="${market.favoriteCount != null}">
+                                <i class="fas fa-heart"></i>
+                                <span th:text="${market.favoriteCount}">24</span>
+                            </span>
+                            <!--
+                            <span class="stat-item" th:if="${market.storeCount != null}">
+                                <i class="fas fa-store"></i>
+                                <span th:text="${market.storeCount}">156</span>개 가게
+                            </span>
+                            -->
+                        </div>
+                        
+                        <div class="market-actions">
+                            <a th:href="${market.marketURL}" 
+                               th:if="${market.marketURL != null && market.marketURL != ''}"
+                               class="btn-link" 
+                               onclick="event.stopPropagation();"
+                               target="_blank">
+                                <i class="fas fa-external-link-alt"></i> 홈페이지
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 검색 결과 없음 -->
+        <div class="no-results" th:if="${markets == null || markets.isEmpty()}">
+            <i class="fas fa-search"></i>
+            <h3>검색 결과가 없습니다</h3>
+            <p>다른 검색어나 필터를 사용해보세요</p>
+        </div>
+        
+        <!-- 페이지네이션 -->
+        <div class="pagination" th:if="${totalPages != null && totalPages > 1}">
+            <button class="pagination-btn" 
+                    th:disabled="${currentPage == 1}"
+                    th:onclick="'changePage(' + ${currentPage - 1} + ')'">
+                <i class="fas fa-chevron-left"></i> 이전
+            </button>
+            
+            <div class="pagination-numbers">
+                <span th:each="pageNum : ${#numbers.sequence(1, totalPages)}" 
+                      th:if="${pageNum >= currentPage - 2 && pageNum <= currentPage + 2}">
+                    <button class="pagination-number" 
+                            th:classappend="${pageNum == currentPage} ? 'active' : ''"
+                            th:onclick="'changePage(' + ${pageNum} + ')'"
+                            th:text="${pageNum}">1</button>
+                </span>
+            </div>
+            
+            <button class="pagination-btn" 
+                    th:disabled="${currentPage == totalPages}"
+                    th:onclick="'changePage(' + ${currentPage + 1} + ')'">
+                다음 <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+    <!-- 푸터 Include -->
+    <div th:replace="~{common/footer}"></div>
+
+    <script>
+    // 검색 기능
+    function searchMarkets() {
+        const searchInput = document.getElementById('searchInput');
+        const keyword = searchInput.value.trim();
+        
+        if (keyword) {
+            window.location.href = `/markets?search=${encodeURIComponent(keyword)}`;
+        } else {
+            window.location.href = '/markets';
+        }
+    }
+    
+    // Enter 키로 검색
+    document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchMarkets();
+        }
+    });
+    
+    // 지역별 필터링
+    function filterByLocal(local) {
+        const currentUrl = new URL(window.location.href);
+        
+        if (local) {
+            currentUrl.searchParams.set('local', local);
+        } else {
+            currentUrl.searchParams.delete('local');
+        }
+        
+        currentUrl.searchParams.delete('page'); // 필터 변경 시 첫 페이지로
+        window.location.href = currentUrl.toString();
+    }
+    
+    // 정렬 기능
+    function sortMarkets(sortType) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('sort', sortType);
+        currentUrl.searchParams.delete('page'); // 정렬 변경 시 첫 페이지로
+        window.location.href = currentUrl.toString();
+    }
+    
+    // 페이지 변경
+    function changePage(page) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('page', page);
+        window.location.href = currentUrl.toString();
+    }
+    
+    // 찜하기 토글 (전역 함수로 가정)
+    function toggleFavorite(type, id, element) {
+        // 여기에 찜하기 API 호출 로직 구현
+        console.log(`Toggle favorite: type=${type}, id=${id}`);
+        
+        // 예시: API 호출 후 UI 업데이트
+        const icon = element.querySelector('i');
+        const isActive = element.classList.contains('active');
+        
+        if (isActive) {
+            element.classList.remove('active');
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+        } else {
+            element.classList.add('active');
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+        }
+    }
+    
+    // 페이지 로드 시 정렬 옵션 설정
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sortValue = urlParams.get('sort') || 'popular';
+        document.getElementById('sortSelect').value = sortValue;
+        
+        // 카드 호버 효과
+        const cards = document.querySelectorAll('.market-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
+</body>
+</html>

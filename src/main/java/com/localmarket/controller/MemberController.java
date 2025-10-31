@@ -4,6 +4,7 @@ import com.localmarket.domain.Member;
 import com.localmarket.dto.MemberDto;
 import com.localmarket.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/member")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
     
@@ -30,9 +31,10 @@ public class MemberController {
     public String register(@ModelAttribute MemberDto memberDto, Model model) {
         boolean success = memberService.registerMember(memberDto);
         if (success) {
-            return "redirect:/member/login";
+            return "redirect:/members/login";
         } else {
             model.addAttribute("error", "회원가입에 실패했습니다.");
+            model.addAttribute("memberDto", memberDto); // 실패 시에도 memberDto 바인딩
             return "members/register";
         }
     }
@@ -43,9 +45,10 @@ public class MemberController {
     }
     
     @PostMapping("/login")
-    public String login(@RequestParam String memberId, @RequestParam String password, Model model) {
+    public String login(@RequestParam String memberId, @RequestParam String password, Model model, HttpSession session) {
         Member member = memberService.loginMember(memberId, password);
         if (member != null) {
+            session.setAttribute("loginMember", member); // 등급 포함 전체 회원 정보 세션 저장
             return "redirect:/";
         } else {
             model.addAttribute("error", "로그인에 실패했습니다.");

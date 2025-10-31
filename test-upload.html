@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market 파일 업로드 테스트</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; border-radius: 4px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Market 파일 업로드 테스트</h1>
+        
+        <div class="form-group">
+            <h3>CSV 파일 업로드</h3>
+            <form id="csvForm" enctype="multipart/form-data">
+                <label for="csvFile">CSV 파일 선택:</label>
+                <input type="file" id="csvFile" name="file" accept=".csv" required>
+                <br><br>
+                <button type="submit">CSV 업로드</button>
+            </form>
+        </div>
+        
+        <div class="form-group">
+            <h3>JSON 파일 업로드</h3>
+            <form id="jsonForm" enctype="multipart/form-data">
+                <label for="jsonFile">JSON 파일 선택:</label>
+                <input type="file" id="jsonFile" name="file" accept=".json" required>
+                <br><br>
+                <button type="submit">JSON 업로드</button>
+            </form>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function showResult(message, isSuccess) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + (isSuccess ? 'success' : 'error');
+            resultDiv.innerHTML = message;
+        }
+        
+        document.getElementById('csvForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById('csvFile');
+            
+            if (!fileInput.files[0]) {
+                showResult('파일을 선택해주세요.', false);
+                return;
+            }
+            
+            formData.append('file', fileInput.files[0]);
+            
+            try {
+                const response = await fetch('/api/market/import-from-csv', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.text();
+                
+                if (response.ok) {
+                    showResult('CSV 업로드 성공: ' + result, true);
+                } else {
+                    showResult('CSV 업로드 실패: ' + result, false);
+                }
+            } catch (error) {
+                showResult('CSV 업로드 오류: ' + error.message, false);
+            }
+        });
+        
+        document.getElementById('jsonForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById('jsonFile');
+            
+            if (!fileInput.files[0]) {
+                showResult('파일을 선택해주세요.', false);
+                return;
+            }
+            
+            formData.append('file', fileInput.files[0]);
+            
+            try {
+                const response = await fetch('/api/market/import-from-json', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.text();
+                
+                if (response.ok) {
+                    showResult('JSON 업로드 성공: ' + result, true);
+                } else {
+                    showResult('JSON 업로드 실패: ' + result, false);
+                }
+            } catch (error) {
+                showResult('JSON 업로드 오류: ' + error.message, false);
+            }
+        });
+    </script>
+</body>
+</html>

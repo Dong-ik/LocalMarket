@@ -1,3 +1,4 @@
+// ...existing code...
 package com.localmarket.service;
 
 import com.localmarket.domain.Market;
@@ -16,8 +17,28 @@ import java.util.List;
 @Slf4j
 @Transactional
 public class MarketServiceImpl implements MarketService {
-    
+    @Override
+    public List<Market> getMarketsWithFavoriteBySearchAndLocal(String search, String local) {
+        try {
+            return marketMapper.selectMarketsWithFavoriteBySearchAndLocal(search, local);
+        } catch (Exception e) {
+            log.error("복합 조건(검색+지역) 시장 목록 조회 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("복합 조건 시장 목록 조회에 실패했습니다.", e);
+        }
+    }
     private final MarketMapper marketMapper;
+
+    @Override
+    public List<Market> getAllMarketsWithFavorite() {
+        try {
+            List<Market> result = marketMapper.selectAllMarketsWithFavorite();
+            log.info("[MarketServiceImpl] selectAllMarketsWithFavorite() 결과: {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("찜 개수 포함 전체 시장 목록 조회 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("찜 개수 포함 전체 시장 목록 조회에 실패했습니다.", e);
+        }
+    }
     
     @Override
     public boolean insertMarketFromApi(MarketDto marketDto) {
@@ -70,7 +91,9 @@ public class MarketServiceImpl implements MarketService {
     @Override
     public List<Market> getAllMarkets() {
         try {
-            return marketMapper.selectAllMarkets();
+            List<Market> result = marketMapper.selectAllMarkets();
+            log.info("[MarketServiceImpl] selectAllMarkets() 결과: {}", result);
+            return result;
         } catch (Exception e) {
             log.error("전체 시장 목록 조회 중 오류 발생: {}", e.getMessage(), e);
             throw new RuntimeException("시장 목록 조회에 실패했습니다.", e);

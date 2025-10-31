@@ -1,0 +1,676 @@
+/* ==================== 시장 목록 페이지 전용 스타일 ==================== */
+/* localmarket.css의 스타일을 기반으로 작성되었습니다 */
+
+/* ==================== 페이지 타이틀 섹션 ==================== */
+.page-title-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 100px 0 70px;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-title-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" fill-opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.page-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 2;
+    line-height: 1.2;
+}
+
+.page-subtitle {
+    font-size: 1.3rem;
+    opacity: 0.95;
+    position: relative;
+    z-index: 2;
+    line-height: 1.6;
+}
+
+/* ==================== 검색 및 필터 섹션 ==================== */
+.search-filter-section {
+    background: white;
+    padding: 40px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+}
+
+.search-filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* 검색 바 */
+.search-bar {
+    display: flex;
+    gap: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 15px 20px;
+    border: 2px solid #ecf0f1;
+    border-radius: 25px;
+    font-size: 16px;
+    transition: all 0.3s;
+    font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.search-btn {
+    padding: 15px 35px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.search-btn:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.search-btn i {
+    margin-right: 5px;
+}
+
+/* 필터 섹션 */
+.filter-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    border: 2px solid #ecf0f1;
+    background: white;
+    color: #7f8c8d;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover {
+    border-color: #3498db;
+    color: #3498db;
+    background: #ecf8ff;
+}
+
+.filter-btn.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+/* 정렬 섹션 */
+.sort-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.sort-section label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.sort-section select {
+    padding: 10px 20px;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: white;
+    color: #2c3e50;
+    font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+}
+
+.sort-section select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* 검색 결과 정보 */
+.search-result-info {
+    padding: 20px;
+    background: #ecf8ff;
+    border-radius: 10px;
+    margin-top: 20px;
+    border-left: 4px solid #3498db;
+}
+
+.search-result-info p {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.search-result-info strong {
+    color: #3498db;
+    font-weight: 700;
+}
+
+/* ==================== 시장 목록 섹션 ==================== */
+.market-list-section {
+    padding: 60px 0;
+    background: #f8f9fa;
+    min-height: 500px;
+}
+
+/* 로딩 스피너 */
+.loading-spinner {
+    text-align: center;
+    padding: 60px 0;
+    font-size: 1.5rem;
+    color: #3498db;
+}
+
+.loading-spinner i {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 20px;
+}
+
+/* 시장 그리드 - localmarket.css의 card-grid 스타일 사용 */
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+/* 시장 카드 - localmarket.css의 card 스타일 기반 */
+.market-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.market-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.market-card-image {
+    width: 100%;
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.market-card-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.2) 100%);
+    transition: all 0.3s;
+}
+
+.market-card:hover .market-card-image::after {
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 100%);
+}
+
+/* 찜하기 버튼 - localmarket.css의 favorite-btn 스타일 사용 */
+.favorite-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255,255,255,0.95);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.favorite-btn:hover {
+    background: white;
+    transform: scale(1.15);
+}
+
+.favorite-btn.active {
+    color: #e74c3c;
+}
+
+.favorite-btn.active:hover {
+    color: #c0392b;
+}
+
+/* 시장 배지 - localmarket.css의 card-badge 스타일 사용 */
+.market-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #e74c3c;
+    color: white;
+    padding: 6px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 5;
+}
+
+/* 시장 카드 콘텐츠 - localmarket.css의 card-content 스타일 기반 */
+.market-card-content {
+    padding: 25px;
+}
+
+.market-name {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.market-introduce {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    height: 45px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.market-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.info-item i {
+    color: #3498db;
+    width: 16px;
+}
+
+.market-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.market-stats {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.stat-item i {
+    color: #3498db;
+}
+
+.market-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-link {
+    padding: 8px 16px;
+    background: #ecf8ff;
+    color: #3498db;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-link:hover {
+    background: #3498db;
+    color: white;
+}
+
+.btn-link i {
+    font-size: 0.8rem;
+}
+
+/* ==================== 검색 결과 없음 ==================== */
+.no-results {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.no-results i {
+    font-size: 5rem;
+    color: #bdc3c7;
+    margin-bottom: 25px;
+}
+
+.no-results h3 {
+    font-size: 1.8rem;
+    color: #7f8c8d;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.no-results p {
+    color: #95a5a6;
+    font-size: 1.1rem;
+}
+
+/* ==================== 페이지네이션 ==================== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 50px;
+}
+
+.pagination-btn {
+    padding: 12px 20px;
+    border: 2px solid #ecf0f1;
+    background: white;
+    color: #2c3e50;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: #3498db;
+    color: #3498db;
+    background: #ecf8ff;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #f8f9fa;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 5px;
+}
+
+.pagination-number {
+    width: 45px;
+    height: 45px;
+    border: 2px solid #ecf0f1;
+    background: white;
+    color: #2c3e50;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-number:hover {
+    border-color: #3498db;
+    color: #3498db;
+    background: #ecf8ff;
+}
+
+.pagination-number.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+/* ==================== favorite-count 스타일 추가 ==================== */
+.favorite-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.favorite-count i {
+    color: #e74c3c;
+}
+
+/* ==================== 반응형 디자인 ==================== */
+@media (max-width: 1200px) {
+    .market-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .page-subtitle {
+        font-size: 1rem;
+    }
+    
+    .page-title-section {
+        padding: 70px 0 50px;
+    }
+    
+    .search-filter-container {
+        gap: 20px;
+    }
+    
+    .search-bar {
+        flex-direction: column;
+    }
+    
+    .search-btn {
+        width: 100%;
+        padding: 15px;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-buttons {
+        width: 100%;
+    }
+    
+    .filter-btn {
+        flex: 1;
+        min-width: calc(25% - 6px);
+        text-align: center;
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .sort-section {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .sort-section select {
+        flex: 1;
+    }
+    
+    .market-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .market-card-content {
+        padding: 20px;
+    }
+    
+    .market-name {
+        font-size: 1.2rem;
+    }
+    
+    .market-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .pagination {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .pagination-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .pagination-number {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title-section {
+        padding: 50px 0 40px;
+    }
+    
+    .page-title {
+        font-size: 1.8rem;
+    }
+    
+    .page-subtitle {
+        font-size: 0.95rem;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+    
+    .filter-btn {
+        min-width: calc(33.333% - 6px);
+        font-size: 0.8rem;
+    }
+    
+    .market-card-image {
+        height: 180px;
+    }
+    
+    .no-results i {
+        font-size: 3rem;
+    }
+    
+    .no-results h3 {
+        font-size: 1.4rem;
+    }
+    
+    .no-results p {
+        font-size: 1rem;
+    }
+}
+
+/* ==================== 프린트 스타일 ==================== */
+@media print {
+    .search-filter-section,
+    .pagination,
+    .favorite-btn,
+    .market-badge,
+    header,
+    footer {
+        display: none;
+    }
+    
+    .market-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .market-card {
+        break-inside: avoid;
+    }
+}

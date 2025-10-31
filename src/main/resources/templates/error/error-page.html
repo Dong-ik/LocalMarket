@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>에러 발생</title>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background: #fafafa; color: #333; margin: 0; }
+        .error-container { max-width: 480px; margin: 80px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 40px 32px; text-align: center; }
+        .error-title { font-size: 2.2rem; font-weight: 700; color: #e74c3c; margin-bottom: 16px; }
+        .error-message { font-size: 1.1rem; margin-bottom: 24px; }
+        .error-detail { color: #888; font-size: 0.95rem; margin-bottom: 24px; }
+        .home-btn { display: inline-block; padding: 10px 28px; background: #3498db; color: #fff; border-radius: 6px; text-decoration: none; font-weight: 500; transition: background 0.2s; }
+        .home-btn:hover { background: #217dbb; }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <div class="error-title">문제가 발생했습니다</div>
+    <div class="error-message" th:text="${errorMessage}">예상치 못한 오류가 발생했습니다.</div>
+            <div th:if="${exception != null}">
+                <h3>Exception: <span th:text="${exception.class.name}"></span></h3>
+                <p th:text="${exceptionMessage}"></p>
+            </div>
+            <div th:if="${stackTrace != null}">
+                <details style="margin-top:1em;">
+                    <summary>스택 트레이스 보기</summary>
+                    <pre th:each="trace : ${stackTrace}" th:text="${trace}"></pre>
+                </details>
+            </div>
+    <a href="/" class="home-btn">홈으로 이동</a>
+</div>
+</body>
+</html>

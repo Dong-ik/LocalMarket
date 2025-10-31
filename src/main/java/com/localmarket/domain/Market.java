@@ -16,4 +16,7 @@ public class Market {
     
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;  // created_date
+
+    // 찜 개수(통계 뷰 조인용)
+    private Integer favoriteCount;
 }
