@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가게 둘러보기</title>
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" th:href="@{/css/store-list.css}">
+</head>
+<body>
+    <!-- 헤더 Include -->
+    <div th:replace="~{common/header}"></div>
+
+    <!-- 페이지 타이틀 섹션 -->
+    <section class="page-title-section">
+        <div class="container">
+            <h1 class="page-title">가게 둘러보기</h1>
+            <p class="page-subtitle">전통시장의 다양한 가게를 만나보세요</p>
+        </div>
+    </section>
+
+    <!-- 검색 및 필터 섹션 -->
+    <section class="search-filter-section">
+        <div class="container">
+            <div class="search-filter-container">
+                <!-- 검색 바 -->
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="가게 이름을 검색하세요" 
+                           th:value="${searchKeyword}">
+                    <button class="search-btn" onclick="searchStores()">
+                        <i class="fas fa-search"></i> 검색
+                    </button>
+                </div>
+                
+                <!-- 카테고리 필터 -->
+                <div class="filter-section">
+                    <div class="filter-label">카테고리:</div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn" th:classappend="${selectedCategory == null || selectedCategory == ''} ? 'active' : ''" 
+                            onclick="filterByCategory('')">전체</button>
+                        <button class="filter-btn" th:classappend="${selectedCategory == '육류'} ? 'active' : ''" onclick="filterByCategory('육류')">육류</button>
+                        <button class="filter-btn" th:classappend="${selectedCategory == '수산물'} ? 'active' : ''" onclick="filterByCategory('수산물')">수산물</button>
+                        <button class="filter-btn" th:classappend="${selectedCategory == '채소'} ? 'active' : ''" onclick="filterByCategory('채소')">채소</button>
+                        <button class="filter-btn" th:classappend="${selectedCategory == '과일'} ? 'active' : ''" onclick="filterByCategory('과일')">과일</button>
+                        <button class="filter-btn" th:classappend="${selectedCategory == '농수산물'} ? 'active' : ''" onclick="filterByCategory('농수산물')">농수산물</button>
+                        <button class="filter-btn" th:classappend="${selectedCategory == '의류'} ? 'active' : ''" onclick="filterByCategory('의류')">의류</button>
+                        <button class="filter-btn" th:classappend="${selectedCategory == '잡화'} ? 'active' : ''" onclick="filterByCategory('잡화')">잡화</button>
+                        <button class="filter-btn" th:classappend="${selectedCategory == '음식점'} ? 'active' : ''" onclick="filterByCategory('음식점')">음식점</button>
+                        <button class="filter-btn" th:classappend="${selectedCategory == '기타'} ? 'active' : ''" onclick="filterByCategory('기타')">기타</button>
+                    </div>
+                </div>
+                
+                <!-- 정렬 옵션 -->
+                <div class="sort-section">
+                    <label for="sortSelect">정렬:</label>
+                    <select id="sortSelect" onchange="sortStores(this.value)">
+                        <option value="name">이름순</option>
+                        <option value="recent">최신순</option>
+                        <option value="market">시장별</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 검색 결과 정보 -->
+            <div class="search-result-info" th:if="${stores != null}">
+                <p>
+                    <span th:if="${selectedCategory != null && selectedCategory != ''}">
+                        <strong th:text="${selectedCategory}">식품</strong> 카테고리의 
+                    </span>
+                    <span th:if="${searchKeyword != null && searchKeyword != ''}">
+                        '<strong th:text="${searchKeyword}">검색어</strong>' 검색 결과 
+                    </span>
+                    총 <strong th:text="${stores.size()}">0</strong>개의 가게가 있습니다.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 가게 목록 섹션 -->
+    <section class="store-list-section">
+        <div class="container">
+            <!-- 로딩 상태 -->
+            <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i> 로딩 중...
+            </div>
+            
+            <!-- 가게 목록 그리드 -->
+            <div class="store-grid" id="storeGrid">
+                <div th:each="store : ${stores}" class="store-card" 
+                     th:onclick="'location.href=\'/stores/' + ${store.storeId} + '\''">
+                    <div class="store-card-image" 
+                         th:style="'background-image: url(/images/stores/' + ${store.storeFilename ?: 'default-store.jpg'} + ')'">
+                        <div class="store-badge" th:if="${store.storeCategory != null}">
+                            <i class="fas fa-tag"></i> <span th:text="${store.storeCategory}">카테고리</span>
+                        </div>
+                    </div>
+                    
+                    <div class="store-card-content">
+                        <h3 class="store-name" th:text="${store.storeName}">가게명</h3>
+                        
+                        <div class="store-info">
+                            <div class="info-item" th:if="${store.marketName != null}">
+                                <i class="fas fa-store"></i>
+                                <span th:text="${store.marketName}">시장명</span>
+                            </div>
+                            <div class="info-item" th:if="${store.marketLocal != null}">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span th:text="${store.marketLocal}">지역</span>
+                            </div>
+                            <div class="info-item" th:if="${store.storeIndex != null}">
+                                <i class="fas fa-map"></i>
+                                <span th:text="${store.storeIndex}">위치</span>
+                            </div>
+                        </div>
+                        
+                        <div class="store-footer">
+                            <div class="store-stats">
+                                <span class="stat-item" th:if="${store.memberName != null}">
+                                    <i class="fas fa-user"></i>
+                                    <span th:text="${store.memberName}">판매자</span>
+                                </span>
+                            </div>
+                            
+                            <div class="store-actions">
+                                <button class="btn-link" onclick="event.stopPropagation();">
+                                    <i class="fas fa-shopping-cart"></i> 상품보기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 검색 결과 없음 -->
+            <div class="no-results" th:if="${stores == null || stores.isEmpty()}">
+                <i class="fas fa-search"></i>
+                <h3>검색 결과가 없습니다</h3>
+                <p>다른 검색어나 필터를 사용해보세요</p>
+            </div>
+            
+            <!-- 페이지네이션 -->
+            <div class="pagination" th:if="${totalPages != null && totalPages > 1}">
+                <button class="pagination-btn" 
+                        th:disabled="${currentPage == 1}"
+                        th:onclick="'changePage(' + ${currentPage - 1} + ')'">
+                    <i class="fas fa-chevron-left"></i> 이전
+                </button>
+                
+                <div class="pagination-numbers">
+                    <span th:each="pageNum : ${#numbers.sequence(1, totalPages)}" 
+                          th:if="${pageNum >= currentPage - 2 && pageNum <= currentPage + 2}">
+                        <button class="pagination-number" 
+                                th:classappend="${pageNum == currentPage} ? 'active' : ''"
+                                th:onclick="'changePage(' + ${pageNum} + ')'"
+                                th:text="${pageNum}">1</button>
+                    </span>
+                </div>
+                
+                <button class="pagination-btn" 
+                        th:disabled="${currentPage == totalPages}"
+                        th:onclick="'changePage(' + ${currentPage + 1} + ')'">
+                    다음 <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 Include -->
+    <div th:replace="~{common/footer}"></div>
+
+    <script>
+    // 검색 기능
+    function searchStores() {
+        const searchInput = document.getElementById('searchInput');
+        const keyword = searchInput.value.trim();
+        
+        if (keyword) {
+            window.location.href = `/stores?search=${encodeURIComponent(keyword)}`;
+        } else {
+            window.location.href = '/stores';
+        }
+    }
+    
+    // Enter 키로 검색
+    document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchStores();
+        }
+    });
+    
+    // 카테고리별 필터링
+    function filterByCategory(category) {
+        const currentUrl = new URL(window.location.href);
+        
+        if (category) {
+            currentUrl.searchParams.set('category', category);
+        } else {
+            currentUrl.searchParams.delete('category');
+        }
+        
+        currentUrl.searchParams.delete('page'); // 필터 변경 시 첫 페이지로
+        window.location.href = currentUrl.toString();
+    }
+    
+    // 정렬 기능
+    function sortStores(sortType) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('sort', sortType);
+        currentUrl.searchParams.delete('page'); // 정렬 변경 시 첫 페이지로
+        window.location.href = currentUrl.toString();
+    }
+    
+    // 페이지 변경
+    function changePage(page) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('page', page);
+        window.location.href = currentUrl.toString();
+    }
+    
+    // 페이지 로드 시 정렬 옵션 설정
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sortValue = urlParams.get('sort') || 'name';
+        document.getElementById('sortSelect').value = sortValue;
+        
+        // 카드 호버 효과
+        const cards = document.querySelectorAll('.store-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+    </script>
+</body>
+</html>

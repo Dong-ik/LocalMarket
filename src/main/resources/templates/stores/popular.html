@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>인기 가게 - LocalMarket</title>
+    <link rel="stylesheet" th:href="@{/css/localmarket.css}">
+    <link rel="stylesheet" th:href="@{/css/store-list.css}">
+    <link rel="stylesheet" th:href="@{/css/popular-store.css}">
+</head>
+<body>
+<div th:replace="~{common/header}"></div>
+<div class="container popular-store-container">
+    <h2>인기 가게</h2>
+    <div class="popular-store-grid">
+        <div class="popular-store-card" th:each="store : ${popularStores}" th:if="${popularStores != null and #lists.size(popularStores) > 0}">
+            <img th:src="@{'/images/stores/' + ${store.storeFilename}}" alt="가게 이미지" class="popular-store-img" onerror="this.src='/images/noimg.png'">
+            <div class="popular-store-info">
+                <h3 th:text="${store.storeName}"></h3>
+                <p class="store-category" th:if="${store.storeCategory != null}">
+                    <i class="fas fa-tag"></i> <span th:text="${store.storeCategory}"></span>
+                </p>
+                <p th:if="${store.marketName != null}">
+                    <i class="fas fa-store"></i> <span th:text="${store.marketName}"></span>
+                </p>
+                <p th:if="${store.marketLocal != null}">
+                    <i class="fas fa-map-marker-alt"></i> <span th:text="${store.marketLocal}"></span>
+                </p>
+                <p class="store-seller" th:if="${store.memberName != null}">
+                    <i class="fas fa-user"></i> <span th:text="${store.memberName}"></span>
+                </p>
+                <a th:href="@{'/stores/' + ${store.storeId}}" class="popular-store-detail-btn">
+                    <i class="fas fa-shopping-cart"></i> 상품보기
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="no-results" th:if="${popularStores == null or #lists.size(popularStores) == 0}">
+        <p>인기 가게 데이터가 없습니다.</p>
+    </div>
+</div>
+<div th:replace="~{common/footer}"></div>
+</body>
+</html>
