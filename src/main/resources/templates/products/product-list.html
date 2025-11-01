@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 둘러보기</title>
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" th:href="@{/css/product-list.css}">
+</head>
+<body>
+    <!-- 헤더 Include -->
+    <div th:replace="~{common/header}"></div>
+
+    <!-- 페이지 타이틀 섹션 -->
+    <section class="page-title-section">
+        <div class="container">
+            <h1 class="page-title">상품 둘러보기</h1>
+            <p class="page-subtitle">신선하고 다양한 전통시장 상품을 만나보세요</p>
+        </div>
+    </section>
+
+    <!-- 검색 및 필터 섹션 -->
+    <section class="search-filter-section">
+        <div class="container">
+            <div class="search-filter-container">
+                <!-- 검색 바 -->
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="상품 이름을 검색하세요" 
+                           th:value="${searchKeyword}">
+                    <button class="search-btn" onclick="searchProducts()">
+                        <i class="fas fa-search"></i> 검색
+                    </button>
+                </div>
+                
+                <!-- 가격 범위 필터 -->
+                <div class="filter-section">
+                    <div class="filter-label">가격대:</div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn" th:classappend="${minPrice == null} ? 'active' : ''" 
+                            onclick="filterByPrice(null, null)">전체</button>
+                        <button class="filter-btn" onclick="filterByPrice(0, 10000)">1만원 이하</button>
+                        <button class="filter-btn" onclick="filterByPrice(10000, 30000)">1~3만원</button>
+                        <button class="filter-btn" onclick="filterByPrice(30000, 50000)">3~5만원</button>
+                        <button class="filter-btn" onclick="filterByPrice(50000, 100000)">5~10만원</button>
+                        <button class="filter-btn" onclick="filterByPrice(100000, null)">10만원 이상</button>
+                    </div>
+                </div>
+                
+                <!-- 정렬 옵션 -->
+                <div class="sort-section">
+                    <label for="sortSelect">정렬:</label>
+                    <select id="sortSelect" onchange="sortProducts(this.value)">
+                        <option value="name">상품명순</option>
+                        <option value="recent">최신순</option>
+                        <option value="price-low">가격 낮은순</option>
+                        <option value="price-high">가격 높은순</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 검색 결과 정보 -->
+            <div class="search-result-info" th:if="${products != null}">
+                <p>
+                    <span th:if="${minPrice != null && maxPrice != null}">
+                        <strong th:text="${#numbers.formatInteger(minPrice, 0, 'COMMA')}">0</strong>원 ~ 
+                        <strong th:text="${#numbers.formatInteger(maxPrice, 0, 'COMMA')}">0</strong>원 가격대의 
+                    </span>
+                    <span th:if="${searchKeyword != null && searchKeyword != ''}">
+                        '<strong th:text="${searchKeyword}">검색어</strong>' 검색 결과 
+                    </span>
+                    총 <strong th:text="${totalProducts != null ? totalProducts : 0}">0</strong>개의 상품이 있습니다.
+                    <span th:if="${totalPages != null && totalPages > 1}">
+                        (현재 <strong th:text="${currentPage}">1</strong> / <strong th:text="${totalPages}">1</strong> 페이지)
+                    </span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 상품 목록 섹션 -->
+    <section class="product-list-section">
+        <div class="container">
+            <!-- 로딩 상태 -->
+            <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i> 로딩 중...
+            </div>
+            
+            <!-- 상품 목록 그리드 -->
+            <div class="product-grid" id="productGrid">
+                <div th:each="product : ${products}" class="product-card" 
+                     th:onclick="'location.href=\'/products/' + ${product.productId} + '\''">
+                    <div class="product-card-image" 
+                         th:style="'background-image: url(/images/products/' + ${product.productFilename ?: 'default-product.jpg'} + ')'">
+                        <div class="product-badge new" th:if="${product.createdDate != null && #temporals.day(product.createdDate) == #temporals.day(#temporals.createNow())}">
+                            <i class="fas fa-star"></i> 신상품
+                        </div>
+                        <div class="product-badge soldout" th:if="${product.productAmount == null || product.productAmount == 0}">
+                            <i class="fas fa-ban"></i> 품절
+                        </div>
+                    </div>
+                    
+                    <div class="product-card-content">
+                        <h3 class="product-name" th:text="${product.productName}">상품명</h3>
+                        
+                        <div class="product-price">
+                            <span th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA')}">15,000</span>
+                            <span class="unit">원</span>
+                        </div>
+                        
+                        <div class="product-info">
+                            <div class="info-item" th:if="${product.storeId != null}">
+                                <i class="fas fa-store"></i>
+                                <span>가게 ID: [[${product.storeId}]]</span>
+                            </div>
+                        </div>
+                        
+                        <div class="product-footer">
+                            <div class="product-stats">
+                                <span class="stat-item stock" 
+                                      th:classappend="${product.productAmount != null && product.productAmount <= 10 && product.productAmount > 0} ? 'low' : (${product.productAmount == null || product.productAmount == 0} ? 'out' : '')">
+                                    <i class="fas fa-box"></i>
+                                    <span th:if="${product.productAmount != null && product.productAmount > 0}">
+                                        재고 [[${product.productAmount}]]개
+                                    </span>
+                                    <span th:if="${product.productAmount == null || product.productAmount == 0}">
+                                        품절
+                                    </span>
+                                </span>
+                            </div>
+                            
+                            <div class="product-actions">
+                                <button class="btn-link" onclick="event.stopPropagation();">
+                                    <i class="fas fa-shopping-cart"></i> 장바구니
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 검색 결과 없음 -->
+            <div class="no-results" th:if="${products == null || products.isEmpty()}">
+                <i class="fas fa-search"></i>
+                <h3 th:if="${errorMessage == null}">검색 결과가 없습니다</h3>
+                <h3 th:if="${errorMessage != null}" th:text="${errorMessage}">오류가 발생했습니다</h3>
+                <p th:if="${errorMessage == null}">다른 검색어나 필터를 사용해보세요</p>
+                <p th:if="${errorMessage != null}">
+                    <a th:href="@{/products}" style="color: #27ae60; text-decoration: underline;">
+                        전체 상품 보기로 돌아가기
+                    </a>
+                </p>
+            </div>
+            
+            <!-- 페이지네이션 -->
+            <div class="pagination" th:if="${totalPages != null && totalPages > 1}">
+                <button class="pagination-btn" 
+                        th:disabled="${currentPage == 1}"
+                        th:onclick="'changePage(' + ${currentPage - 1} + ')'">
+                    <i class="fas fa-chevron-left"></i> 이전
+                </button>
+                
+                <div class="pagination-numbers">
+                    <span th:each="pageNum : ${#numbers.sequence(1, totalPages)}" 
+                          th:if="${pageNum >= currentPage - 2 && pageNum <= currentPage + 2}">
+                        <button class="pagination-number" 
+                                th:classappend="${pageNum == currentPage} ? 'active' : ''"
+                                th:onclick="'changePage(' + ${pageNum} + ')'"
+                                th:text="${pageNum}">1</button>
+                    </span>
+                </div>
+                
+                <button class="pagination-btn" 
+                        th:disabled="${currentPage == totalPages}"
+                        th:onclick="'changePage(' + ${currentPage + 1} + ')'">
+                    다음 <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 Include -->
+    <div th:replace="~{common/footer}"></div>
+
+    <script>
+    // 검색 기능
+    function searchProducts() {
+        const searchInput = document.getElementById('searchInput');
+        const keyword = searchInput.value.trim();
+        
+        if (keyword) {
+            window.location.href = `/products?search=${encodeURIComponent(keyword)}`;
+        } else {
+            window.location.href = '/products';
+        }
+    }
+    
+    // Enter 키로 검색
+    document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchProducts();
+        }
+    });
+    
+    // 가격대별 필터링
+    function filterByPrice(minPrice, maxPrice) {
+        const currentUrl = new URL(window.location.href);
+        
+        if (minPrice !== null && maxPrice !== null) {
+            currentUrl.searchParams.set('minPrice', minPrice);
+            currentUrl.searchParams.set('maxPrice', maxPrice);
+        } else if (minPrice !== null) {
+            currentUrl.searchParams.set('minPrice', minPrice);
+            currentUrl.searchParams.delete('maxPrice');
+        } else {
+            currentUrl.searchParams.delete('minPrice');
+            currentUrl.searchParams.delete('maxPrice');
+        }
+        
+        currentUrl.searchParams.delete('page'); // 필터 변경 시 첫 페이지로
+        window.location.href = currentUrl.toString();
+    }
+    
+    // 정렬 기능
+    function sortProducts(sortType) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('sort', sortType);
+        currentUrl.searchParams.delete('page'); // 정렬 변경 시 첫 페이지로
+        window.location.href = currentUrl.toString();
+    }
+    
+    // 페이지 변경
+    function changePage(page) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('page', page);
+        window.location.href = currentUrl.toString();
+    }
+    
+    // 페이지 로드 시 정렬 옵션 설정
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sortValue = urlParams.get('sort') || 'name';
+        document.getElementById('sortSelect').value = sortValue;
+        
+        // 가격 필터 버튼 활성화 상태 설정
+        const minPrice = urlParams.get('minPrice');
+        const maxPrice = urlParams.get('maxPrice');
+        
+        if (minPrice || maxPrice) {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // 해당하는 버튼 찾아서 활성화
+            filterButtons.forEach(btn => {
+                const onclick = btn.getAttribute('onclick');
+                if (onclick && onclick.includes(`${minPrice}`) && onclick.includes(`${maxPrice}`)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        // 카드 호버 효과
+        const cards = document.querySelectorAll('.product-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+    </script>
+</body>
+</html>

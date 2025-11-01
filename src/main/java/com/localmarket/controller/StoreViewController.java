@@ -56,7 +56,8 @@ public class StoreViewController {
         } catch (Exception e) {
             log.error("인기 가게 조회 중 오류 발생", e);
             model.addAttribute("errorMessage", "인기 가게 정보를 불러오는 중 오류가 발생했습니다.");
-            return "error/500";
+            model.addAttribute("popularStores", List.of());
+            return "stores/popular";
         }
     }
     
@@ -150,7 +151,10 @@ public class StoreViewController {
         } catch (Exception e) {
             log.error("가게 목록 조회 중 오류 발생", e);
             model.addAttribute("errorMessage", "가게 목록을 불러오는 중 오류가 발생했습니다.");
-            return "error/500";
+            model.addAttribute("stores", List.of());
+            model.addAttribute("currentPage", 1);
+            model.addAttribute("totalPages", 0);
+            return "stores/store-list";
         }
     }
     
@@ -168,7 +172,8 @@ public class StoreViewController {
             if (store == null) {
                 log.warn("가게를 찾을 수 없음 - storeId: {}", storeId);
                 model.addAttribute("errorMessage", "가게를 찾을 수 없습니다.");
-                return "error/404";
+                model.addAttribute("stores", List.of());
+                return "stores/store-list";
             }
             
             model.addAttribute("store", store);
@@ -180,7 +185,8 @@ public class StoreViewController {
         } catch (Exception e) {
             log.error("가게 상세 조회 중 오류 발생 - storeId: {}", storeId, e);
             model.addAttribute("errorMessage", "가게 정보를 불러오는 중 오류가 발생했습니다.");
-            return "error/500";
+            model.addAttribute("stores", List.of());
+            return "stores/store-list";
         }
     }
 }

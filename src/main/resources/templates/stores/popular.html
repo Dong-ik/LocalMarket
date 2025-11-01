@@ -35,7 +35,14 @@
         </div>
     </div>
     <div class="no-results" th:if="${popularStores == null or #lists.size(popularStores) == 0}">
-        <p>인기 가게 데이터가 없습니다.</p>
+        <i class="fas fa-search"></i>
+        <h3 th:if="${errorMessage == null}">인기 가게 데이터가 없습니다.</h3>
+        <h3 th:if="${errorMessage != null}" th:text="${errorMessage}">오류가 발생했습니다</h3>
+        <p th:if="${errorMessage != null}">
+            <a th:href="@{/stores}" style="color: #f39c12; text-decoration: underline;">
+                전체 가게 보기로 돌아가기
+            </a>
+        </p>
     </div>
 </div>
 <div th:replace="~{common/footer}"></div>

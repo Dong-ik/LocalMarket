@@ -135,8 +135,14 @@
             <!-- 검색 결과 없음 -->
             <div class="no-results" th:if="${stores == null || stores.isEmpty()}">
                 <i class="fas fa-search"></i>
-                <h3>검색 결과가 없습니다</h3>
-                <p>다른 검색어나 필터를 사용해보세요</p>
+                <h3 th:if="${errorMessage == null}">검색 결과가 없습니다</h3>
+                <h3 th:if="${errorMessage != null}" th:text="${errorMessage}">오류가 발생했습니다</h3>
+                <p th:if="${errorMessage == null}">다른 검색어나 필터를 사용해보세요</p>
+                <p th:if="${errorMessage != null}">
+                    <a th:href="@{/stores}" style="color: #f39c12; text-decoration: underline;">
+                        전체 가게 보기로 돌아가기
+                    </a>
+                </p>
             </div>
             
             <!-- 페이지네이션 -->
