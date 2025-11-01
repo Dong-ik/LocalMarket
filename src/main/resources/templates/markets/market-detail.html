@@ -255,27 +255,50 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('시장 상세 페이지 로드 완료');
             
+            // 카카오맵 API 로드 확인
+            if (typeof kakao !== 'undefined') {
+                console.log('✅ 카카오맵 API 로드 성공');
+            } else {
+                console.error('❌ 카카오맵 API가 로드되지 않았습니다. API 키를 확인하세요.');
+            }
+            
             // 카카오맵 초기화
             initKakaoMap();
         });
         
         // 카카오맵 초기화 함수
         function initKakaoMap() {
+            console.log('🗺️ initKakaoMap 함수 시작');
+            
             var mapContainer = document.getElementById('map');
             
             if (!mapContainer) {
-                console.log('지도 컨테이너를 찾을 수 없습니다.');
+                console.error('❌ 지도 컨테이너를 찾을 수 없습니다.');
                 return;
             }
+            
+            console.log('✅ 지도 컨테이너 발견:', mapContainer);
             
             // data 속성에서 주소와 이름 가져오기
             var marketAddress = mapContainer.getAttribute('data-address');
             var marketName = mapContainer.getAttribute('data-name');
             
-            if (!marketAddress || typeof kakao === 'undefined') {
-                console.log('주소 정보가 없거나 카카오맵 API가 로드되지 않았습니다.');
+            console.log('📍 시장 주소:', marketAddress);
+            console.log('🏪 시장 이름:', marketName);
+            
+            if (!marketAddress) {
+                console.error('❌ 주소 정보가 없습니다.');
+                showMapError('주소 정보가 없습니다');
                 return;
             }
+            
+            if (typeof kakao === 'undefined') {
+                console.error('❌ 카카오맵 API가 로드되지 않았습니다.');
+                showMapError('카카오맵 API를 로드할 수 없습니다.<br>카카오 개발자센터에서 플랫폼(http://localhost:8080)을 등록했는지 확인하세요.');
+                return;
+            }
+            
+            console.log('✅ 카카오맵 API 사용 가능');
             
             // 지도 옵션 설정
             var options = {
@@ -283,15 +306,25 @@
                 level: 3 // 지도 확대 레벨
             };
             
+            console.log('🗺️ 지도 생성 시작...');
+            
             // 지도 생성
             var map = new kakao.maps.Map(mapContainer, options);
+            
+            console.log('✅ 지도 생성 완료');
             
             // 주소-좌표 변환 객체 생성
             var geocoder = new kakao.maps.services.Geocoder();
             
+            console.log('🔍 주소 검색 시작:', marketAddress);
+            
             // 주소로 좌표를 검색
             geocoder.addressSearch(marketAddress, function(result, status) {
+                console.log('📍 주소 검색 결과 상태:', status);
+                
                 if (status === kakao.maps.services.Status.OK) {
+                    console.log('✅ 주소 검색 성공:', result[0]);
+                    
                     var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
                     
                     // 결과값으로 받은 위치를 지도 중심으로 이동
@@ -309,23 +342,32 @@
                     });
                     infowindow.open(map, marker);
                     
+                    console.log('✅ 마커 및 정보창 표시 완료');
+                    
                     // 마커 클릭 이벤트 - 카카오맵으로 길찾기
                     kakao.maps.event.addListener(marker, 'click', function() {
                         var kakaoMapUrl = 'https://map.kakao.com/link/map/' + marketName + ',' + result[0].y + ',' + result[0].x;
                         window.open(kakaoMapUrl, '_blank');
                     });
                     
-                    console.log('지도 로드 성공:', marketName);
+                    console.log('✅ 지도 로드 완료:', marketName);
                 } else {
-                    console.error('주소 검색 실패:', status);
-                    // 주소 검색 실패 시 기본 메시지 표시
-                    mapContainer.innerHTML = '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f8f9fa;border-radius:8px;">' +
-                        '<i class="fas fa-map-marker-alt" style="font-size:48px;color:#ccc;margin-bottom:10px;"></i>' +
-                        '<p style="color:#999;font-size:14px;">주소를 찾을 수 없습니다</p>' +
-                        '<p style="color:#999;font-size:12px;">' + marketAddress + '</p>' +
-                        '</div>';
+                    console.error('❌ 주소 검색 실패:', status, '주소:', marketAddress);
+                    showMapError('주소를 찾을 수 없습니다<br>' + marketAddress);
                 }
             });
+        }
+        
+        // 지도 오류 메시지 표시 함수
+        function showMapError(message) {
+            var mapContainer = document.getElementById('map');
+            if (mapContainer) {
+                mapContainer.innerHTML = '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f8f9fa;border-radius:8px;border:2px dashed #e0e0e0;">' +
+                    '<i class="fas fa-exclamation-triangle" style="font-size:48px;color:#ff9800;margin-bottom:15px;"></i>' +
+                    '<p style="color:#666;font-size:16px;font-weight:bold;margin-bottom:10px;">지도를 표시할 수 없습니다</p>' +
+                    '<p style="color:#999;font-size:14px;text-align:center;line-height:1.6;">' + message + '</p>' +
+                    '</div>';
+            }
         }
     </script>
 </body>
