@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${market != null ? market.marketName + ' - 시장 상세' : '시장 상세'}">시장 상세</title>
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" th:href="@{/css/market-detail.css}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 헤더 Include -->
+    <div th:replace="~{common/header}"></div>
+
+    <!-- 시장 상세 컨텐츠 -->
+    <div class="market-detail-container" th:if="${market != null}">
+        <!-- 시장 헤더 영역 -->
+        <section class="market-header">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a th:href="@{/}">홈</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a th:href="@{/markets}">전통시장</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span th:text="${market.marketName}">시장명</span>
+                </div>
+                
+                <div class="market-title-section">
+                    <div class="market-title-left">
+                        <h1 class="market-name" th:text="${market.marketName}">시장명</h1>
+                        <div class="market-meta">
+                            <span class="location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span th:text="${market.marketLocal}">지역</span>
+                            </span>
+                            <span class="favorites" th:if="${market.favoriteCount != null && market.favoriteCount > 0}">
+                                <i class="fas fa-heart"></i>
+                                <span th:text="${market.favoriteCount}">0</span>명이 찜했어요
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="market-title-right">
+                        <button class="favorite-btn" onclick="toggleFavorite()">
+                            <i class="far fa-heart"></i>
+                            <span>찜하기</span>
+                        </button>
+                        <button class="share-btn" onclick="shareMarket()">
+                            <i class="fas fa-share-alt"></i>
+                            <span>공유하기</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 시장 상세 정보 영역 -->
+        <section class="market-content">
+            <div class="container">
+                <div class="content-grid">
+                    <!-- 왼쪽: 시장 이미지 및 기본 정보 -->
+                    <div class="content-left">
+                        <!-- 시장 대표 이미지 -->
+                        <div class="market-image-section">
+                            <div class="main-image">
+                                <img th:src="${market.marketURL != null && !market.marketURL.isEmpty() 
+                                    ? market.marketURL 
+                                    : '/images/default-market.jpg'}" 
+                                     th:alt="${market.marketName}"
+                                     onerror="this.src='/images/default-market.jpg'">
+                            </div>
+                        </div>
+
+                        <!-- 시장 소개 -->
+                        <div class="market-description-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-store"></i>
+                                시장 소개
+                            </h2>
+                            <div class="description-content" th:if="${market.marketIntroduce != null && !market.marketIntroduce.isEmpty()}">
+                                <p th:text="${market.marketIntroduce}">시장 소개 내용</p>
+                            </div>
+                            <div class="description-content" th:if="${market.marketIntroduce == null || market.marketIntroduce.isEmpty()}">
+                                <p class="no-info">시장 소개 정보가 없습니다.</p>
+                            </div>
+                        </div>
+
+                        <!-- 찾아가는 길 -->
+                        <div class="market-location-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-map-marked-alt"></i>
+                                찾아가는 길
+                            </h2>
+                            <div class="location-info">
+                                <div class="info-row" th:if="${market.marketAddress != null && !market.marketAddress.isEmpty()}">
+                                    <span class="info-label">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        주소
+                                    </span>
+                                    <span class="info-value" th:text="${market.marketAddress}">주소</span>
+                                </div>
+                                
+                                <div class="info-row" th:if="${market.marketLocal != null && !market.marketLocal.isEmpty()}">
+                                    <span class="info-label">
+                                        <i class="fas fa-map-pin"></i>
+                                        지역
+                                    </span>
+                                    <span class="info-value" th:text="${market.marketLocal}">지역</span>
+                                </div>
+                            </div>
+
+                            <!-- 지도 영역 (추후 카카오맵 API 연동 가능) -->
+                            <div class="map-container" th:if="${market.marketAddress != null && !market.marketAddress.isEmpty()}">
+                                <div id="map" class="map-placeholder">
+                                    <i class="fas fa-map"></i>
+                                    <p>지도 서비스 준비 중입니다</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 오른쪽: 통계 및 부가 정보 -->
+                    <div class="content-right">
+                        <!-- 시장 통계 카드 -->
+                        <div class="stats-card">
+                            <h3 class="card-title">시장 정보</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item" th:if="${market.favoriteCount != null}">
+                                    <div class="stat-icon favorite">
+                                        <i class="fas fa-heart"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="stat-label">찜하기</div>
+                                        <div class="stat-value">
+                                            <span th:text="${market.favoriteCount}">0</span>명
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="stat-item" th:if="${market.marketLocal != null}">
+                                    <div class="stat-icon location">
+                                        <i class="fas fa-map-pin"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="stat-label">지역</div>
+                                        <div class="stat-value" th:text="${market.marketLocal}">지역</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="stat-label">등록일</div>
+                                        <div class="stat-value" th:text="${#temporals.format(market.createdDate, 'yyyy-MM-dd')}">날짜</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 시장 파일 정보 -->
+                        <div class="features-card" th:if="${market.marketFilename != null && !market.marketFilename.isEmpty()}">
+                            <h3 class="card-title">추가 정보</h3>
+                            <div class="features-list">
+                                <div class="feature-item">
+                                    <i class="fas fa-file"></i>
+                                    <span class="feature-label">관련 파일:</span>
+                                    <span class="feature-value" th:text="${market.marketFilename}">파일명</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 액션 버튼 -->
+                        <div class="action-buttons">
+                            <a th:href="@{/stores(marketId=${market.marketId})}" class="action-btn primary">
+                                <i class="fas fa-store"></i>
+                                <span>이 시장의 점포 보기</span>
+                            </a>
+                            <a th:href="@{/markets}" class="action-btn outline">
+                                <i class="fas fa-list"></i>
+                                <span>시장 목록으로</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 시장 정보가 없을 때 -->
+    <div class="no-market-container" th:if="${market == null}">
+        <div class="container">
+            <div class="no-market-content">
+                <i class="fas fa-exclamation-circle"></i>
+                <h2>시장을 찾을 수 없습니다</h2>
+                <p>요청하신 시장 정보를 찾을 수 없습니다.</p>
+                <a th:href="@{/markets}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    시장 목록으로 돌아가기
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 푸터 Include -->
+    <div th:replace="~{common/footer}"></div>
+
+    <!-- JavaScript -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // 찜하기 토글
+        function toggleFavorite() {
+            // TODO: 로그인 체크 및 찜하기 API 호출
+            alert('찜하기 기능은 로그인 후 이용 가능합니다.');
+        }
+
+        // 공유하기
+        function shareMarket() {
+            const marketName = /*[[${market != null ? market.marketName : ''}]]*/ '';
+            const currentUrl = window.location.href;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: marketName,
+                    url: currentUrl
+                }).then(() => {
+                    console.log('공유 성공');
+                }).catch((error) => {
+                    console.log('공유 실패:', error);
+                    copyToClipboard(currentUrl);
+                });
+            } else {
+                copyToClipboard(currentUrl);
+            }
+        }
+
+        // 클립보드에 복사
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('링크가 복사되었습니다!');
+            }).catch(err => {
+                console.error('복사 실패:', err);
+            });
+        }
+
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('시장 상세 페이지 로드 완료');
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

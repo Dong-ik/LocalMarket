@@ -198,6 +198,23 @@
         WHERE market_id = #{marketId}
     </select>
 
+    <!-- 시장 상세 조회 (찜 개수 포함) -->
+    <select id="selectMarketWithFavoriteById" parameterType="int" resultMap="marketWithFavoriteResultMap">
+        SELECT 
+            m.market_id,
+            m.market_name,
+            m.market_local,
+            m.market_address,
+            m.market_introduce,
+            m.market_filename,
+            m.market_URL,
+            m.created_date,
+            IFNULL(v.favorite_count, 0) AS favorite_count
+        FROM market m
+        LEFT JOIN view_market_favorite_stats v ON m.market_id = v.market_id
+        WHERE m.market_id = #{marketId}
+    </select>
+
     <!-- 시장 이름으로 검색 -->
     <select id="selectMarketsByName" parameterType="string" resultMap="marketResultMap">
         SELECT 

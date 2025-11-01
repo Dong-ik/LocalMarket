@@ -18,6 +18,7 @@ public interface MarketService {
     List<Market> getAllMarkets();
     List<Market> getMarketsByLocal(String marketLocal);
     Market getMarketById(Integer marketId);
+    Market getMarketWithFavoriteById(String marketId); // 찜 개수 포함 시장 상세 조회
     List<Market> searchMarketsByName(String marketName);
     List<Market> searchMarketsByAddress(String marketAddress);
     List<Market> getRecentMarkets(int limit);

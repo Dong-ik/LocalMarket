@@ -1,0 +1,602 @@
+/* 전통시장 상세 페이지 스타일 */
+/* 테마 색상: 블루 (#3498db) */
+
+/* 전역 리셋 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 브레드크럼 */
+.breadcrumb {
+    padding: 20px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.breadcrumb a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.breadcrumb a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+.breadcrumb i {
+    margin: 0 8px;
+    font-size: 10px;
+    color: #999;
+}
+
+.breadcrumb span {
+    color: #333;
+    font-weight: 500;
+}
+
+/* 시장 헤더 영역 */
+.market-header {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    padding: 30px 0;
+    margin-bottom: 30px;
+}
+
+.market-title-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.market-title-left {
+    flex: 1;
+}
+
+.market-name {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.market-meta {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 15px;
+}
+
+.market-meta .location,
+.market-meta .favorites {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.market-meta i {
+    font-size: 14px;
+}
+
+.market-title-right {
+    display: flex;
+    gap: 10px;
+}
+
+.favorite-btn,
+.share-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: 2px solid white;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.favorite-btn:hover,
+.share-btn:hover {
+    background: white;
+    color: #3498db;
+}
+
+.favorite-btn i,
+.share-btn i {
+    font-size: 16px;
+}
+
+/* 컨텐츠 그리드 */
+.market-content {
+    padding: 0 0 50px 0;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+/* 왼쪽 컨텐츠 영역 */
+.content-left {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* 시장 이미지 섹션 */
+.market-image-section {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.main-image {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+}
+
+.main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.main-image img:hover {
+    transform: scale(1.05);
+}
+
+/* 섹션 공통 스타일 */
+.market-description-section,
+.market-location-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #3498db;
+}
+
+.section-title i {
+    color: #3498db;
+    font-size: 22px;
+}
+
+/* 시장 소개 */
+.description-content {
+    color: #555;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+.description-content p {
+    margin-bottom: 12px;
+}
+
+.description-content .no-info {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+/* 위치 정보 */
+.location-info {
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    min-width: 120px;
+    font-weight: 600;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-label i {
+    color: #3498db;
+    width: 16px;
+}
+
+.info-value {
+    flex: 1;
+    color: #333;
+}
+
+.info-value a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.info-value a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+/* 지도 영역 */
+.map-container {
+    margin-top: 20px;
+}
+
+.map-placeholder {
+    width: 100%;
+    height: 300px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    border: 1px dashed #ddd;
+}
+
+.map-placeholder i {
+    font-size: 48px;
+    margin-bottom: 10px;
+    color: #ccc;
+}
+
+.map-placeholder p {
+    font-size: 14px;
+}
+
+/* 오른쪽 사이드바 */
+.content-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 카드 공통 스타일 */
+.stats-card,
+.features-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #3498db;
+}
+
+/* 통계 그리드 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.stat-item:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.stat-icon.parking {
+    background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.stat-icon.favorite {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.stat-icon.location {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* 시장 특징 */
+.features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.feature-item i {
+    color: #3498db;
+    width: 20px;
+}
+
+.feature-label {
+    font-weight: 600;
+    color: #555;
+}
+
+.feature-value {
+    color: #333;
+}
+
+/* 액션 버튼 */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.action-btn i {
+    font-size: 16px;
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+}
+
+.action-btn.primary:hover {
+    background: linear-gradient(135deg, #2980b9, #21618c);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.action-btn.secondary {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    color: white;
+    border: none;
+}
+
+.action-btn.secondary:hover {
+    background: linear-gradient(135deg, #229954, #1e8449);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.action-btn.outline {
+    background: white;
+    color: #3498db;
+    border: 2px solid #3498db;
+}
+
+.action-btn.outline:hover {
+    background: #3498db;
+    color: white;
+}
+
+/* 시장 정보 없음 */
+.no-market-container {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 20px;
+}
+
+.no-market-content {
+    text-align: center;
+    max-width: 500px;
+}
+
+.no-market-content i {
+    font-size: 80px;
+    color: #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.no-market-content h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.no-market-content p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.back-btn:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.back-btn i {
+    font-size: 16px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 992px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .market-title-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .market-title-right {
+        width: 100%;
+    }
+
+    .favorite-btn,
+    .share-btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .market-name {
+        font-size: 24px;
+    }
+
+    .market-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .main-image {
+        height: 250px;
+    }
+
+    .section-title {
+        font-size: 18px;
+    }
+
+    .favorite-btn span,
+    .share-btn span {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .market-header {
+        padding: 20px 0;
+    }
+
+    .market-name {
+        font-size: 20px;
+    }
+
+    .market-description-section,
+    .market-location-section,
+    .stats-card,
+    .features-card {
+        padding: 20px;
+    }
+
+    .info-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .info-label {
+        min-width: auto;
+    }
+}

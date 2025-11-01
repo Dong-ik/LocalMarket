@@ -31,6 +31,34 @@ public class MarketViewController {
         return "markets/popular";
     }
     
+    /**
+     * 시장 상세 페이지
+     * GET /markets/{marketId}
+     */
+    @GetMapping("/{marketId}")
+    public String marketDetail(@PathVariable("marketId") String marketId, Model model) {
+        try {
+            log.info("시장 상세 페이지 요청 - marketId: {}", marketId);
+            
+            // 시장 정보 조회 (찜 개수 포함)
+            Market market = marketService.getMarketWithFavoriteById(marketId);
+            
+            if (market == null) {
+                log.warn("시장을 찾을 수 없음 - marketId: {}", marketId);
+                model.addAttribute("errorMessage", "시장을 찾을 수 없습니다.");
+                return "markets/market-list";
+            }
+            
+            model.addAttribute("market", market);
+            return "markets/market-detail"; // templates/markets/market-detail.html
+            
+        } catch (Exception e) {
+            log.error("시장 상세 조회 중 오류 발생 - marketId: {}, error: {}", marketId, e.getMessage(), e);
+            model.addAttribute("errorMessage", "시장 정보를 불러오는 중 오류가 발생했습니다.");
+            return "markets/market-list";
+        }
+    }
+    
     private final MarketService marketService;
     
     /**

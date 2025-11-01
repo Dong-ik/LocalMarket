@@ -27,6 +27,9 @@ public interface MarketMapper {
     // 시장 상세 조회
     Market selectMarketById(@Param("marketId") Integer marketId);
     
+    // 시장 상세 조회 (찜 개수 포함, 뷰 조인)
+    Market selectMarketWithFavoriteById(@Param("marketId") Integer marketId);
+    
     // 시장 정보 수정
     int updateMarket(Market market);
     

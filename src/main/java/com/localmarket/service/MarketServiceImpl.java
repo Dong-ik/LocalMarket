@@ -121,6 +121,20 @@ public class MarketServiceImpl implements MarketService {
     }
     
     @Override
+    public Market getMarketWithFavoriteById(String marketId) {
+        try {
+            Integer id = Integer.parseInt(marketId);
+            return marketMapper.selectMarketWithFavoriteById(id);
+        } catch (NumberFormatException e) {
+            log.error("잘못된 시장 ID 형식 - ID: {}", marketId, e);
+            throw new RuntimeException("잘못된 시장 ID 형식입니다.", e);
+        } catch (Exception e) {
+            log.error("시장 상세 조회(찜 포함) 중 오류 발생 - ID: {}, 오류: {}", marketId, e.getMessage(), e);
+            throw new RuntimeException("시장 상세 조회에 실패했습니다.", e);
+        }
+    }
+    
+    @Override
     public List<Market> searchMarketsByName(String marketName) {
         try {
             return marketMapper.selectMarketsByName(marketName);
