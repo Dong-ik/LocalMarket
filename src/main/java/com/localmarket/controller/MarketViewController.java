@@ -4,6 +4,7 @@ import com.localmarket.domain.Market;
 import com.localmarket.service.MarketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,11 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class MarketViewController {
+    
+    private final MarketService marketService;
+    
+    @Value("${kakao.map.api.key}")
+    private String kakaoMapApiKey;
     /**
      * 인기 전통시장 페이지
      * GET /markets/popular
@@ -50,6 +56,7 @@ public class MarketViewController {
             }
             
             model.addAttribute("market", market);
+            model.addAttribute("kakaoMapApiKey", kakaoMapApiKey); // API 키 전달
             return "markets/market-detail"; // templates/markets/market-detail.html
             
         } catch (Exception e) {
@@ -58,8 +65,6 @@ public class MarketViewController {
             return "markets/market-list";
         }
     }
-    
-    private final MarketService marketService;
     
     /**
      * 시장 목록 페이지

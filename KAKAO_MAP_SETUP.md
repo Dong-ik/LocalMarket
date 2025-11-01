@@ -30,20 +30,59 @@ LocalMarket 프로젝트의 시장 상세 페이지에서 카카오맵 API를 �
 
 ## ⚙️ 프로젝트 설정
 
-### market-detail.html 파일 수정
-`src/main/resources/templates/markets/market-detail.html` 파일에서 다음 부분을 찾아 수정합니다:
+### 방법 1: application.properties 직접 수정 (간단, 로컬 개발용)
 
-```html
-<!-- 카카오맵 API -->
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_APP_KEY&libraries=services"></script>
+`src/main/resources/application.properties` 파일에서 다음 부분을 수정합니다:
+
+```properties
+# Kakao Map API Configuration
+kakao.map.api.key=${KAKAO_MAP_API_KEY:YOUR_API_KEY_HERE}
 ```
 
-**YOUR_APP_KEY** 부분을 발급받은 JavaScript 키로 교체:
+`YOUR_API_KEY_HERE` 부분을 발급받은 JavaScript 키로 교체:
 
-```html
-<!-- 카카오맵 API -->
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&libraries=services"></script>
+```properties
+# Kakao Map API Configuration
+kakao.map.api.key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
+
+**⚠️ 주의: 이 방법은 로컬 개발용으로만 사용하세요! GitHub에 올리면 안 됩니다!**
+
+### 방법 2: 환경 변수 사용 (권장, 프로덕션용)
+
+**Windows (PowerShell)**
+```powershell
+$env:KAKAO_MAP_API_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+**Windows (CMD)**
+```cmd
+set KAKAO_MAP_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+**Linux/Mac**
+```bash
+export KAKAO_MAP_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+**IntelliJ IDEA**
+1. Run > Edit Configurations
+2. Environment variables에 추가: `KAKAO_MAP_API_KEY=your_api_key`
+
+### 방법 3: application-local.properties 사용 (권장)
+
+1. `src/main/resources/`에 `application-local.properties` 파일 생성
+2. 다음 내용 추가:
+```properties
+kakao.map.api.key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+3. `application.properties`에 프로필 설정 추가:
+```properties
+spring.profiles.include=local
+```
+
+**이 파일은 .gitignore에 포함되어 있어 GitHub에 업로드되지 않습니다!**
+
 
 ## 🎯 기능 설명
 

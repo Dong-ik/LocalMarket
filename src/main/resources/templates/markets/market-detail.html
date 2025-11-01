@@ -9,8 +9,10 @@
     <link rel="stylesheet" th:href="@{/css/market-detail.css}">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- 카카오맵 API -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_APP_KEY&libraries=services"></script>
+    <!-- 카카오맵 API: API 키는 서버에서 안전하게 주입됩니다 -->
+    <script th:if="${kakaoMapApiKey != null and kakaoMapApiKey != 'YOUR_API_KEY_HERE'}"
+            type="text/javascript" 
+            th:src="'//dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoMapApiKey} + '&libraries=services'"></script>
 </head>
 <body>
     <!-- 헤더 Include -->
@@ -49,7 +51,8 @@
                             <i class="far fa-heart"></i>
                             <span>찜하기</span>
                         </button>
-                        <button class="share-btn" onclick="shareMarket()">
+                        <button class="share-btn" onclick="shareMarket()" 
+                                th:data-market-name="${market.marketName}">
                             <i class="fas fa-share-alt"></i>
                             <span>공유하기</span>
                         </button>
@@ -115,7 +118,10 @@
 
                             <!-- 지도 영역 -->
                             <div class="map-container" th:if="${market.marketAddress != null && !market.marketAddress.isEmpty()}">
-                                <div id="map" style="width:100%;height:300px;"></div>
+                                <div id="map" 
+                                     th:data-address="${market.marketAddress}"
+                                     th:data-name="${market.marketName}"
+                                     style="width:100%;height:300px;"></div>
                             </div>
                         </div>
                     </div>
@@ -208,8 +214,7 @@
     <div th:replace="~{common/footer}"></div>
 
     <!-- JavaScript -->
-    <script th:inline="javascript">
-        /*<![CDATA[*/
+    <script>
         // 찜하기 토글
         function toggleFavorite() {
             // TODO: 로그인 체크 및 찜하기 API 호출
@@ -218,16 +223,17 @@
 
         // 공유하기
         function shareMarket() {
-            const marketName = /*[[${market != null ? market.marketName : ''}]]*/ '';
-            const currentUrl = window.location.href;
+            var shareBtn = document.querySelector('.share-btn');
+            var marketName = shareBtn ? shareBtn.getAttribute('data-market-name') : '';
+            var currentUrl = window.location.href;
             
             if (navigator.share) {
                 navigator.share({
                     title: marketName,
                     url: currentUrl
-                }).then(() => {
+                }).then(function() {
                     console.log('공유 성공');
-                }).catch((error) => {
+                }).catch(function(error) {
                     console.log('공유 실패:', error);
                     copyToClipboard(currentUrl);
                 });
@@ -238,9 +244,9 @@
 
         // 클립보드에 복사
         function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
+            navigator.clipboard.writeText(text).then(function() {
                 alert('링크가 복사되었습니다!');
-            }).catch(err => {
+            }).catch(function(err) {
                 console.error('복사 실패:', err);
             });
         }
@@ -255,55 +261,57 @@
         
         // 카카오맵 초기화 함수
         function initKakaoMap() {
-            const marketAddress = /*[[${market != null ? market.marketAddress : ''}]]*/ '';
-            const marketName = /*[[${market != null ? market.marketName : ''}]]*/ '';
+            var mapContainer = document.getElementById('map');
+            
+            if (!mapContainer) {
+                console.log('지도 컨테이너를 찾을 수 없습니다.');
+                return;
+            }
+            
+            // data 속성에서 주소와 이름 가져오기
+            var marketAddress = mapContainer.getAttribute('data-address');
+            var marketName = mapContainer.getAttribute('data-name');
             
             if (!marketAddress || typeof kakao === 'undefined') {
                 console.log('주소 정보가 없거나 카카오맵 API가 로드되지 않았습니다.');
                 return;
             }
             
-            const mapContainer = document.getElementById('map');
-            if (!mapContainer) {
-                console.log('지도 컨테이너를 찾을 수 없습니다.');
-                return;
-            }
-            
             // 지도 옵션 설정
-            const mapOption = {
+            var options = {
                 center: new kakao.maps.LatLng(37.5665, 126.9780), // 기본 중심좌표 (서울시청)
                 level: 3 // 지도 확대 레벨
             };
             
             // 지도 생성
-            const map = new kakao.maps.Map(mapContainer, mapOption);
+            var map = new kakao.maps.Map(mapContainer, options);
             
             // 주소-좌표 변환 객체 생성
-            const geocoder = new kakao.maps.services.Geocoder();
+            var geocoder = new kakao.maps.services.Geocoder();
             
             // 주소로 좌표를 검색
             geocoder.addressSearch(marketAddress, function(result, status) {
                 if (status === kakao.maps.services.Status.OK) {
-                    const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
                     
                     // 결과값으로 받은 위치를 지도 중심으로 이동
                     map.setCenter(coords);
                     
                     // 마커 생성
-                    const marker = new kakao.maps.Marker({
+                    var marker = new kakao.maps.Marker({
                         map: map,
                         position: coords
                     });
                     
                     // 인포윈도우로 장소에 대한 설명 표시
-                    const infowindow = new kakao.maps.InfoWindow({
+                    var infowindow = new kakao.maps.InfoWindow({
                         content: '<div style="width:150px;text-align:center;padding:6px 0;font-size:12px;font-weight:bold;">' + marketName + '</div>'
                     });
                     infowindow.open(map, marker);
                     
                     // 마커 클릭 이벤트 - 카카오맵으로 길찾기
                     kakao.maps.event.addListener(marker, 'click', function() {
-                        const kakaoMapUrl = 'https://map.kakao.com/link/map/' + marketName + ',' + result[0].y + ',' + result[0].x;
+                        var kakaoMapUrl = 'https://map.kakao.com/link/map/' + marketName + ',' + result[0].y + ',' + result[0].x;
                         window.open(kakaoMapUrl, '_blank');
                     });
                     
@@ -319,7 +327,6 @@
                 }
             });
         }
-        /*]]>*/
     </script>
 </body>
 </html>
