@@ -9,6 +9,8 @@
     <link rel="stylesheet" th:href="@{/css/market-detail.css}">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 카카오맵 API -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_APP_KEY&libraries=services"></script>
 </head>
 <body>
     <!-- 헤더 Include -->
@@ -111,12 +113,9 @@
                                 </div>
                             </div>
 
-                            <!-- 지도 영역 (추후 카카오맵 API 연동 가능) -->
+                            <!-- 지도 영역 -->
                             <div class="map-container" th:if="${market.marketAddress != null && !market.marketAddress.isEmpty()}">
-                                <div id="map" class="map-placeholder">
-                                    <i class="fas fa-map"></i>
-                                    <p>지도 서비스 준비 중입니다</p>
-                                </div>
+                                <div id="map" style="width:100%;height:300px;"></div>
                             </div>
                         </div>
                     </div>
@@ -249,7 +248,77 @@
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', function() {
             console.log('시장 상세 페이지 로드 완료');
+            
+            // 카카오맵 초기화
+            initKakaoMap();
         });
+        
+        // 카카오맵 초기화 함수
+        function initKakaoMap() {
+            const marketAddress = /*[[${market != null ? market.marketAddress : ''}]]*/ '';
+            const marketName = /*[[${market != null ? market.marketName : ''}]]*/ '';
+            
+            if (!marketAddress || typeof kakao === 'undefined') {
+                console.log('주소 정보가 없거나 카카오맵 API가 로드되지 않았습니다.');
+                return;
+            }
+            
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer) {
+                console.log('지도 컨테이너를 찾을 수 없습니다.');
+                return;
+            }
+            
+            // 지도 옵션 설정
+            const mapOption = {
+                center: new kakao.maps.LatLng(37.5665, 126.9780), // 기본 중심좌표 (서울시청)
+                level: 3 // 지도 확대 레벨
+            };
+            
+            // 지도 생성
+            const map = new kakao.maps.Map(mapContainer, mapOption);
+            
+            // 주소-좌표 변환 객체 생성
+            const geocoder = new kakao.maps.services.Geocoder();
+            
+            // 주소로 좌표를 검색
+            geocoder.addressSearch(marketAddress, function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                    
+                    // 결과값으로 받은 위치를 지도 중심으로 이동
+                    map.setCenter(coords);
+                    
+                    // 마커 생성
+                    const marker = new kakao.maps.Marker({
+                        map: map,
+                        position: coords
+                    });
+                    
+                    // 인포윈도우로 장소에 대한 설명 표시
+                    const infowindow = new kakao.maps.InfoWindow({
+                        content: '<div style="width:150px;text-align:center;padding:6px 0;font-size:12px;font-weight:bold;">' + marketName + '</div>'
+                    });
+                    infowindow.open(map, marker);
+                    
+                    // 마커 클릭 이벤트 - 카카오맵으로 길찾기
+                    kakao.maps.event.addListener(marker, 'click', function() {
+                        const kakaoMapUrl = 'https://map.kakao.com/link/map/' + marketName + ',' + result[0].y + ',' + result[0].x;
+                        window.open(kakaoMapUrl, '_blank');
+                    });
+                    
+                    console.log('지도 로드 성공:', marketName);
+                } else {
+                    console.error('주소 검색 실패:', status);
+                    // 주소 검색 실패 시 기본 메시지 표시
+                    mapContainer.innerHTML = '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f8f9fa;border-radius:8px;">' +
+                        '<i class="fas fa-map-marker-alt" style="font-size:48px;color:#ccc;margin-bottom:10px;"></i>' +
+                        '<p style="color:#999;font-size:14px;">주소를 찾을 수 없습니다</p>' +
+                        '<p style="color:#999;font-size:12px;">' + marketAddress + '</p>' +
+                        '</div>';
+                }
+            });
+        }
         /*]]>*/
     </script>
 </body>
