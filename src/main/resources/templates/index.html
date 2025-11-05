@@ -15,30 +15,6 @@
     </div>
 </section>
 
-<!-- 통계 섹션 -->
-<section class="stats-section">
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat-item">
-                <span class="stat-number" th:text="${stats.marketCount ?: '35'}">35</span>
-                <span class="stat-label">등록된 전통시장</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" th:text="${stats.storeCount ?: '156'}">156</span>
-                <span class="stat-label">참여 가게</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" th:text="${stats.productCount ?: '1,240'}">1,240</span>
-                <span class="stat-label">판매 상품</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" th:text="${stats.memberCount ?: '8,950'}">8,950</span>
-                <span class="stat-label">회원 수</span>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- 인기 전통시장 섹션 -->
 <section class="section">
     <div class="container">
@@ -280,25 +256,6 @@
         }, 1000).animate({
             'transform': 'translateY(0)'
         }, 800);
-        
-        // 통계 카운터 애니메이션
-        $('.stat-number').each(function() {
-            const $this = $(this);
-            const countTo = parseInt($this.text().replace(/,/g, ''));
-            
-            $({ countNum: 0 }).animate({
-                countNum: countTo
-            }, {
-                duration: 2000,
-                easing: 'swing',
-                step: function() {
-                    $this.text(Math.floor(this.countNum).toLocaleString());
-                },
-                complete: function() {
-                    $this.text(countTo.toLocaleString());
-                }
-            });
-        });
         
         // 카드 호버 효과
         $('.card').hover(

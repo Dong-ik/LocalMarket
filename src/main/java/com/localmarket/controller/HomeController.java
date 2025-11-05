@@ -1,5 +1,7 @@
 package com.localmarket.controller;
 
+import com.localmarket.domain.Market;
+import com.localmarket.service.MarketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 메인 페이지 컨트롤러
@@ -18,11 +20,7 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final com.localmarket.service.StoreService storeService;
-    private final com.localmarket.service.ProductService productService;
-    private final com.localmarket.service.MemberService memberService;
-
-    private final com.localmarket.service.MarketService marketService;
+    private final MarketService marketService;
 
     /**
      * 메인 페이지
@@ -31,21 +29,11 @@ public class HomeController {
     public String index(Model model) {
         try {
             log.info("메인 페이지 조회 시작");
-            // 통계 정보
-            Map<String, Object> stats = new HashMap<>();
-            int marketCount = marketService.getTotalMarketCount();
-            int storeCount = storeService.getTotalStoreCount();
-            int productCount = productService.getTotalProductCount();
-            int memberCount = memberService.getTotalMemberCount();
-            stats.put("marketCount", marketCount);
-            stats.put("storeCount", storeCount);
-            stats.put("productCount", productCount);
-            stats.put("memberCount", memberCount);
-            model.addAttribute("stats", stats);
             
-            // 인기 전통시장 (상위 6개)
-            // List<Market> popularMarkets = marketService.getPopularMarkets(6);
-            // model.addAttribute("popularMarkets", popularMarkets);
+            // 인기 전통시장 (상위 3개) - 찜 많은 순
+            List<Market> popularMarkets = marketService.getPopularMarkets(3);
+            model.addAttribute("popularMarkets", popularMarkets);
+            log.info("인기 시장 {} 개 조회 완료", popularMarkets != null ? popularMarkets.size() : 0);
             
             // 신상품 (상위 8개)
             // List<Product> newProducts = productService.getNewProducts(8);
@@ -63,8 +51,8 @@ public class HomeController {
             
         } catch (Exception e) {
             log.error("메인 페이지 조회 중 오류 발생", e);
-            // 오류가 발생해도 페이지는 표시되도록 빈 데이터 설정
-            model.addAttribute("stats", new HashMap<>());
+            // 오류 발생 시 빈 리스트 설정
+            model.addAttribute("popularMarkets", new ArrayList<>());
         }
         
         return "index";

@@ -149,7 +149,7 @@
                             </div>
                         </li>
                         <li class="nav-item" th:if="${session.member != null and session.member.memberGrade == 'ADMIN'}">
-                            <a th:href="@{/admin}" class="nav-link">
+                            <a th:href="@{/members/mypage}" class="nav-link">
                                 <i class="fas fa-cog"></i> 관리자
                             </a>
                             <div class="dropdown-menu">
