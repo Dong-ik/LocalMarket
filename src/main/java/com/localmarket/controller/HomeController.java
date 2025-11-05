@@ -1,7 +1,11 @@
 package com.localmarket.controller;
 
 import com.localmarket.domain.Market;
+import com.localmarket.domain.Product;
+import com.localmarket.domain.Store;
 import com.localmarket.service.MarketService;
+import com.localmarket.service.ProductService;
+import com.localmarket.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +25,8 @@ import java.util.List;
 public class HomeController {
 
     private final MarketService marketService;
+    private final StoreService storeService;
+    private final ProductService productService;
 
     /**
      * 메인 페이지
@@ -28,31 +34,66 @@ public class HomeController {
     @GetMapping({"/", "/index", "/home"})
     public String index(Model model) {
         try {
-            log.info("메인 페이지 조회 시작");
+            log.info("=== 메인 페이지 조회 시작 ===");
             
             // 인기 전통시장 (상위 3개) - 찜 많은 순
             List<Market> popularMarkets = marketService.getPopularMarkets(3);
-            model.addAttribute("popularMarkets", popularMarkets);
-            log.info("인기 시장 {} 개 조회 완료", popularMarkets != null ? popularMarkets.size() : 0);
+            log.info(">>> 인기 시장 조회 결과: {} 개", popularMarkets != null ? popularMarkets.size() : "null");
+            if (popularMarkets != null && !popularMarkets.isEmpty()) {
+                popularMarkets.forEach(m -> log.info("  - 시장: {} (ID: {})", m.getMarketName(), m.getMarketId()));
+            }
+            model.addAttribute("popularMarkets", popularMarkets != null ? popularMarkets : new ArrayList<>());
             
-            // 신상품 (상위 8개)
-            // List<Product> newProducts = productService.getNewProducts(8);
-            // model.addAttribute("newProducts", newProducts);
+            // 인기 가게 (상위 3개) - 최신순
+            List<Store> allStores = storeService.getAllStores();
+            log.info(">>> 전체 가게 조회 결과: {} 개", allStores != null ? allStores.size() : "null");
             
-            // 인기 가게 (상위 6개)
-            // List<Store> popularStores = storeService.getPopularStores(6);
-            // model.addAttribute("popularStores", popularStores);
+            if (allStores != null && !allStores.isEmpty()) {
+                allStores.sort((s1, s2) -> {
+                    if (s1.getCreatedDate() == null && s2.getCreatedDate() == null) return 0;
+                    if (s1.getCreatedDate() == null) return 1;
+                    if (s2.getCreatedDate() == null) return -1;
+                    return s2.getCreatedDate().compareTo(s1.getCreatedDate());
+                });
+                List<Store> popularStores = allStores.size() > 3 ? allStores.subList(0, 3) : allStores;
+                log.info(">>> 인기 가게 필터링 결과: {} 개", popularStores.size());
+                popularStores.forEach(s -> log.info("  - 가게: {} (ID: {}, 생성일: {})", 
+                    s.getStoreName(), s.getStoreId(), s.getCreatedDate()));
+                model.addAttribute("popularStores", popularStores);
+            } else {
+                log.warn(">>> 조회된 가게가 없습니다!");
+                model.addAttribute("popularStores", new ArrayList<>());
+            }
             
-            // 최신 게시글 (상위 6개)
-            // List<Board> recentBoards = boardService.getRecentBoards(6);
-            // model.addAttribute("recentBoards", recentBoards);
+            // 신상품 (상위 3개) - 최신순
+            List<Product> allProducts = productService.getAllProducts();
+            log.info(">>> 전체 상품 조회 결과: {} 개", allProducts != null ? allProducts.size() : "null");
             
-            log.info("메인 페이지 데이터 조회 완료");
+            if (allProducts != null && !allProducts.isEmpty()) {
+                allProducts.sort((p1, p2) -> {
+                    if (p1.getCreatedDate() == null && p2.getCreatedDate() == null) return 0;
+                    if (p1.getCreatedDate() == null) return 1;
+                    if (p2.getCreatedDate() == null) return -1;
+                    return p2.getCreatedDate().compareTo(p1.getCreatedDate());
+                });
+                List<Product> newProducts = allProducts.size() > 3 ? allProducts.subList(0, 3) : allProducts;
+                log.info(">>> 신상품 필터링 결과: {} 개", newProducts.size());
+                newProducts.forEach(p -> log.info("  - 상품: {} (ID: {}, 가격: {}, 생성일: {})", 
+                    p.getProductName(), p.getProductId(), p.getProductPrice(), p.getCreatedDate()));
+                model.addAttribute("newProducts", newProducts);
+            } else {
+                log.warn(">>> 조회된 상품이 없습니다!");
+                model.addAttribute("newProducts", new ArrayList<>());
+            }
+            
+            log.info("=== 메인 페이지 데이터 조회 완료 ===");
             
         } catch (Exception e) {
-            log.error("메인 페이지 조회 중 오류 발생", e);
+            log.error("!!! 메인 페이지 조회 중 오류 발생 !!!", e);
             // 오류 발생 시 빈 리스트 설정
             model.addAttribute("popularMarkets", new ArrayList<>());
+            model.addAttribute("popularStores", new ArrayList<>());
+            model.addAttribute("newProducts", new ArrayList<>());
         }
         
         return "index";

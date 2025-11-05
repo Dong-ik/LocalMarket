@@ -88,7 +88,7 @@ public class CommentController {
      * GET /api/comments/{commentId}
      */
     @GetMapping("/{commentId}")
-    public ResponseEntity<Map<String, Object>> getCommentById(@PathVariable Integer commentId) {
+    public ResponseEntity<Map<String, Object>> getCommentById(@PathVariable("commentId") Integer commentId) {
         log.info("댓글 조회 요청 - ID: {}", commentId);
         
         Map<String, Object> response = new HashMap<>();
@@ -118,7 +118,7 @@ public class CommentController {
      * GET /api/comments/board/{boardId}
      */
     @GetMapping("/board/{boardId}")
-    public ResponseEntity<Map<String, Object>> getCommentsByBoardId(@PathVariable Integer boardId) {
+    public ResponseEntity<Map<String, Object>> getCommentsByBoardId(@PathVariable("boardId") Integer boardId) {
         log.info("게시글별 댓글 조회 요청 - 게시글ID: {}", boardId);
         
         Map<String, Object> response = new HashMap<>();
@@ -145,7 +145,7 @@ public class CommentController {
      * GET /api/comments/{parentCommentId}/replies
      */
     @GetMapping("/{parentCommentId}/replies")
-    public ResponseEntity<Map<String, Object>> getRepliesByParentId(@PathVariable Integer parentCommentId) {
+    public ResponseEntity<Map<String, Object>> getRepliesByParentId(@PathVariable("parentCommentId") Integer parentCommentId) {
         log.info("대댓글 조회 요청 - 부모 댓글ID: {}", parentCommentId);
         
         Map<String, Object> response = new HashMap<>();
@@ -171,7 +171,7 @@ public class CommentController {
      * GET /api/comments/member/{memberNum}
      */
     @GetMapping("/member/{memberNum}")
-    public ResponseEntity<Map<String, Object>> getCommentsByMemberNum(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> getCommentsByMemberNum(@PathVariable("memberNum") Integer memberNum) {
         log.info("회원별 댓글 조회 요청 - 회원번호: {}", memberNum);
         
         Map<String, Object> response = new HashMap<>();
@@ -222,7 +222,7 @@ public class CommentController {
      * PUT /api/comments/{commentId}
      */
     @PutMapping("/{commentId}")
-    public ResponseEntity<Map<String, Object>> updateComment(@PathVariable Integer commentId, @RequestBody CommentDto commentDto) {
+    public ResponseEntity<Map<String, Object>> updateComment(@PathVariable("commentId") Integer commentId, @RequestBody CommentDto commentDto) {
         log.info("댓글 수정 요청 - ID: {}, 수정 내용: {}", commentId, commentDto);
         
         Map<String, Object> response = new HashMap<>();
@@ -253,7 +253,7 @@ public class CommentController {
      * DELETE /api/comments/{commentId}
      */
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Map<String, Object>> deleteComment(@PathVariable Integer commentId) {
+    public ResponseEntity<Map<String, Object>> deleteComment(@PathVariable("commentId") Integer commentId) {
         log.info("댓글 삭제 요청 - ID: {}", commentId);
         
         Map<String, Object> response = new HashMap<>();
@@ -283,7 +283,7 @@ public class CommentController {
      * DELETE /api/comments/{commentId}/with-replies
      */
     @DeleteMapping("/{commentId}/with-replies")
-    public ResponseEntity<Map<String, Object>> deleteCommentWithReplies(@PathVariable Integer commentId) {
+    public ResponseEntity<Map<String, Object>> deleteCommentWithReplies(@PathVariable("commentId") Integer commentId) {
         log.info("댓글 및 대댓글 삭제 요청 - ID: {}", commentId);
         
         Map<String, Object> response = new HashMap<>();
@@ -314,7 +314,7 @@ public class CommentController {
      * POST /api/comments/{commentId}/like
      */
     @PostMapping("/{commentId}/like")
-    public ResponseEntity<Map<String, Object>> increaseCommentLike(@PathVariable Integer commentId) {
+    public ResponseEntity<Map<String, Object>> increaseCommentLike(@PathVariable("commentId") Integer commentId) {
         log.info("댓글 좋아요 증가 요청 - ID: {}", commentId);
         
         Map<String, Object> response = new HashMap<>();
@@ -344,7 +344,7 @@ public class CommentController {
      * DELETE /api/comments/{commentId}/like
      */
     @DeleteMapping("/{commentId}/like")
-    public ResponseEntity<Map<String, Object>> decreaseCommentLike(@PathVariable Integer commentId) {
+    public ResponseEntity<Map<String, Object>> decreaseCommentLike(@PathVariable("commentId") Integer commentId) {
         log.info("댓글 좋아요 감소 요청 - ID: {}", commentId);
         
         Map<String, Object> response = new HashMap<>();
@@ -374,7 +374,7 @@ public class CommentController {
      * GET /api/comments/search?keyword={keyword}
      */
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> searchComments(@RequestParam String keyword) {
+    public ResponseEntity<Map<String, Object>> searchComments(@RequestParam("keyword") String keyword) {
         log.info("댓글 검색 요청 - 키워드: {}", keyword);
         
         Map<String, Object> response = new HashMap<>();

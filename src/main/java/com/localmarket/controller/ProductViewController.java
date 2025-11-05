@@ -195,7 +195,7 @@ public class ProductViewController {
      * GET /products/{productId}
      */
     @GetMapping("/{productId}")
-    public String productDetail(@PathVariable Integer productId, Model model) {
+    public String productDetail(@PathVariable("productId") Integer productId, Model model) {
         try {
             log.info("상품 상세 페이지 요청 - productId: {}", productId);
             

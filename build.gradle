@@ -17,6 +17,10 @@ configurations {
     }
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-parameters'
+}
+
 springBoot {
     mainClass = 'com.localmarket.LocalMarketApplication'
 }

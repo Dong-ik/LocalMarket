@@ -446,7 +446,7 @@ public class MarketController {
      * 지역별 시장 목록 조회
      */
     @GetMapping("/list/{marketLocal}")
-    public ResponseEntity<Map<String, Object>> getMarketsByLocal(@PathVariable String marketLocal) {
+    public ResponseEntity<Map<String, Object>> getMarketsByLocal(@PathVariable("marketLocal") String marketLocal) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -472,7 +472,7 @@ public class MarketController {
      * 시장 상세 조회
      */
     @GetMapping("/detail/{marketId}")
-    public ResponseEntity<Map<String, Object>> getMarketById(@PathVariable Integer marketId) {
+    public ResponseEntity<Map<String, Object>> getMarketById(@PathVariable("marketId") Integer marketId) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -500,7 +500,7 @@ public class MarketController {
      * 시장 이름으로 검색
      */
     @GetMapping("/search/name")
-    public ResponseEntity<Map<String, Object>> searchMarketsByName(@RequestParam String marketName) {
+    public ResponseEntity<Map<String, Object>> searchMarketsByName(@RequestParam("marketName") String marketName) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -526,7 +526,7 @@ public class MarketController {
      * 시장 주소로 검색
      */
     @GetMapping("/search/address")
-    public ResponseEntity<Map<String, Object>> searchMarketsByAddress(@RequestParam String marketAddress) {
+    public ResponseEntity<Map<String, Object>> searchMarketsByAddress(@RequestParam("marketAddress") String marketAddress) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -577,7 +577,7 @@ public class MarketController {
      * 시장 정보 수정
      */
     @PutMapping("/{marketId}")
-    public ResponseEntity<Map<String, Object>> updateMarket(@PathVariable Integer marketId, 
+    public ResponseEntity<Map<String, Object>> updateMarket(@PathVariable("marketId") Integer marketId, 
                                                           @RequestBody MarketDto marketDto) {
         Map<String, Object> response = new HashMap<>();
         
@@ -606,7 +606,7 @@ public class MarketController {
      * 시장 삭제
      */
     @DeleteMapping("/{marketId}")
-    public ResponseEntity<Map<String, Object>> deleteMarket(@PathVariable Integer marketId) {
+    public ResponseEntity<Map<String, Object>> deleteMarket(@PathVariable("marketId") Integer marketId) {
         Map<String, Object> response = new HashMap<>();
         
         try {

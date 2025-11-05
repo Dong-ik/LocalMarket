@@ -27,7 +27,7 @@
             <div th:each="market : ${popularMarkets}" class="card" 
                  th:onclick="'location.href=\'/markets/' + ${market.marketId} + '\''">
                 <div class="card-image" 
-                     th:style="'background-image: url(/images/markets/' + ${market.marketFilename ?: 'default-market.jpg'} + ')'">
+                     th:style="${market.marketFilename != null ? 'background-image: url(/images/markets/' + market.marketFilename + ')' : 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}">
                     <div class="card-badge">HOT</div>
                 </div>
                 <div class="card-content">
@@ -66,20 +66,17 @@
         <div class="product-grid">
             <div th:each="product : ${newProducts}" class="product-card">
                 <div class="product-image" 
-                     th:style="'background-image: url(/images/products/' + ${product.productFilename ?: 'default-product.jpg'} + ')'">
-                    <button class="favorite-btn" 
-                            th:onclick="'toggleFavorite(\'PRODUCT\', ' + ${product.productId} + ', this)'"
-                            th:classappend="${product.isFavorite} ? 'active' : ''">
-                        <i th:class="${product.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"></i>
-                    </button>
+                     th:style="${product.productFilename != null ? 'background-image: url(/images/products/' + product.productFilename + ')' : 'background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)'}">
                 </div>
                 <div class="product-info">
                     <h4 class="product-name" th:text="${product.productName}">한우 등심</h4>
                     <div class="product-price" th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA') + '원'}">45,000원</div>
-                    <div class="product-store" th:text="${product.storeName}">김씨 한우전문점</div>
+                    <div class="product-store" th:if="${product.productAmount != null}">
+                        재고: <span th:text="${product.productAmount + '개'}">10개</span>
+                    </div>
                     <button class="add-to-cart" 
-                            th:onclick="'addToCart(' + ${product.productId} + ')'">
-                        장바구니 담기
+                            th:onclick="'location.href=\'/products/' + ${product.productId} + '\''">
+                        상세보기
                     </button>
                 </div>
             </div>
@@ -103,22 +100,22 @@
             <div th:each="store : ${popularStores}" class="card" 
                  th:onclick="'location.href=\'/stores/' + ${store.storeId} + '\''">
                 <div class="card-image" 
-                     th:style="'background-image: url(/images/stores/' + ${store.storeFilename ?: 'default-store.jpg'} + ')'">
+                     th:style="${store.storeFilename != null ? 'background-image: url(/images/stores/' + store.storeFilename + ')' : 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'}">
                     <div class="card-badge" th:text="${store.storeCategory}">정육점</div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title" th:text="${store.storeName}">김씨 한우전문점</h3>
-                    <p class="card-description" th:text="${store.storeIntroduce ?: '신선한 재료로 승부하는 가게'}">
-                        신선한 재료로 승부하는 가게
+                    <p class="card-description" th:text="${store.storeCategory + ' - ' + (store.marketName ?: '전통시장')}">
+                        정육점 - 남대문시장
                     </p>
                     <div class="card-meta">
                         <span class="card-location">
-                            <i class="fas fa-store"></i>
-                            <span th:text="${store.marketName}">남대문시장</span>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span th:text="${store.marketLocal ?: '전통시장'}">서울특별시</span>
                         </span>
-                        <span class="favorite-count" th:if="${store.favoriteCount != null}">
-                            <i class="fas fa-heart"></i>
-                            <span th:text="${store.favoriteCount}">12</span>
+                        <span class="card-location">
+                            <i class="fas fa-store"></i>
+                            <span th:text="${store.storeCategory}">정육점</span>
                         </span>
                     </div>
                 </div>

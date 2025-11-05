@@ -363,8 +363,8 @@ public class OrderController {
      */
     @GetMapping("/date-range")
     public ResponseEntity<Map<String, Object>> getOrdersByDateRange(
-            @RequestParam String startDate,
-            @RequestParam String endDate) {
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
         log.info("=== 기간별 주문 조회 API 호출 - 기간: {} ~ {} ===", startDate, endDate);
         
         Map<String, Object> response = new HashMap<>();
@@ -417,7 +417,7 @@ public class OrderController {
      * 주문 검색
      */
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> searchOrders(@RequestParam String keyword) {
+    public ResponseEntity<Map<String, Object>> searchOrders(@RequestParam("keyword") String keyword) {
         log.info("=== 주문 검색 API 호출 - 키워드: {} ===", keyword);
         
         Map<String, Object> response = new HashMap<>();

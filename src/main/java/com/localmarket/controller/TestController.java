@@ -61,7 +61,7 @@ public class TestController {
      * 회원 ID 중복 체크 테스트
      */
     @GetMapping("/check-id/{memberId}")
-    public ResponseEntity<Map<String, Object>> checkMemberIdExists(@PathVariable String memberId) {
+    public ResponseEntity<Map<String, Object>> checkMemberIdExists(@PathVariable("memberId") String memberId) {
         Map<String, Object> response = new HashMap<>();
         try {
             boolean exists = memberService.checkMemberIdExists(memberId);

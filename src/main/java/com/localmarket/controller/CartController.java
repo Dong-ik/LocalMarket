@@ -53,8 +53,8 @@ public class CartController {
     /**
      * 장바구니 아이템 삭제
      */
-    @DeleteMapping("/{cartId}")
-    public ResponseEntity<Map<String, Object>> removeCartItem(@PathVariable Integer cartId) {
+    @DeleteMapping("/{cartId:[0-9]+}")
+    public ResponseEntity<Map<String, Object>> removeCartItem(@PathVariable("cartId") Integer cartId) {
         log.info("장바구니 삭제 요청 - ID: {}", cartId);
         
         Map<String, Object> response = new HashMap<>();
@@ -83,7 +83,7 @@ public class CartController {
      * 회원의 전체 장바구니 삭제
      */
     @DeleteMapping("/member/{memberNum}")
-    public ResponseEntity<Map<String, Object>> removeAllCartItems(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> removeAllCartItems(@PathVariable("memberNum") Integer memberNum) {
         log.info("전체 장바구니 삭제 요청 - 회원번호: {}", memberNum);
         
         Map<String, Object> response = new HashMap<>();
@@ -112,7 +112,7 @@ public class CartController {
      * 선택된 장바구니 아이템들 삭제
      */
     @DeleteMapping("/member/{memberNum}/selected")
-    public ResponseEntity<Map<String, Object>> removeSelectedCartItems(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> removeSelectedCartItems(@PathVariable("memberNum") Integer memberNum) {
         log.info("선택된 장바구니 삭제 요청 - 회원번호: {}", memberNum);
         
         Map<String, Object> response = new HashMap<>();
@@ -140,10 +140,10 @@ public class CartController {
     /**
      * 장바구니 수량 수정
      */
-    @PutMapping("/{cartId}/quantity")
+    @PutMapping("/{cartId:[0-9]+}/quantity")
     public ResponseEntity<Map<String, Object>> updateCartQuantity(
-            @PathVariable Integer cartId, 
-            @RequestParam Integer cartQuantity) {
+            @PathVariable("cartId") Integer cartId, 
+            @RequestParam("cartQuantity") Integer cartQuantity) {
         log.info("장바구니 수량 수정 요청 - ID: {}, 수량: {}", cartId, cartQuantity);
         
         Map<String, Object> response = new HashMap<>();
@@ -171,10 +171,10 @@ public class CartController {
     /**
      * 장바구니 선택 상태 수정
      */
-    @PutMapping("/{cartId}/selected")
+    @PutMapping("/{cartId:[0-9]+}/selected")
     public ResponseEntity<Map<String, Object>> updateCartSelected(
-            @PathVariable Integer cartId, 
-            @RequestParam Boolean cartSelected) {
+            @PathVariable("cartId") Integer cartId, 
+            @RequestParam("cartSelected") Boolean cartSelected) {
         log.info("장바구니 선택 상태 수정 요청 - ID: {}, 선택: {}", cartId, cartSelected);
         
         Map<String, Object> response = new HashMap<>();
@@ -204,8 +204,8 @@ public class CartController {
      */
     @PutMapping("/member/{memberNum}/selected")
     public ResponseEntity<Map<String, Object>> updateAllCartSelected(
-            @PathVariable Integer memberNum, 
-            @RequestParam Boolean cartSelected) {
+            @PathVariable("memberNum") Integer memberNum, 
+            @RequestParam("cartSelected") Boolean cartSelected) {
         log.info("전체 장바구니 선택 상태 수정 요청 - 회원번호: {}, 선택: {}", memberNum, cartSelected);
         
         Map<String, Object> response = new HashMap<>();
@@ -234,7 +234,7 @@ public class CartController {
      * 회원의 장바구니 목록 조회
      */
     @GetMapping("/member/{memberNum}")
-    public ResponseEntity<Map<String, Object>> getCartItems(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> getCartItems(@PathVariable("memberNum") Integer memberNum) {
         log.info("장바구니 목록 조회 요청 - 회원번호: {}", memberNum);
         
         Map<String, Object> response = new HashMap<>();
@@ -258,7 +258,7 @@ public class CartController {
      * 회원의 선택된 장바구니 목록 조회
      */
     @GetMapping("/member/{memberNum}/selected")
-    public ResponseEntity<Map<String, Object>> getSelectedCartItems(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> getSelectedCartItems(@PathVariable("memberNum") Integer memberNum) {
         log.info("선택된 장바구니 목록 조회 요청 - 회원번호: {}", memberNum);
         
         Map<String, Object> response = new HashMap<>();
@@ -281,8 +281,8 @@ public class CartController {
     /**
      * 장바구니 아이템 상세 조회
      */
-    @GetMapping("/{cartId}")
-    public ResponseEntity<Map<String, Object>> getCartItem(@PathVariable Integer cartId) {
+    @GetMapping("/{cartId:[0-9]+}")
+    public ResponseEntity<Map<String, Object>> getCartItem(@PathVariable("cartId") Integer cartId) {
         log.info("장바구니 아이템 조회 요청 - ID: {}", cartId);
         
         Map<String, Object> response = new HashMap<>();
@@ -311,7 +311,7 @@ public class CartController {
      * 장바구니 통계 정보 조회
      */
     @GetMapping("/member/{memberNum}/stats")
-    public ResponseEntity<Map<String, Object>> getCartStats(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> getCartStats(@PathVariable("memberNum") Integer memberNum) {
         log.info("장바구니 통계 조회 요청 - 회원번호: {}", memberNum);
         
         Map<String, Object> response = new HashMap<>();
@@ -344,8 +344,8 @@ public class CartController {
      */
     @GetMapping("/member/{memberNum}/product/{productId}/exists")
     public ResponseEntity<Map<String, Object>> checkProductInCart(
-            @PathVariable Integer memberNum, 
-            @PathVariable Integer productId) {
+            @PathVariable("memberNum") Integer memberNum, 
+            @PathVariable("productId") Integer productId) {
         log.info("장바구니 상품 존재 확인 요청 - 회원번호: {}, 상품ID: {}", memberNum, productId);
         
         Map<String, Object> response = new HashMap<>();

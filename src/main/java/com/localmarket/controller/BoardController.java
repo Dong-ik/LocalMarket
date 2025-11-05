@@ -57,7 +57,7 @@ public class BoardController {
      * GET /api/boards/{boardId}
      */
     @GetMapping("/{boardId}")
-    public ResponseEntity<Map<String, Object>> getBoardById(@PathVariable Integer boardId) {
+    public ResponseEntity<Map<String, Object>> getBoardById(@PathVariable("boardId") Integer boardId) {
         log.info("게시글 조회 요청 - ID: {}", boardId);
         
         Map<String, Object> response = new HashMap<>();
@@ -112,7 +112,7 @@ public class BoardController {
      * GET /api/boards/member/{memberNum}
      */
     @GetMapping("/member/{memberNum}")
-    public ResponseEntity<Map<String, Object>> getBoardsByMemberNum(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> getBoardsByMemberNum(@PathVariable("memberNum") Integer memberNum) {
         log.info("회원별 게시글 조회 요청 - 회원번호: {}", memberNum);
         
         Map<String, Object> response = new HashMap<>();
@@ -138,7 +138,7 @@ public class BoardController {
      * GET /api/boards/store/{storeId}
      */
     @GetMapping("/store/{storeId}")
-    public ResponseEntity<Map<String, Object>> getBoardsByStoreId(@PathVariable Integer storeId) {
+    public ResponseEntity<Map<String, Object>> getBoardsByStoreId(@PathVariable("storeId") Integer storeId) {
         log.info("가게별 게시글 조회 요청 - 가게ID: {}", storeId);
         
         Map<String, Object> response = new HashMap<>();
@@ -164,7 +164,7 @@ public class BoardController {
      * PUT /api/boards/{boardId}
      */
     @PutMapping("/{boardId}")
-    public ResponseEntity<Map<String, Object>> updateBoard(@PathVariable Integer boardId, @RequestBody BoardDto boardDto) {
+    public ResponseEntity<Map<String, Object>> updateBoard(@PathVariable("boardId") Integer boardId, @RequestBody BoardDto boardDto) {
         log.info("게시글 수정 요청 - ID: {}, 수정 내용: {}", boardId, boardDto);
         
         Map<String, Object> response = new HashMap<>();
@@ -195,7 +195,7 @@ public class BoardController {
      * DELETE /api/boards/{boardId}
      */
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable Integer boardId) {
+    public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable("boardId") Integer boardId) {
         log.info("게시글 삭제 요청 - ID: {}", boardId);
         
         Map<String, Object> response = new HashMap<>();
@@ -225,7 +225,7 @@ public class BoardController {
      * POST /api/boards/{boardId}/like
      */
     @PostMapping("/{boardId}/like")
-    public ResponseEntity<Map<String, Object>> increaseLike(@PathVariable Integer boardId) {
+    public ResponseEntity<Map<String, Object>> increaseLike(@PathVariable("boardId") Integer boardId) {
         log.info("게시글 좋아요 증가 요청 - ID: {}", boardId);
         
         Map<String, Object> response = new HashMap<>();
@@ -255,7 +255,7 @@ public class BoardController {
      * DELETE /api/boards/{boardId}/like
      */
     @DeleteMapping("/{boardId}/like")
-    public ResponseEntity<Map<String, Object>> decreaseLike(@PathVariable Integer boardId) {
+    public ResponseEntity<Map<String, Object>> decreaseLike(@PathVariable("boardId") Integer boardId) {
         log.info("게시글 좋아요 감소 요청 - ID: {}", boardId);
         
         Map<String, Object> response = new HashMap<>();
@@ -285,7 +285,7 @@ public class BoardController {
      * GET /api/boards/search?keyword={keyword}
      */
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> searchBoards(@RequestParam String keyword) {
+    public ResponseEntity<Map<String, Object>> searchBoards(@RequestParam("keyword") String keyword) {
         log.info("게시글 검색 요청 - 키워드: {}", keyword);
         
         Map<String, Object> response = new HashMap<>();

@@ -58,7 +58,7 @@ public class OrderDetailController {
      * 주문 상세 조회 (ID별)
      */
     @GetMapping("/{orderDetailId}")
-    public ResponseEntity<Map<String, Object>> getOrderDetailById(@PathVariable Integer orderDetailId) {
+    public ResponseEntity<Map<String, Object>> getOrderDetailById(@PathVariable("orderDetailId") Integer orderDetailId) {
         log.info("=== 주문 상세 조회 API 호출 - ID: {} ===", orderDetailId);
         
         Map<String, Object> response = new HashMap<>();
@@ -89,7 +89,7 @@ public class OrderDetailController {
      * 주문별 상세 목록 조회
      */
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<Map<String, Object>> getOrderDetailsByOrderId(@PathVariable Integer orderId) {
+    public ResponseEntity<Map<String, Object>> getOrderDetailsByOrderId(@PathVariable("orderId") Integer orderId) {
         log.info("=== 주문별 상세 목록 조회 API 호출 - 주문ID: {} ===", orderId);
         
         Map<String, Object> response = new HashMap<>();
@@ -115,7 +115,7 @@ public class OrderDetailController {
      * 회원별 주문 상세 조회
      */
     @GetMapping("/member/{memberNum}")
-    public ResponseEntity<Map<String, Object>> getOrderDetailsByMemberNum(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> getOrderDetailsByMemberNum(@PathVariable("memberNum") Integer memberNum) {
         log.info("=== 회원별 주문 상세 조회 API 호출 - 회원번호: {} ===", memberNum);
         
         Map<String, Object> response = new HashMap<>();
@@ -141,7 +141,7 @@ public class OrderDetailController {
      * 상품별 주문 상세 조회
      */
     @GetMapping("/product/{productId}")
-    public ResponseEntity<Map<String, Object>> getOrderDetailsByProductId(@PathVariable Integer productId) {
+    public ResponseEntity<Map<String, Object>> getOrderDetailsByProductId(@PathVariable("productId") Integer productId) {
         log.info("=== 상품별 주문 상세 조회 API 호출 - 상품ID: {} ===", productId);
         
         Map<String, Object> response = new HashMap<>();
@@ -168,7 +168,7 @@ public class OrderDetailController {
      * 가게별 주문 상세 조회
      */
     @GetMapping("/store/{storeId}")
-    public ResponseEntity<Map<String, Object>> getOrderDetailsByStoreId(@PathVariable Integer storeId) {
+    public ResponseEntity<Map<String, Object>> getOrderDetailsByStoreId(@PathVariable("storeId") Integer storeId) {
         log.info("=== 가게별 주문 상세 조회 API 호출 - 가게ID: {} ===", storeId);
         
         Map<String, Object> response = new HashMap<>();
@@ -222,7 +222,7 @@ public class OrderDetailController {
      */
     @PutMapping("/{orderDetailId}/quantity")
     public ResponseEntity<Map<String, Object>> updateOrderQuantity(
-            @PathVariable Integer orderDetailId,
+            @PathVariable("orderDetailId") Integer orderDetailId,
             @RequestBody Map<String, Integer> quantityData) {
         log.info("=== 주문 상세 수량 수정 API 호출 - ID: {} ===", orderDetailId);
         
@@ -256,7 +256,7 @@ public class OrderDetailController {
      */
     @PutMapping("/{orderDetailId}/price")
     public ResponseEntity<Map<String, Object>> updateOrderPrice(
-            @PathVariable Integer orderDetailId,
+            @PathVariable("orderDetailId") Integer orderDetailId,
             @RequestBody Map<String, String> priceData) {
         log.info("=== 주문 상세 가격 수정 API 호출 - ID: {} ===", orderDetailId);
         
@@ -291,7 +291,7 @@ public class OrderDetailController {
      */
     @PutMapping("/{orderDetailId}/cancel-request")
     public ResponseEntity<Map<String, Object>> requestCancel(
-            @PathVariable Integer orderDetailId,
+            @PathVariable("orderDetailId") Integer orderDetailId,
             @RequestBody Map<String, String> cancelData) {
         log.info("=== 취소 요청 API 호출 - ID: {} ===", orderDetailId);
         
@@ -323,9 +323,9 @@ public class OrderDetailController {
     /**
      * 취소 상태 수정 (관리자용)
      */
-    @PutMapping("/{orderDetailId}/cancel-status")
+    @PatchMapping("/{orderDetailId}/cancel-status")
     public ResponseEntity<Map<String, Object>> updateCancelStatus(
-            @PathVariable Integer orderDetailId,
+            @PathVariable("orderDetailId") Integer orderDetailId,
             @RequestBody Map<String, String> statusData) {
         log.info("=== 취소 상태 수정 API 호출 - ID: {} ===", orderDetailId);
         
@@ -358,7 +358,7 @@ public class OrderDetailController {
      * 주문 상세 삭제 (관리자용)
      */
     @DeleteMapping("/{orderDetailId}")
-    public ResponseEntity<Map<String, Object>> deleteOrderDetail(@PathVariable Integer orderDetailId) {
+    public ResponseEntity<Map<String, Object>> deleteOrderDetail(@PathVariable("orderDetailId") Integer orderDetailId) {
         log.info("=== 주문 상세 삭제 API 호출 - ID: {} ===", orderDetailId);
         
         Map<String, Object> response = new HashMap<>();
@@ -415,7 +415,7 @@ public class OrderDetailController {
      * 취소 상태별 조회
      */
     @GetMapping("/cancel-status/{cancelStatus}")
-    public ResponseEntity<Map<String, Object>> getOrderDetailsByCancelStatus(@PathVariable String cancelStatus) {
+    public ResponseEntity<Map<String, Object>> getOrderDetailsByCancelStatus(@PathVariable("cancelStatus") String cancelStatus) {
         log.info("=== 취소 상태별 조회 API 호출 - 상태: {} ===", cancelStatus);
         
         Map<String, Object> response = new HashMap<>();
@@ -442,7 +442,7 @@ public class OrderDetailController {
      * 주문 상세 검색
      */
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> searchOrderDetails(@RequestParam String keyword) {
+    public ResponseEntity<Map<String, Object>> searchOrderDetails(@RequestParam("keyword") String keyword) {
         log.info("=== 주문 상세 검색 API 호출 - 키워드: {} ===", keyword);
         
         Map<String, Object> response = new HashMap<>();
@@ -495,8 +495,8 @@ public class OrderDetailController {
      */
     @GetMapping("/date-range")
     public ResponseEntity<Map<String, Object>> getOrderDetailsByDateRange(
-            @RequestParam String startDate,
-            @RequestParam String endDate) {
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
         log.info("=== 기간별 주문 상세 조회 API 호출 - 기간: {} ~ {} ===", startDate, endDate);
         
         Map<String, Object> response = new HashMap<>();

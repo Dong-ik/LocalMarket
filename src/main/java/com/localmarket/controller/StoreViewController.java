@@ -163,7 +163,7 @@ public class StoreViewController {
      * GET /stores/{storeId}
      */
     @GetMapping("/{storeId}")
-    public String storeDetail(@PathVariable Integer storeId, Model model) {
+    public String storeDetail(@PathVariable("storeId") Integer storeId, Model model) {
         try {
             log.info("가게 상세 페이지 요청 - storeId: {}", storeId);
             

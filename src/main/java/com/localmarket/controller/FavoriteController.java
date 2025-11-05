@@ -32,8 +32,8 @@ public class FavoriteController {
     /**
      * 특정 관심 조회
      */
-    @GetMapping("/{favoriteId}")
-    public ResponseEntity<Favorite> getFavoriteById(@PathVariable Integer favoriteId) {
+    @GetMapping("/{favoriteId:[0-9]+}")
+    public ResponseEntity<Favorite> getFavoriteById(@PathVariable("favoriteId") Integer favoriteId) {
         Favorite favorite = favoriteService.getFavoriteById(favoriteId);
         if (favorite != null) {
             return ResponseEntity.ok(favorite);
@@ -63,8 +63,8 @@ public class FavoriteController {
     /**
      * 관심 수정
      */
-    @PutMapping("/{favoriteId}")
-    public ResponseEntity<Map<String, Object>> updateFavorite(@PathVariable Integer favoriteId, @RequestBody Favorite favorite) {
+    @PutMapping("/{favoriteId:[0-9]+}")
+    public ResponseEntity<Map<String, Object>> updateFavorite(@PathVariable("favoriteId") Integer favoriteId, @RequestBody Favorite favorite) {
         Map<String, Object> response = new HashMap<>();
         
         favorite.setFavoriteId(favoriteId);
@@ -84,8 +84,8 @@ public class FavoriteController {
     /**
      * 관심 삭제
      */
-    @DeleteMapping("/{favoriteId}")
-    public ResponseEntity<Map<String, Object>> deleteFavorite(@PathVariable Integer favoriteId) {
+    @DeleteMapping("/{favoriteId:[0-9]+}")
+    public ResponseEntity<Map<String, Object>> deleteFavorite(@PathVariable("favoriteId") Integer favoriteId) {
         Map<String, Object> response = new HashMap<>();
         
         boolean result = favoriteService.deleteFavorite(favoriteId);
@@ -104,7 +104,7 @@ public class FavoriteController {
      * 회원별 관심 목록 조회
      */
     @GetMapping("/member/{memberNum}")
-    public ResponseEntity<List<Favorite>> getFavoritesByMember(@PathVariable Integer memberNum) {
+    public ResponseEntity<List<Favorite>> getFavoritesByMember(@PathVariable("memberNum") Integer memberNum) {
         List<Favorite> favorites = favoriteService.getFavoritesByMember(memberNum);
         if (favorites != null) {
             return ResponseEntity.ok(favorites);
@@ -116,7 +116,7 @@ public class FavoriteController {
      * 타입별 관심 목록 조회
      */
     @GetMapping("/member/{memberNum}/type/{targetType}")
-    public ResponseEntity<List<Favorite>> getFavoritesByType(@PathVariable Integer memberNum, @PathVariable String targetType) {
+    public ResponseEntity<List<Favorite>> getFavoritesByType(@PathVariable("memberNum") Integer memberNum, @PathVariable("targetType") String targetType) {
         List<Favorite> favorites = favoriteService.getFavoritesByType(memberNum, targetType);
         if (favorites != null) {
             return ResponseEntity.ok(favorites);
@@ -128,7 +128,7 @@ public class FavoriteController {
      * 회원별 시장 관심 목록 조회 (조인)
      */
     @GetMapping("/member/{memberNum}/markets")
-    public ResponseEntity<List<Favorite>> getMarketFavorites(@PathVariable Integer memberNum) {
+    public ResponseEntity<List<Favorite>> getMarketFavorites(@PathVariable("memberNum") Integer memberNum) {
         List<Favorite> favorites = favoriteService.getMarketFavorites(memberNum);
         if (favorites != null) {
             return ResponseEntity.ok(favorites);
@@ -140,7 +140,7 @@ public class FavoriteController {
      * 회원별 가게 관심 목록 조회 (조인)
      */
     @GetMapping("/member/{memberNum}/stores")
-    public ResponseEntity<List<Favorite>> getStoreFavorites(@PathVariable Integer memberNum) {
+    public ResponseEntity<List<Favorite>> getStoreFavorites(@PathVariable("memberNum") Integer memberNum) {
         List<Favorite> favorites = favoriteService.getStoreFavorites(memberNum);
         if (favorites != null) {
             return ResponseEntity.ok(favorites);
@@ -152,9 +152,9 @@ public class FavoriteController {
      * 관심 등록/해제 토글
      */
     @PostMapping("/toggle")
-    public ResponseEntity<Map<String, Object>> toggleFavorite(@RequestParam Integer memberNum, 
-                                                            @RequestParam String targetType, 
-                                                            @RequestParam Integer targetId) {
+    public ResponseEntity<Map<String, Object>> toggleFavorite(@RequestParam("memberNum") Integer memberNum, 
+                                                            @RequestParam("targetType") String targetType, 
+                                                            @RequestParam("targetId") Integer targetId) {
         Map<String, Object> response = new HashMap<>();
         
         boolean wasFavorite = favoriteService.isFavorite(memberNum, targetType, targetId);
@@ -176,9 +176,9 @@ public class FavoriteController {
      * 관심 등록 여부 확인
      */
     @GetMapping("/check")
-    public ResponseEntity<Map<String, Object>> checkFavorite(@RequestParam Integer memberNum, 
-                                                           @RequestParam String targetType, 
-                                                           @RequestParam Integer targetId) {
+    public ResponseEntity<Map<String, Object>> checkFavorite(@RequestParam("memberNum") Integer memberNum, 
+                                                           @RequestParam("targetType") String targetType, 
+                                                           @RequestParam("targetId") Integer targetId) {
         Map<String, Object> response = new HashMap<>();
         
         boolean isFavorite = favoriteService.isFavorite(memberNum, targetType, targetId);
@@ -191,7 +191,7 @@ public class FavoriteController {
      * 회원별 관심 개수 조회
      */
     @GetMapping("/member/{memberNum}/count")
-    public ResponseEntity<Map<String, Object>> getFavoriteCountByMember(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> getFavoriteCountByMember(@PathVariable("memberNum") Integer memberNum) {
         Map<String, Object> response = new HashMap<>();
         
         int count = favoriteService.getFavoriteCountByMember(memberNum);
@@ -205,8 +205,8 @@ public class FavoriteController {
      * 대상별 관심 개수 조회
      */
     @GetMapping("/target/count")
-    public ResponseEntity<Map<String, Object>> getFavoriteCountByTarget(@RequestParam String targetType, 
-                                                                      @RequestParam Integer targetId) {
+    public ResponseEntity<Map<String, Object>> getFavoriteCountByTarget(@RequestParam("targetType") String targetType, 
+                                                                      @RequestParam("targetId") Integer targetId) {
         Map<String, Object> response = new HashMap<>();
         
         int count = favoriteService.getFavoriteCountByTarget(targetType, targetId);

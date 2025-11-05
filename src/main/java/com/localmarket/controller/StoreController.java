@@ -84,7 +84,7 @@ public class StoreController {
      * GET /api/stores/{storeId}
      */
     @GetMapping("/{storeId}")
-    public ResponseEntity<Map<String, Object>> getStoreById(@PathVariable Integer storeId) {
+    public ResponseEntity<Map<String, Object>> getStoreById(@PathVariable("storeId") Integer storeId) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -138,7 +138,7 @@ public class StoreController {
      * GET /api/stores/market/{marketId}
      */
     @GetMapping("/market/{marketId}")
-    public ResponseEntity<Map<String, Object>> getStoresByMarket(@PathVariable Integer marketId) {
+    public ResponseEntity<Map<String, Object>> getStoresByMarket(@PathVariable("marketId") Integer marketId) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -164,7 +164,7 @@ public class StoreController {
      * GET /api/stores/seller/{memberNum}
      */
     @GetMapping("/seller/{memberNum}")
-    public ResponseEntity<Map<String, Object>> getStoresBySeller(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> getStoresBySeller(@PathVariable("memberNum") Integer memberNum) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -190,7 +190,7 @@ public class StoreController {
      * GET /api/stores/category/{category}
      */
     @GetMapping("/category/{category}")
-    public ResponseEntity<Map<String, Object>> getStoresByCategory(@PathVariable String category) {
+    public ResponseEntity<Map<String, Object>> getStoresByCategory(@PathVariable("category") String category) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -214,7 +214,7 @@ public class StoreController {
      * GET /api/stores/search?name={storeName}
      */
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> searchStores(@RequestParam String name) {
+    public ResponseEntity<Map<String, Object>> searchStores(@RequestParam("name") String name) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -245,7 +245,7 @@ public class StoreController {
      * PUT /api/stores/{storeId}
      */
     @PutMapping("/{storeId}")
-    public ResponseEntity<Map<String, Object>> updateStore(@PathVariable Integer storeId, 
+    public ResponseEntity<Map<String, Object>> updateStore(@PathVariable("storeId") Integer storeId, 
                                                           @RequestBody StoreDto storeDto) {
         Map<String, Object> response = new HashMap<>();
         
@@ -293,7 +293,7 @@ public class StoreController {
      * DELETE /api/stores/{storeId}
      */
     @DeleteMapping("/{storeId}")
-    public ResponseEntity<Map<String, Object>> deleteStore(@PathVariable Integer storeId) {
+    public ResponseEntity<Map<String, Object>> deleteStore(@PathVariable("storeId") Integer storeId) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -360,7 +360,7 @@ public class StoreController {
      * GET /api/stores/market/{marketId}/paging?page={page}&size={size}
      */
     @GetMapping("/market/{marketId}/paging")
-    public ResponseEntity<Map<String, Object>> getStoresByMarketWithPaging(@PathVariable Integer marketId,
+    public ResponseEntity<Map<String, Object>> getStoresByMarketWithPaging(@PathVariable("marketId") Integer marketId,
                                                                           @RequestParam(name = "page", defaultValue = "1") int page,
                                                                           @RequestParam(name = "size", defaultValue = "10") int size) {
         Map<String, Object> response = new HashMap<>();
@@ -392,8 +392,8 @@ public class StoreController {
      * GET /api/stores/check-duplicate?name={storeName}&marketId={marketId}
      */
     @GetMapping("/check-duplicate")
-    public ResponseEntity<Map<String, Object>> checkStoreDuplicate(@RequestParam String name,
-                                                                  @RequestParam Integer marketId) {
+    public ResponseEntity<Map<String, Object>> checkStoreDuplicate(@RequestParam("name") String name,
+                                                                  @RequestParam("marketId") Integer marketId) {
         Map<String, Object> response = new HashMap<>();
         
         try {

@@ -51,7 +51,7 @@ public class ProductController {
     
     // 상품 조회 (ID로)
     @GetMapping("/{productId}")
-    public ResponseEntity<Map<String, Object>> getProduct(@PathVariable Integer productId) {
+    public ResponseEntity<Map<String, Object>> getProduct(@PathVariable("productId") Integer productId) {
         Map<String, Object> response = new HashMap<>();
         try {
             log.info("상품 조회 요청 - ID: {}", productId);
@@ -101,7 +101,7 @@ public class ProductController {
     
     // 가게별 상품 목록 조회
     @GetMapping("/store/{storeId}")
-    public ResponseEntity<Map<String, Object>> getProductsByStore(@PathVariable Integer storeId) {
+    public ResponseEntity<Map<String, Object>> getProductsByStore(@PathVariable("storeId") Integer storeId) {
         Map<String, Object> response = new HashMap<>();
         try {
             log.info("가게별 상품 목록 조회 요청 - 가게 ID: {}", storeId);
@@ -126,7 +126,7 @@ public class ProductController {
     
     // 상품명으로 검색
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> searchProducts(@RequestParam String keyword) {
+    public ResponseEntity<Map<String, Object>> searchProducts(@RequestParam("keyword") String keyword) {
         Map<String, Object> response = new HashMap<>();
         try {
             log.info("상품 검색 요청 - 키워드: {}", keyword);
@@ -178,7 +178,7 @@ public class ProductController {
     // 상품 수정
     @PutMapping("/{productId}")
     public ResponseEntity<Map<String, Object>> updateProduct(
-            @PathVariable Integer productId, 
+            @PathVariable("productId") Integer productId, 
             @RequestBody Product product) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -207,7 +207,7 @@ public class ProductController {
     
     // 상품 삭제
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Map<String, Object>> deleteProduct(@PathVariable Integer productId) {
+    public ResponseEntity<Map<String, Object>> deleteProduct(@PathVariable("productId") Integer productId) {
         Map<String, Object> response = new HashMap<>();
         try {
             log.info("상품 삭제 요청 - ID: {}", productId);
@@ -234,8 +234,8 @@ public class ProductController {
     // 상품 재고 수량 업데이트
     @PatchMapping("/{productId}/amount")
     public ResponseEntity<Map<String, Object>> updateProductAmount(
-            @PathVariable Integer productId, 
-            @RequestParam Integer amount) {
+            @PathVariable("productId") Integer productId, 
+            @RequestParam("amount") Integer amount) {
         Map<String, Object> response = new HashMap<>();
         try {
             log.info("상품 재고 수량 업데이트 요청 - ID: {}, 수량: {}", productId, amount);

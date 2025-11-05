@@ -42,12 +42,12 @@ public class MarketViewController {
      * GET /markets/{marketId}
      */
     @GetMapping("/{marketId}")
-    public String marketDetail(@PathVariable("marketId") String marketId, Model model) {
+    public String marketDetail(@PathVariable("marketId") Integer marketId, Model model) {
         try {
             log.info("시장 상세 페이지 요청 - marketId: {}", marketId);
             
             // 시장 정보 조회 (찜 개수 포함)
-            Market market = marketService.getMarketWithFavoriteById(marketId);
+            Market market = marketService.getMarketWithFavoriteById(String.valueOf(marketId));
             
             if (market == null) {
                 log.warn("시장을 찾을 수 없음 - marketId: {}", marketId);
