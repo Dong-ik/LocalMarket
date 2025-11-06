@@ -11,7 +11,7 @@
         <result property="hitCnt" column="hit_cnt"/>
         <result property="likeCnt" column="like_cnt"/>
         <result property="writeDate" column="write_date"/>
-        <result property="updateDate" column="update_date"/>
+        <result property="updatedDate" column="updated_date"/>
         <result property="memberNum" column="member_num"/>
         <!-- JOIN 된거-->
         <result property="memberName" column="member_name"/>

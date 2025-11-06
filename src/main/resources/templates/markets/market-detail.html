@@ -45,14 +45,6 @@
         <!-- 시장 헤더 영역 -->
         <section class="market-header">
             <div class="container">
-                <div class="breadcrumb">
-                    <a th:href="@{/}">홈</a>
-                    <i class="fas fa-chevron-right"></i>
-                    <a th:href="@{/markets}">전통시장</a>
-                    <i class="fas fa-chevron-right"></i>
-                    <span th:text="${market.marketName}">시장명</span>
-                </div>
-                
                 <div class="market-title-section">
                     <div class="market-title-left">
                         <h1 class="market-name" th:text="${market.marketName}">시장명</h1>

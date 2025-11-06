@@ -11,7 +11,7 @@
     <!-- 헤더 -->
     <div class="board-header">
         <h1 class="board-title" th:text="${pageTitle != null ? pageTitle : '게시판'}">게시판</h1>
-        <div class="board-actions">
+        <div class="board-actions" th:if="${session.memberNum != null}">
             <a th:href="@{/boards/write}" class="write-btn">
                 <i class="fas fa-pen"></i> 글쓰기
             </a>

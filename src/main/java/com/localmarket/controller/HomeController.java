@@ -1,8 +1,10 @@
 package com.localmarket.controller;
 
+import com.localmarket.domain.Board;
 import com.localmarket.domain.Market;
 import com.localmarket.domain.Product;
 import com.localmarket.domain.Store;
+import com.localmarket.service.BoardService;
 import com.localmarket.service.MarketService;
 import com.localmarket.service.ProductService;
 import com.localmarket.service.StoreService;
@@ -27,6 +29,7 @@ public class HomeController {
     private final MarketService marketService;
     private final StoreService storeService;
     private final ProductService productService;
+    private final BoardService boardService;
 
     /**
      * 메인 페이지
@@ -86,6 +89,27 @@ public class HomeController {
                 model.addAttribute("newProducts", new ArrayList<>());
             }
             
+            // 최신 게시글 (상위 3개) - 최신순
+            List<Board> allBoards = boardService.getAllBoards();
+            log.info(">>> 전체 게시글 조회 결과: {} 개", allBoards != null ? allBoards.size() : "null");
+            
+            if (allBoards != null && !allBoards.isEmpty()) {
+                allBoards.sort((b1, b2) -> {
+                    if (b1.getWriteDate() == null && b2.getWriteDate() == null) return 0;
+                    if (b1.getWriteDate() == null) return 1;
+                    if (b2.getWriteDate() == null) return -1;
+                    return b2.getWriteDate().compareTo(b1.getWriteDate());
+                });
+                List<Board> recentBoards = allBoards.size() > 3 ? allBoards.subList(0, 3) : allBoards;
+                log.info(">>> 최신 게시글 필터링 결과: {} 개", recentBoards.size());
+                recentBoards.forEach(b -> log.info("  - 게시글: {} (ID: {}, 작성자: {}, 작성일: {})", 
+                    b.getBoardTitle(), b.getBoardId(), b.getMemberName(), b.getWriteDate()));
+                model.addAttribute("recentBoards", recentBoards);
+            } else {
+                log.warn(">>> 조회된 게시글이 없습니다!");
+                model.addAttribute("recentBoards", new ArrayList<>());
+            }
+            
             log.info("=== 메인 페이지 데이터 조회 완료 ===");
             
         } catch (Exception e) {
@@ -94,6 +118,7 @@ public class HomeController {
             model.addAttribute("popularMarkets", new ArrayList<>());
             model.addAttribute("popularStores", new ArrayList<>());
             model.addAttribute("newProducts", new ArrayList<>());
+            model.addAttribute("recentBoards", new ArrayList<>());
         }
         
         return "index";

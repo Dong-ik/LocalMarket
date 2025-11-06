@@ -123,7 +123,8 @@
                             </div>
                             
                             <div class="store-actions">
-                                <button class="btn-link" onclick="event.stopPropagation();">
+                                <button class="btn-link" 
+                                        th:onclick="'event.stopPropagation(); location.href=\'/products?storeId=' + ${store.storeId} + '\''">
                                     <i class="fas fa-shopping-cart"></i> 상품보기
                                 </button>
                             </div>

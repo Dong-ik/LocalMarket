@@ -19,9 +19,6 @@ public interface NoticeMapper {
     // 전체 공지사항 목록 조회
     List<Notice> selectAllNotices();
     
-    // 회원별 공지사항 조회
-    List<Notice> selectNoticesByMemberNum(@Param("memberNum") Integer memberNum);
-    
     // 공지사항 수정
     int updateNotice(NoticeDto noticeDto);
     

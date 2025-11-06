@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 - LocalMarket</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 헤더 Include -->
+    <div th:replace="~{common/header}"></div>
+    
+    <!-- Notice CSS를 header 이후에 로드하여 우선순위 확보 -->
+    <link rel="stylesheet" th:href="@{/css/notice.css}">
+
+    <!-- 공지사항 목록 컨테이너 -->
+    <div class="notice-container">
+        <!-- 공지사항 헤더 -->
+        <div class="notice-header">
+            <h1 class="notice-title">공지사항</h1>
+            <!-- 관리자만 보이는 작성 버튼 -->
+            <div class="board-actions" th:if="${isAdmin}">
+                <a th:href="@{/notices/write}" class="write-btn">
+                    <i class="fas fa-pen"></i> 글쓰기
+                </a>
+            </div>
+        </div>
+
+        <!-- 검색 영역 -->
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" 
+                   placeholder="제목으로 검색하세요" th:value="${searchKeyword}">
+            <button class="search-btn" onclick="searchNotices()">
+                <i class="fas fa-search"></i> 검색
+            </button>
+        </div>
+
+        <!-- 공지사항 목록 테이블 -->
+        <div class="notice-list">
+            <table class="notice-table">
+                <thead>
+                    <tr>
+                        <th class="col-id">번호</th>
+                        <th class="col-title">제목</th>
+                        <th class="col-date">작성일</th>
+                        <th class="col-hit">조회수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="notice, stat : ${notices}" 
+                        th:onclick="'location.href=\'/notices/' + ${notice.noticeId} + '\''">
+                        <td class="col-id" th:text="${notice.noticeId}">1</td>
+                        <td class="col-title">
+                            <div class="title-wrapper">
+                                <span class="notice-badge">공지</span>
+                                <span class="title-text" th:text="${notice.noticeTitle}">공지사항 제목</span>
+                                <!-- 새 글 뱃지 (오늘 작성된 글) -->
+                                <span class="badge-new" 
+                                      th:if="${notice.writeDate != null && #temporals.format(notice.writeDate, 'yyyy-MM-dd') == #temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                                    NEW
+                                </span>
+                            </div>
+                        </td>
+                        <td class="col-date" th:text="${#temporals.format(notice.writeDate, 'yyyy-MM-dd')}">2025-01-01</td>
+                        <td class="col-hit">
+                            <i class="fas fa-eye"></i>
+                            <span th:text="${notice.hitCnt}">0</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 공지사항 없을 때 -->
+            <div class="no-notice" th:if="${notices == null || notices.isEmpty()}">
+                <i class="fas fa-inbox"></i>
+                <p>등록된 공지사항이 없습니다.</p>
+            </div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination" th:if="${totalPages != null && totalPages > 1}">
+            <button class="pagination-btn" 
+                    th:disabled="${currentPage == 1}"
+                    th:onclick="'changePage(' + ${currentPage - 1} + ')'">
+                <i class="fas fa-chevron-left"></i> 이전
+            </button>
+            
+            <div class="pagination-numbers">
+                <span th:each="pageNum : ${#numbers.sequence(1, totalPages)}" 
+                      th:if="${pageNum >= currentPage - 2 && pageNum <= currentPage + 2}">
+                    <button class="pagination-number" 
+                            th:classappend="${pageNum == currentPage} ? 'active' : ''"
+                            th:onclick="'changePage(' + ${pageNum} + ')'"
+                            th:text="${pageNum}">1</button>
+                </span>
+            </div>
+            
+            <button class="pagination-btn" 
+                    th:disabled="${currentPage == totalPages}"
+                    th:onclick="'changePage(' + ${currentPage + 1} + ')'">
+                다음 <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 푸터 Include -->
+    <div th:replace="~{common/footer}"></div>
+
+    <script>
+        // 검색 기능
+        function searchNotices() {
+            const searchInput = document.getElementById('searchInput');
+            const keyword = searchInput.value.trim();
+            
+            if (keyword) {
+                window.location.href = `/notices?search=${encodeURIComponent(keyword)}`;
+            } else {
+                window.location.href = '/notices';
+            }
+        }
+        
+        // Enter 키로 검색
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchNotices();
+            }
+        });
+        
+        // 페이지 변경
+        function changePage(page) {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('page', page);
+            window.location.href = currentUrl.toString();
+        }
+        
+        // 테이블 행 호버 효과
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('.notice-table tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

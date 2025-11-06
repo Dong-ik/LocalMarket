@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${notice.noticeTitle} + ' - 공지사항'">공지사항</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 헤더 Include -->
+    <div th:replace="~{common/header}"></div>
+    
+    <!-- Notice CSS를 header 이후에 로드하여 우선순위 확보 -->
+    <link rel="stylesheet" th:href="@{/css/notice.css}">
+
+    <!-- 공지사항 상세 컨테이너 -->
+    <div class="notice-detail-container">
+        <!-- 공지사항 상세 카드 -->
+        <div class="notice-detail-card">
+            <!-- 공지사항 헤더 -->
+            <div class="detail-header">
+                <h1 class="detail-title" th:text="${notice.noticeTitle}">공지사항 제목</h1>
+                
+                <div class="detail-meta">
+                    <div class="meta-left">
+                        <span class="meta-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span th:text="${#temporals.format(notice.writeDate, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</span>
+                        </span>
+                        <span class="meta-item" th:if="${notice.updatedDate != null}">
+                            <i class="fas fa-edit"></i>
+                            <span>수정: </span>
+                            <span th:text="${#temporals.format(notice.updatedDate, 'yyyy-MM-dd HH:mm')}">2025-01-02 12:00</span>
+                        </span>
+                    </div>
+                    
+                    <div class="meta-right">
+                        <span class="meta-item">
+                            <i class="fas fa-eye"></i>
+                            <span th:text="${notice.hitCnt}">0</span>
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-heart"></i>
+                            <span th:text="${notice.likeCnt}">0</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 구분선 -->
+            <div class="divider"></div>
+
+            <!-- 공지사항 내용 -->
+            <div class="detail-content">
+                <div class="content-text" th:utext="${#strings.replace(notice.noticeContent, T(System).lineSeparator(), '<br>')}">
+                    공지사항 내용입니다.
+                </div>
+            </div>
+
+            <!-- 통계 정보 -->
+            <div class="detail-stats">
+                <div class="stat-box">
+                    <i class="fas fa-eye"></i>
+                    <div class="stat-info">
+                        <span class="stat-label">조회수</span>
+                        <span class="stat-value" th:text="${notice.hitCnt}">0</span>
+                    </div>
+                </div>
+                
+                <div class="stat-box">
+                    <i class="fas fa-heart"></i>
+                    <div class="stat-info">
+                        <span class="stat-label">좋아요</span>
+                        <span class="stat-value" th:text="${notice.likeCnt}">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 액션 버튼들 -->
+            <div class="detail-actions">
+                <div class="actions-left">
+                    <a th:href="@{/notices}" class="btn-secondary">
+                        <i class="fas fa-list"></i> 목록
+                    </a>
+                </div>
+                
+                <!-- 관리자만 보이는 수정/삭제 버튼 -->
+                <div class="actions-right" th:if="${isAdmin}">
+                    <a th:href="@{/notices/{id}/edit(id=${notice.noticeId})}" class="btn-primary">
+                        <i class="fas fa-edit"></i> 수정
+                    </a>
+                    <button onclick="deleteNotice()" class="btn-danger">
+                        <i class="fas fa-trash"></i> 삭제
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 푸터 Include -->
+    <div th:replace="~{common/footer}"></div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const noticeId = /*[[${notice.noticeId}]]*/ 0;
+        const isAdmin = /*[[${isAdmin}]]*/ false;
+        /*]]>*/
+        
+        // 공지사항 삭제
+        function deleteNotice() {
+            if (!confirm('이 공지사항을 삭제하시겠습니까?')) {
+                return;
+            }
+            
+            if (!isAdmin) {
+                alert('관리자만 삭제할 수 있습니다.');
+                return;
+            }
+            
+            fetch(`/api/notices/${noticeId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('공지사항이 삭제되었습니다.');
+                    window.location.href = '/notices';
+                } else {
+                    alert('삭제 실패: ' + (data.message || '알 수 없는 오류'));
+                }
+            })
+            .catch(error => {
+                console.error('삭제 중 오류:', error);
+                alert('삭제 중 오류가 발생했습니다.');
+            });
+        }
+    </script>
+</body>
+</html>

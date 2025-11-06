@@ -55,39 +55,6 @@
     </div>
 </section>
 
-<!-- 신상품 섹션 -->
-<section class="section">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">신선한 상품</h2>
-            <p class="section-subtitle">전통시장에서 직접 공급하는 신선하고 품질 좋은 상품들</p>
-        </div>
-        
-        <div class="product-grid">
-            <div th:each="product : ${newProducts}" class="product-card">
-                <div class="product-image" 
-                     th:style="${product.productFilename != null ? 'background-image: url(/images/products/' + product.productFilename + ')' : 'background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)'}">
-                </div>
-                <div class="product-info">
-                    <h4 class="product-name" th:text="${product.productName}">한우 등심</h4>
-                    <div class="product-price" th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA') + '원'}">45,000원</div>
-                    <div class="product-store" th:if="${product.productAmount != null}">
-                        재고: <span th:text="${product.productAmount + '개'}">10개</span>
-                    </div>
-                    <button class="add-to-cart" 
-                            th:onclick="'location.href=\'/products/' + ${product.productId} + '\''">
-                        상세보기
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="text-center mt-40">
-            <a th:href="@{/products}" class="btn-secondary">더 많은 상품 보기</a>
-        </div>
-    </div>
-</section>
-
 <!-- 인기 가게 섹션 -->
 <section class="section">
     <div class="container">
@@ -128,6 +95,39 @@
     </div>
 </section>
 
+<!-- 신상품 섹션 -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">신선한 상품</h2>
+            <p class="section-subtitle">전통시장에서 직접 공급하는 신선하고 품질 좋은 상품들</p>
+        </div>
+        
+        <div class="product-grid">
+            <div th:each="product : ${newProducts}" class="product-card">
+                <div class="product-image" 
+                     th:style="${product.productFilename != null ? 'background-image: url(/images/products/' + product.productFilename + ')' : 'background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)'}">
+                </div>
+                <div class="product-info">
+                    <h4 class="product-name" th:text="${product.productName}">한우 등심</h4>
+                    <div class="product-price" th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA') + '원'}">45,000원</div>
+                    <div class="product-store" th:if="${product.productAmount != null}">
+                        재고: <span th:text="${product.productAmount + '개'}">10개</span>
+                    </div>
+                    <button class="add-to-cart" 
+                            th:onclick="'location.href=\'/products/' + ${product.productId} + '\''">
+                        상세보기
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-40">
+            <a th:href="@{/products}" class="btn-secondary">더 많은 상품 보기</a>
+        </div>
+    </div>
+</section>
+
 <!-- 최신 게시글 섹션 -->
 <section class="section">
     <div class="container">
@@ -140,19 +140,27 @@
             <div th:each="board : ${recentBoards}" class="card" 
                  th:onclick="'location.href=\'/boards/' + ${board.boardId} + '\''">
                 <div class="card-content">
-                    <h3 class="card-title" th:text="${board.boardTitle}">남대문시장 후기</h3>
-                    <p class="card-description" th:text="${#strings.abbreviate(board.boardContent, 100)}">
-                        정말 좋은 시장이에요. 신선한 재료도 많고 가격도 합리적입니다...
+                    <h3 class="card-title" th:text="${board.boardTitle}">게시글 제목</h3>
+                    <p class="card-description" 
+                       th:text="${#strings.length(board.boardContent) > 100 ? #strings.substring(board.boardContent, 0, 100) + '...' : board.boardContent}">
+                        게시글 내용 미리보기...
                     </p>
                     <div class="card-meta">
                         <span class="card-location">
                             <i class="fas fa-user"></i>
-                            <span th:text="${board.memberName}">김고객</span>
+                            <span th:text="${board.memberName ?: '익명'}">작성자</span>
+                        </span>
+                        <span class="card-location" th:if="${board.storeName != null}">
+                            <i class="fas fa-store"></i>
+                            <span th:text="${board.storeName}">가게명</span>
                         </span>
                         <span class="post-stats">
-                            <i class="fas fa-eye"></i> <span th:text="${board.hitCnt}">45</span>
-                            <i class="fas fa-heart" style="margin-left: 10px;"></i> <span th:text="${board.likeCnt}">8</span>
+                            <i class="fas fa-eye"></i> <span th:text="${board.hitCnt ?: 0}">0</span>
+                            <i class="fas fa-heart" style="margin-left: 10px;"></i> <span th:text="${board.likeCnt ?: 0}">0</span>
                         </span>
+                    </div>
+                    <div class="card-meta" style="margin-top: 10px; color: #95a5a6; font-size: 0.85rem;">
+                        <span th:text="${#temporals.format(board.writeDate, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</span>
                     </div>
                 </div>
             </div>

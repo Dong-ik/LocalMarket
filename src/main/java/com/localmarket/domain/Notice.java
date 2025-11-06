@@ -14,4 +14,7 @@ public class Notice {
     private LocalDateTime writeDate;
     private LocalDateTime updatedDate;
     private int memberNum;
+    
+    // 조인용 필드
+    private String memberName;  // 작성자 이름
 }

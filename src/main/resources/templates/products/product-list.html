@@ -109,9 +109,9 @@
                         </div>
                         
                         <div class="product-info">
-                            <div class="info-item" th:if="${product.storeId != null}">
+                            <div class="info-item" th:if="${product.storeName != null}">
                                 <i class="fas fa-store"></i>
-                                <span>가게 ID: [[${product.storeId}]]</span>
+                                <span th:text="${product.storeName}">가게명</span>
                             </div>
                         </div>
                         
