@@ -37,7 +37,6 @@ public class BoardTestRunner implements CommandLineRunner {
             testSearchBoards();
             testGetPopularBoards();
             testGetRecentBoards();
-            testGetBoardStatistics();
             testDeleteBoard();
             
         } catch (Exception e) {
@@ -282,24 +281,8 @@ public class BoardTestRunner implements CommandLineRunner {
         }
     }
     
-    private void testGetBoardStatistics() {
-        log.info("\n=== 12. 게시글 통계 조회 테스트 ===");
-        
-        try {
-            List<Board> statistics = boardService.getBoardStatistics();
-            log.info("게시글 통계 데이터 개수: {}", statistics.size());
-            
-            for (Board stat : statistics) {
-                log.info("- 회원: {} ({}), 게시글 수: {}, 총 좋아요: {}", 
-                    stat.getMemberName(), stat.getMemberNum(), stat.getHitCnt(), stat.getLikeCnt());
-            }
-        } catch (Exception e) {
-            log.error("게시글 통계 조회 테스트 중 오류: ", e);
-        }
-    }
-    
     private void testDeleteBoard() {
-        log.info("\n=== 13. 게시글 삭제 테스트 ===");
+        log.info("\n=== 12. 게시글 삭제 테스트 ===");
         
         try {
             // 새 게시글 생성 후 삭제 테스트

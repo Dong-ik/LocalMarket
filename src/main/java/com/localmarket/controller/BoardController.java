@@ -357,28 +357,4 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    
-    /**
-     * 게시글 통계 조회
-     * GET /api/boards/statistics
-     */
-    @GetMapping("/statistics")
-    public ResponseEntity<Map<String, Object>> getBoardStatistics() {
-        log.info("게시글 통계 조회 요청");
-        
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            List<Board> statistics = boardService.getBoardStatistics();
-            
-            response.put("success", true);
-            response.put("statistics", statistics);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("게시글 통계 조회 중 오류 발생: ", e);
-            response.put("success", false);
-            response.put("message", "게시글 통계 조회 중 오류가 발생했습니다: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
 }

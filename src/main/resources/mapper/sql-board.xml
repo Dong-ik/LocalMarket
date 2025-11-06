@@ -189,20 +189,6 @@
         ORDER BY b.write_date DESC
     </select>
 
-    <!-- 게시글 통계 (회원별 작성 수) -->
-    <select id="selectBoardStatistics" resultMap="BoardResultMap">
-        SELECT 
-            b.member_num,
-            m.member_name,
-            COUNT(b.board_id) as hit_cnt,
-            SUM(b.like_cnt) as like_cnt,
-            MAX(b.write_date) as write_date
-        FROM board b
-        INNER JOIN member m ON b.member_num = m.member_num
-        GROUP BY b.member_num, m.member_name
-        ORDER BY COUNT(b.board_id) DESC
-    </select>
-
     <!-- 인기 게시글 조회 (좋아요 많은 순) -->
     <select id="selectPopularBoards" resultMap="BoardResultMap">
         SELECT 

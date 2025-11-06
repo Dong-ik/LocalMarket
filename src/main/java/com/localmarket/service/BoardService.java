@@ -40,9 +40,6 @@ public interface BoardService {
     // 게시글 검색
     List<Board> searchBoards(String keyword);
     
-    // 게시글 통계
-    List<Board> getBoardStatistics();
-    
     // 인기 게시글 조회
     List<Board> getPopularBoards(int limit);
     

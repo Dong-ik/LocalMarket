@@ -131,9 +131,7 @@
                             </a>
                             <div class="dropdown-menu">
                                 <a th:href="@{/boards}">전체 게시글</a>
-                                <a th:href="@{/boards/reviews}">상품 리뷰</a>
-                                <a th:href="@{/boards/market-reviews}">시장 후기</a>
-                                <a th:href="@{/boards/popular}">인기 게시글</a>
+                                <a th:href="@{/notice}">인기 게시글</a>
                             </div>
                         </li>
                         <li class="nav-item" th:if="${session.member != null and session.member.memberGrade == 'SELLER'}">

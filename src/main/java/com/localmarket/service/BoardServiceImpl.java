@@ -186,20 +186,6 @@ public class BoardServiceImpl implements BoardService {
     }
     
     @Override
-    public List<Board> getBoardStatistics() {
-        log.info("=== 게시글 통계 조회 시작 ===");
-        
-        try {
-            List<Board> statistics = boardMapper.selectBoardStatistics();
-            log.info("게시글 통계 조회 완료");
-            return statistics;
-        } catch (Exception e) {
-            log.error("게시글 통계 조회 실패: ", e);
-            throw e;
-        }
-    }
-    
-    @Override
     public List<Board> getPopularBoards(int limit) {
         log.info("=== 인기 게시글 조회 시작 ===");
         log.info("조회 개수: {}", limit);

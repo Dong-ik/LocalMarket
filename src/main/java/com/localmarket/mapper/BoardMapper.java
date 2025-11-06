@@ -40,9 +40,6 @@ public interface BoardMapper {
     // 게시글 검색 (제목 + 내용)
     List<Board> searchBoards(@Param("keyword") String keyword);
     
-    // 게시글 통계 (회원별 작성 수)
-    List<Board> selectBoardStatistics();
-    
     // 인기 게시글 조회 (좋아요 많은 순)
     List<Board> selectPopularBoards(@Param("limit") int limit);
     
