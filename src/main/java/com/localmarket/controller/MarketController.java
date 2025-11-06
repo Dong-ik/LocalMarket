@@ -279,12 +279,10 @@ public class MarketController {
             
             String line;
             boolean isFirstLine = true;
-            String[] headers = null;
             
             while ((line = reader.readLine()) != null) {
                 if (isFirstLine) {
-                    // 첫 번째 줄은 헤더로 처리
-                    headers = line.split(",");
+                    // 첫 번째 줄은 헤더로 건너뛰기
                     isFirstLine = false;
                     continue;
                 }

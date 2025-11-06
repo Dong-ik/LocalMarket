@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.localmarket.mapper.BoardMapper">
+
+    <!-- Notice 결과 매핑 -->
+    <resultMap id="NoticeResultMap" type="com.localmarket.domain.Notice">
+        <id property="noticeId" column="notice_id"/>
+        <result property="noticeTitle" column="notice_title"/>
+        <result property="noticeContent" column="notice_content"/>
+        <result property="hitCnt" column="hit_cnt"/>
+        <result property="likeCnt" column="like_cnt"/>
+        <result property="writeDate" column="write_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="memberNum" column="member_num"/>
+        <!-- JOIN 된거-->
+        <result property="memberName" column="member_name"/>
+    </resultMap>
+
+    <!-- 공지사항 등록 -->
+    <insert id="insertNotice" parameterType="com.localmarket.dto.NoticeDto" useGeneratedKeys="true" keyProperty="noticeId">
+        INSERT INTO notice (
+            notice_title,
+            notice_content,
+            hit_cnt,
+            like_cnt,
+            member_num,
+            write_date,
+            updated_date
+        ) VALUES (
+            #{noticeTitle},
+            #{noticeContent},
+            COALESCE(#{hitCnt}, 0),
+            COALESCE(#{likeCnt}, 0),
+            #{memberNum},
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <!-- 공지사항 조회 (ID별) -->
+    <select id="selectNoticeById" resultMap="NoticeResultMap">
+        SELECT 
+            n.notice_id,
+            n.notice_title,
+            n.notice_content,
+            n.hit_cnt,
+            n.like_cnt,
+            n.write_date,
+            n.updated_date,
+            n.member_num,
+            m.member_name
+        FROM notice n
+        INNER JOIN member m ON n.member_num = m.member_num
+        WHERE n.notice_id = #{noticeId}
+    </select>
+
+    <!-- 전체 공지사항 목록 조회 -->
+    <select id="selectAllNotices" resultMap="NoticeResultMap">
+        SELECT 
+            n.notice_id,
+            n.notice_title,
+            n.notice_content,
+            n.hit_cnt,
+            n.like_cnt,
+            n.write_date,
+            n.updated_date,
+            n.member_num,
+            m.member_name
+        FROM notice n
+        INNER JOIN member m ON n.member_num = m.member_num
+        ORDER BY n.write_date DESC
+    </select>
+
+    <!-- 공지사항 수정 -->
+    <update id="updateNotice" parameterType="com.localmarket.dto.NoticeDto">
+        UPDATE notice 
+        SET
+            notice_title = #{noticeTitle},
+            notice_content = #{noticeContent},
+            updated_date = NOW()
+        WHERE notice_id = #{noticeId}
+    </update>
+
+    <!-- 공지사항 삭제 -->
+    <delete id="deleteNotice">
+        DELETE FROM notice
+        WHERE notice_id = #{noticeId}
+    </delete>
+
+    <!-- 조회수 증가 -->
+    <update id="updateHitCount">
+        UPDATE notice
+        SET hit_cnt = hit_cnt + 1
+        WHERE notice_id = #{noticeId}
+    </update>
+
+    <!-- 좋아요 수 증가/감소 -->
+    <update id="updateLikeCount">
+        UPDATE notice
+        SET like_cnt = GREATEST(0, like_cnt + #{increment})
+        WHERE notice_id = #{noticeId}
+    </update>
+
+    <!-- 공지사항 검색 (제목 + 내용) -->
+    <select id="searchNotices" resultMap="NoticeResultMap">
+        SELECT 
+            n.notice_id,
+            n.notice_title,
+            n.notice_content,
+            n.hit_cnt,
+            n.like_cnt,
+            n.write_date,
+            n.updated_date,
+            n.member_num,
+            m.member_name
+        FROM notice n
+        INNER JOIN member m ON n.member_num = m.member_num
+        WHERE n.notice_title LIKE CONCAT('%', #{keyword}, '%')
+           OR n.notice_content LIKE CONCAT('%', #{keyword}, '%')
+           OR m.member_name LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY n.write_date DESC
+    </select>
+
+    <!-- 최신 공지사항 조회 -->
+    <select id="selectRecentNotices" resultMap="NoticeResultMap">
+        SELECT 
+            n.notice_id,
+            n.notice_title,
+            n.notice_content,
+            n.hit_cnt,
+            n.like_cnt,
+            n.write_date,
+            n.updated_date,
+            n.member_num,
+            m.member_name
+        FROM notice n
+        INNER JOIN member m ON n.member_num = m.member_num
+        ORDER BY n.write_date DESC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

@@ -19,14 +19,22 @@ public class BoardServiceImpl implements BoardService {
     private final BoardMapper boardMapper;
     
     @Override
-    public int createBoard(BoardDto boardDto) {
+    public Board createBoard(BoardDto boardDto) {
         log.info("=== 게시글 등록 시작 ===");
         log.info("게시글 정보: {}", boardDto);
         
         try {
             int result = boardMapper.insertBoard(boardDto);
-            log.info("게시글 등록 완료. 게시글ID: {}", boardDto.getBoardId());
-            return result;
+            
+            if (result > 0) {
+                // 생성된 게시글 조회 (조회수 증가 없이)
+                Board createdBoard = boardMapper.selectBoardById(boardDto.getBoardId());
+                log.info("게시글 등록 완료. 게시글ID: {}", boardDto.getBoardId());
+                return createdBoard;
+            } else {
+                log.error("게시글 등록 실패 - 영향받은 행 수: 0");
+                throw new RuntimeException("게시글 등록에 실패했습니다.");
+            }
         } catch (Exception e) {
             log.error("게시글 등록 실패: ", e);
             throw e;

@@ -32,13 +32,13 @@ public class BoardController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            int result = boardService.createBoard(boardDto);
+            Board createdBoard = boardService.createBoard(boardDto);
             
-            if (result > 0) {
+            if (createdBoard != null) {
                 response.put("success", true);
                 response.put("message", "게시글이 성공적으로 등록되었습니다.");
-                response.put("boardId", boardDto.getBoardId());
-                return ResponseEntity.ok(response);
+                response.put("board", createdBoard);
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
             } else {
                 response.put("success", false);
                 response.put("message", "게시글 등록에 실패했습니다.");

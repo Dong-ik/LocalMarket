@@ -59,9 +59,10 @@ public class BoardTestRunner implements CommandLineRunner {
             boardDto1.setMemberNum(6);
             boardDto1.setStoreId(null); // 일반 게시글
             
-            int result1 = boardService.createBoard(boardDto1);
+            Board createdBoard1 = boardService.createBoard(boardDto1);
             log.info("첫 번째 게시글 등록 결과: {} (생성된 게시글ID: {})", 
-                result1 > 0 ? "성공" : "실패", boardDto1.getBoardId());
+                createdBoard1 != null ? "성공" : "실패", 
+                createdBoard1 != null ? createdBoard1.getBoardId() : "없음");
             
             // 두 번째 게시글 등록 (가게 리뷰)
             BoardDto boardDto2 = new BoardDto();
@@ -70,9 +71,10 @@ public class BoardTestRunner implements CommandLineRunner {
             boardDto2.setMemberNum(6);
             boardDto2.setStoreId(3); // 가게 리뷰
             
-            int result2 = boardService.createBoard(boardDto2);
+            Board createdBoard2 = boardService.createBoard(boardDto2);
             log.info("두 번째 게시글 등록 결과: {} (생성된 게시글ID: {})", 
-                result2 > 0 ? "성공" : "실패", boardDto2.getBoardId());
+                createdBoard2 != null ? "성공" : "실패", 
+                createdBoard2 != null ? createdBoard2.getBoardId() : "없음");
             
             // 세 번째 게시글 등록
             BoardDto boardDto3 = new BoardDto();
@@ -81,9 +83,10 @@ public class BoardTestRunner implements CommandLineRunner {
             boardDto3.setMemberNum(6);
             boardDto3.setStoreId(null);
             
-            int result3 = boardService.createBoard(boardDto3);
+            Board createdBoard3 = boardService.createBoard(boardDto3);
             log.info("세 번째 게시글 등록 결과: {} (생성된 게시글ID: {})", 
-                result3 > 0 ? "성공" : "실패", boardDto3.getBoardId());
+                createdBoard3 != null ? "성공" : "실패", 
+                createdBoard3 != null ? createdBoard3.getBoardId() : "없음");
             
         } catch (Exception e) {
             log.error("게시글 등록 테스트 중 오류: ", e);
@@ -291,16 +294,17 @@ public class BoardTestRunner implements CommandLineRunner {
             deleteTestBoard.setBoardContent("이 게시글은 삭제 테스트용입니다.");
             deleteTestBoard.setMemberNum(6);
             
-            int createResult = boardService.createBoard(deleteTestBoard);
+            Board createdBoard = boardService.createBoard(deleteTestBoard);
             log.info("삭제 테스트용 게시글 생성 결과: {} (게시글ID: {})", 
-                createResult > 0 ? "성공" : "실패", deleteTestBoard.getBoardId());
+                createdBoard != null ? "성공" : "실패", 
+                createdBoard != null ? createdBoard.getBoardId() : "없음");
             
-            if (createResult > 0) {
-                int deleteResult = boardService.deleteBoard(deleteTestBoard.getBoardId());
+            if (createdBoard != null) {
+                int deleteResult = boardService.deleteBoard(createdBoard.getBoardId());
                 log.info("게시글 삭제 결과: {}", deleteResult > 0 ? "성공" : "실패");
                 
                 // 삭제 확인
-                Board deletedBoard = boardService.getBoardByIdWithoutHit(deleteTestBoard.getBoardId());
+                Board deletedBoard = boardService.getBoardByIdWithoutHit(createdBoard.getBoardId());
                 log.info("삭제 확인: {}", deletedBoard == null ? "삭제됨" : "삭제되지 않음");
             }
         } catch (Exception e) {

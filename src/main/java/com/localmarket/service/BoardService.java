@@ -8,7 +8,7 @@ import java.util.List;
 public interface BoardService {
     
     // 게시글 등록
-    int createBoard(BoardDto boardDto);
+    Board createBoard(BoardDto boardDto);
     
     // 게시글 조회 (ID별) - 조회수 증가 포함
     Board getBoardById(Integer boardId);
