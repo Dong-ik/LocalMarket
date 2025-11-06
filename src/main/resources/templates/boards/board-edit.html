@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<!-- 게시판 스타일 -->
+<link rel="stylesheet" th:href="@{/css/board.css}">
+
+<div class="board-edit-container">
+    <!-- 에러 메시지 -->
+    <div th:if="${error}" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${error}">오류 메시지</span>
+    </div>
+    
+    <!-- 헤더 -->
+    <div class="page-header">
+        <h1 class="page-title">게시글 수정</h1>
+    </div>
+    
+    <!-- 수정 폼 -->
+    <div th:if="${board != null}" class="edit-card">
+        <!-- 안내 메시지 -->
+        <div class="info-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p><strong>수정 안내</strong></p>
+            <p>• 게시글을 수정하면 수정 시간이 표시됩니다.</p>
+            <p>• 가게 리뷰로 작성된 경우 가게 정보는 변경할 수 없습니다.</p>
+        </div>
+        
+        <form id="boardForm">
+            <!-- 제목 -->
+            <div class="form-group">
+                <label class="form-label">
+                    제목<span class="required">*</span>
+                </label>
+                <input type="text" 
+                       id="boardTitle" 
+                       class="form-control" 
+                       th:value="${board.boardTitle}"
+                       placeholder="제목을 입력하세요 (최대 100자)"
+                       maxlength="100"
+                       required>
+                <div class="char-counter">
+                    <span id="titleCount" th:text="${#strings.length(board.boardTitle)}">0</span> / 100
+                </div>
+                <div class="error-message" id="titleError">제목을 입력해주세요.</div>
+            </div>
+            
+            <!-- 가게 정보 (읽기 전용) -->
+            <div class="form-group" th:if="${board.storeName != null}">
+                <label class="form-label">
+                    가게 정보
+                </label>
+                <input type="text" 
+                       class="form-control" 
+                       th:value="${board.storeName}"
+                       readonly
+                       style="background-color: #f8f9fa; cursor: not-allowed;">
+                <div class="help-text">
+                    <i class="fas fa-lock"></i>
+                    가게 정보는 수정할 수 없습니다.
+                </div>
+            </div>
+            
+            <!-- 내용 -->
+            <div class="form-group">
+                <label class="form-label">
+                    내용<span class="required">*</span>
+                </label>
+                <textarea id="boardContent" 
+                          class="form-control" 
+                          placeholder="내용을 입력하세요 (최대 2000자)"
+                          maxlength="2000"
+                          required
+                          th:text="${board.boardContent}"></textarea>
+                <div class="char-counter">
+                    <span id="contentCount" th:text="${#strings.length(board.boardContent)}">0</span> / 2000
+                </div>
+                <div class="error-message" id="contentError">내용을 입력해주세요.</div>
+            </div>
+            
+            <!-- 작성 정보 -->
+            <div class="form-group" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                <div style="display: flex; gap: 30px; font-size: 14px; color: #495057;">
+                    <div>
+                        <i class="fas fa-user" style="color: #667eea;"></i>
+                        작성자: <strong th:text="${board.memberName}">작성자명</strong>
+                    </div>
+                    <div>
+                        <i class="fas fa-calendar-alt" style="color: #667eea;"></i>
+                        작성일: <strong th:text="${#temporals.format(board.writeDate, 'yyyy-MM-dd HH:mm')}">2024-01-01</strong>
+                    </div>
+                    <div th:if="${board.updatedDate != null}">
+                        <i class="fas fa-edit" style="color: #667eea;"></i>
+                        최근 수정: <strong th:text="${#temporals.format(board.updatedDate, 'yyyy-MM-dd HH:mm')}">2024-01-01</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 버튼 -->
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="history.back()">
+                    <i class="fas fa-times"></i> 취소
+                </button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-check"></i> 수정 완료
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- 게시글 없음 -->
+    <div th:if="${board == null and error == null}" class="edit-card" style="text-align: center; padding: 60px;">
+        <i class="fas fa-exclamation-circle" style="font-size: 48px; color: #868e96; margin-bottom: 20px;"></i>
+        <p style="color: #868e96; font-size: 18px;">게시글을 찾을 수 없습니다.</p>
+        <a th:href="@{/boards}" class="btn btn-primary" style="margin-top: 20px;">목록으로 돌아가기</a>
+    </div>
+</div>
+
+<!-- 푸터 Include -->
+<div th:replace="~{common/footer}"></div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const boardId = /*[[${board != null ? board.boardId : null}]]*/ null;
+    /*]]>*/
+    
+    if (boardId) {
+        // 글자 수 카운터
+        const titleInput = document.getElementById('boardTitle');
+        const contentInput = document.getElementById('boardContent');
+        const titleCount = document.getElementById('titleCount');
+        const contentCount = document.getElementById('contentCount');
+        
+        titleInput.addEventListener('input', function() {
+            titleCount.textContent = this.value.length;
+            if (this.value.trim()) {
+                this.classList.remove('error');
+                document.getElementById('titleError').style.display = 'none';
+            }
+        });
+        
+        contentInput.addEventListener('input', function() {
+            contentCount.textContent = this.value.length;
+            if (this.value.trim()) {
+                this.classList.remove('error');
+                document.getElementById('contentError').style.display = 'none';
+            }
+        });
+        
+        // 폼 제출
+        document.getElementById('boardForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const title = titleInput.value.trim();
+            const content = contentInput.value.trim();
+            
+            // 유효성 검사
+            let hasError = false;
+            
+            if (!title) {
+                titleInput.classList.add('error');
+                document.getElementById('titleError').style.display = 'block';
+                hasError = true;
+            }
+            
+            if (!content) {
+                contentInput.classList.add('error');
+                document.getElementById('contentError').style.display = 'block';
+                hasError = true;
+            }
+            
+            if (hasError) {
+                return;
+            }
+            
+            // 데이터 준비
+            const boardData = {
+                boardTitle: title,
+                boardContent: content
+            };
+            
+            // 전송
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 수정 중...';
+            
+            try {
+                const response = await fetch(`/api/boards/${boardId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(boardData)
+                });
+                
+                if (response.ok) {
+                    alert('게시글이 수정되었습니다.');
+                    location.href = `/boards/${boardId}`;
+                } else {
+                    const error = await response.json();
+                    alert(error.message || '게시글 수정 중 오류가 발생했습니다.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> 수정 완료';
+                }
+            } catch (error) {
+                console.error('수정 오류:', error);
+                alert('게시글 수정 중 오류가 발생했습니다.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> 수정 완료';
+            }
+        });
+    }
+</script>
+
+</html>

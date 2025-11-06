@@ -1,8 +1,11 @@
 package com.localmarket.controller;
 
 import com.localmarket.dto.BoardDto;
+import com.localmarket.dto.CommentDto;
 import com.localmarket.domain.Board;
+import com.localmarket.domain.Comment;
 import com.localmarket.service.BoardService;
+import com.localmarket.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,7 @@ import java.util.Map;
 public class BoardController {
     
     private final BoardService boardService;
+    private final CommentService commentService;
     
     /**
      * 게시글 등록
@@ -354,6 +358,89 @@ public class BoardController {
             log.error("최신 게시글 조회 중 오류 발생: ", e);
             response.put("success", false);
             response.put("message", "최신 게시글 조회 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    /**
+     * 게시글별 댓글 목록 조회
+     * GET /api/boards/{boardId}/comments
+     */
+    @GetMapping("/{boardId}/comments")
+    public ResponseEntity<List<Comment>> getCommentsByBoardId(@PathVariable("boardId") Integer boardId) {
+        log.info("게시글별 댓글 조회 요청 - 게시글ID: {}", boardId);
+        
+        try {
+            List<Comment> comments = commentService.getCommentsByBoardId(boardId);
+            return ResponseEntity.ok(comments);
+        } catch (Exception e) {
+            log.error("댓글 목록 조회 중 오류 발생: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
+     * 댓글 등록
+     * POST /api/boards/{boardId}/comments
+     */
+    @PostMapping("/{boardId}/comments")
+    public ResponseEntity<Map<String, Object>> createComment(
+            @PathVariable("boardId") Integer boardId,
+            @RequestBody CommentDto commentDto) {
+        log.info("댓글 등록 요청 - 게시글ID: {}, 댓글: {}", boardId, commentDto);
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            commentDto.setBoardId(boardId);
+            int result = commentService.createComment(commentDto);
+            
+            if (result > 0) {
+                response.put("success", true);
+                response.put("message", "댓글이 성공적으로 등록되었습니다.");
+                response.put("commentId", commentDto.getCommentId());
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "댓글 등록에 실패했습니다.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        } catch (Exception e) {
+            log.error("댓글 등록 중 오류 발생: ", e);
+            response.put("success", false);
+            response.put("message", "댓글 등록 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    /**
+     * 댓글 삭제
+     * DELETE /api/boards/{boardId}/comments/{commentId}
+     */
+    @DeleteMapping("/{boardId}/comments/{commentId}")
+    public ResponseEntity<Map<String, Object>> deleteComment(
+            @PathVariable("boardId") Integer boardId,
+            @PathVariable("commentId") Integer commentId) {
+        log.info("댓글 삭제 요청 - 게시글ID: {}, 댓글ID: {}", boardId, commentId);
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            int result = commentService.deleteComment(commentId);
+            
+            if (result > 0) {
+                response.put("success", true);
+                response.put("message", "댓글이 성공적으로 삭제되었습니다.");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "댓글 삭제에 실패했습니다.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        } catch (Exception e) {
+            log.error("댓글 삭제 중 오류 발생: ", e);
+            response.put("success", false);
+            response.put("message", "댓글 삭제 중 오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

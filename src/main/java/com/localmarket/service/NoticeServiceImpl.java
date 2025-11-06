@@ -48,7 +48,7 @@ public class NoticeServiceImpl implements NoticeService {
         
         try {
             // 조회수 증가
-            noticeMapper.updateHitCount(noticeId);
+            noticeMapper.updateNoticeHitCount(noticeId);
             
             Notice notice = noticeMapper.selectNoticeById(noticeId);
             log.info("공지사항 조회 완료: {}", notice != null ? notice.getNoticeTitle() : "공지사항을 찾을 수 없음");
@@ -125,7 +125,7 @@ public class NoticeServiceImpl implements NoticeService {
         log.info("공지사항ID: {}", noticeId);
         
         try {
-            int result = noticeMapper.updateLikeCount(noticeId, 1);
+            int result = noticeMapper.updateNoticeLikeCount(noticeId, 1);
             log.info("좋아요 증가 완료. 영향받은 행 수: {}", result);
             return result;
         } catch (Exception e) {
@@ -140,7 +140,7 @@ public class NoticeServiceImpl implements NoticeService {
         log.info("공지사항ID: {}", noticeId);
         
         try {
-            int result = noticeMapper.updateLikeCount(noticeId, -1);
+            int result = noticeMapper.updateNoticeLikeCount(noticeId, -1);
             log.info("좋아요 감소 완료. 영향받은 행 수: {}", result);
             return result;
         } catch (Exception e) {

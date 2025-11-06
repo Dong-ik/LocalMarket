@@ -71,6 +71,8 @@ public class MemberController {
         Member member = memberService.loginMember(memberId, password);
         if (member != null) {
             session.setAttribute("member", member); // 헤더에서 사용하는 이름과 동일하게 저장
+            session.setAttribute("memberNum", member.getMemberNum());
+            session.setAttribute("memberId", member.getMemberId());
             return "redirect:/";
         } else {
             model.addAttribute("error", "로그인에 실패했습니다.");

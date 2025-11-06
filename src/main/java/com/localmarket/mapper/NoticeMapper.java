@@ -29,10 +29,10 @@ public interface NoticeMapper {
     int deleteNotice(@Param("noticeId") Integer noticeId);
     
     // 조회수 증가
-    int updateHitCount(@Param("noticeId") Integer noticeId);
+    int updateNoticeHitCount(@Param("noticeId") Integer noticeId);
     
     // 좋아요 수 증가
-    int updateLikeCount(@Param("noticeId") Integer noticeId, @Param("increment") int increment);
+    int updateNoticeLikeCount(@Param("noticeId") Integer noticeId, @Param("increment") int increment);
     
     // 공지사항 검색 (제목 + 내용)
     List<Notice> searchNotices(@Param("keyword") String keyword);

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<!-- 게시판 스타일 -->
+<link rel="stylesheet" th:href="@{/css/board.css}">
+
+<div class="board-container">
+    <!-- 헤더 -->
+    <div class="board-header">
+        <h1 class="board-title" th:text="${pageTitle != null ? pageTitle : '게시판'}">게시판</h1>
+        <div class="board-actions">
+            <a th:href="@{/boards/write}" class="write-btn">
+                <i class="fas fa-pen"></i> 글쓰기
+            </a>
+        </div>
+    </div>
+    
+    <!-- 검색 -->
+    <div class="search-box">
+        <input type="text" class="search-input" id="searchInput" 
+               th:value="${search}" placeholder="제목, 내용, 작성자로 검색하세요">
+        <button class="search-btn" onclick="searchBoards()">
+            <i class="fas fa-search"></i> 검색
+        </button>
+    </div>
+    
+    <!-- 게시글 테이블 -->
+    <div th:if="${boards != null and !boards.isEmpty()}">
+        <table class="board-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px; text-align: center;">번호</th>
+                    <th>제목</th>
+                    <th style="width: 120px; text-align: center;">작성자</th>
+                    <th style="width: 120px; text-align: center;">작성일</th>
+                    <th style="width: 120px; text-align: center;">조회/좋아요</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="board, stat : ${boards}" 
+                    th:onclick="'location.href=\'/boards/' + ${board.boardId} + '\''">
+                    <td class="board-number" th:text="${stat.count}">1</td>
+                    <td class="board-title-cell">
+                        <span th:text="${board.boardTitle}">게시글 제목</span>
+                        <!-- NEW 배지 (오늘 작성된 글) -->
+                        <span class="badge-new" 
+                              th:if="${board.writeDate != null and #temporals.format(board.writeDate, 'yyyy-MM-dd') == #temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                            NEW
+                        </span>
+                        <!-- HOT 배지 (좋아요 10개 이상) -->
+                        <span class="badge-hot" 
+                              th:if="${board.likeCnt != null and board.likeCnt >= 10}">
+                            HOT
+                        </span>
+                        <!-- 가게 리뷰인 경우 -->
+                        <span th:if="${board.storeName != null}" 
+                              style="color: #667eea; font-size: 12px; margin-left: 5px;">
+                            [<span th:text="${board.storeName}">가게명</span>]
+                        </span>
+                    </td>
+                    <td class="board-author" style="text-align: center;" 
+                        th:text="${board.memberName}">작성자</td>
+                    <td class="board-date" style="text-align: center;" 
+                        th:text="${#temporals.format(board.writeDate, 'yyyy-MM-dd')}">2024-01-01</td>
+                    <td style="text-align: center;">
+                        <div class="board-stats" style="justify-content: center;">
+                            <span class="stat-item">
+                                <i class="fas fa-eye"></i>
+                                <span th:text="${board.hitCnt ?: 0}">0</span>
+                            </span>
+                            <span class="stat-item">
+                                <i class="fas fa-heart" style="color: #ff6b6b;"></i>
+                                <span th:text="${board.likeCnt ?: 0}">0</span>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- 데이터 없음 -->
+    <div th:if="${boards == null or boards.isEmpty()}" class="no-data">
+        <i class="fas fa-clipboard-list"></i>
+        <p>등록된 게시글이 없습니다.</p>
+        <p th:if="${search != null and !search.isEmpty()}" style="margin-top: 10px;">
+            '<span th:text="${search}"></span>' 검색 결과가 없습니다.
+        </p>
+    </div>
+</div>
+
+<!-- 푸터 Include -->
+<div th:replace="~{common/footer}"></div>
+
+<script>
+    function searchBoards() {
+        const keyword = document.getElementById('searchInput').value.trim();
+        if (keyword) {
+            location.href = '/boards?search=' + encodeURIComponent(keyword);
+        } else {
+            location.href = '/boards';
+        }
+    }
+    
+    // 엔터키로 검색
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchBoards();
+        }
+    });
+</script>
+
+</html>

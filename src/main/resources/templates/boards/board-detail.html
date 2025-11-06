@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<!-- 게시판 스타일 -->
+<link rel="stylesheet" th:href="@{/css/board.css}">
+
+<div class="board-detail-container">
+    <!-- 에러 메시지 -->
+    <div th:if="${error}" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${error}">오류 메시지</span>
+    </div>
+    
+    <!-- 게시글 상세 -->
+    <div th:if="${board != null}" class="board-detail-card">
+        <!-- 가게 정보 (리뷰인 경우) -->
+        <div th:if="${board.storeName != null}" class="store-info">
+            <i class="fas fa-store"></i>
+            <div class="store-details">
+                <h3 th:text="${board.storeName}">가게명</h3>
+                <p>이 게시글은 가게 리뷰입니다</p>
+            </div>
+        </div>
+        
+        <!-- 헤더 -->
+        <div class="board-header">
+            <h1 class="board-title" th:text="${board.boardTitle}">게시글 제목</h1>
+            <div class="board-meta">
+                <div class="meta-item">
+                    <i class="fas fa-user"></i>
+                    <span th:text="${board.memberName}">작성자</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span th:text="${#temporals.format(board.writeDate, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
+                </div>
+                <div class="meta-item" th:if="${board.updatedDate != null}">
+                    <i class="fas fa-edit"></i>
+                    <span>수정: <span th:text="${#temporals.format(board.updatedDate, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 본문 -->
+        <div class="board-content" th:utext="${#strings.replace(#strings.replace(board.boardContent, '\n', '&lt;br&gt;'), '\r', '')}">
+            게시글 내용
+        </div>
+        
+        <!-- 좋아요 버튼 -->
+        <button id="likeBtn" class="like-btn" onclick="toggleLike()">
+            <i class="fas fa-heart"></i>
+            <div>
+                <span id="likeCount" th:text="${board.likeCnt ?: 0}">0</span>
+                <div class="stat-label">좋아요</div>
+            </div>
+        </button>
+        
+        <!-- 통계 -->
+        <div class="board-stats">
+            <div class="stat-box">
+                <div class="stat-icon">👁️</div>
+                <div class="stat-value" th:text="${board.hitCnt ?: 0}">0</div>
+                <div class="stat-label">조회수</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">❤️</div>
+                <div class="stat-value" th:text="${board.likeCnt ?: 0}">0</div>
+                <div class="stat-label">좋아요</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">💬</div>
+                <div class="stat-value" th:text="${commentCount ?: 0}">0</div>
+                <div class="stat-label">댓글</div>
+            </div>
+        </div>
+        
+        <!-- 액션 버튼 -->
+        <div class="action-buttons">
+            <div class="btn-group">
+                <a th:href="@{/boards}" class="btn btn-outline">
+                    <i class="fas fa-list"></i> 목록
+                </a>
+            </div>
+            <div class="btn-group" th:if="${isOwner}">
+                <a th:href="@{'/boards/' + ${board.boardId} + '/edit'}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> 수정
+                </a>
+                <button onclick="deleteBoard()" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> 삭제
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 댓글 섹션 -->
+    <div th:if="${board != null}" class="comments-section">
+        <h2 class="comments-title">
+            <i class="fas fa-comments"></i>
+            댓글 <span class="comment-count" th:text="${commentCount ?: 0}">0</span>
+        </h2>
+        
+        <!-- 댓글 작성 폼 -->
+        <div class="comment-write-box">
+            <textarea id="commentContent" 
+                      class="comment-input" 
+                      placeholder="댓글을 입력하세요..."
+                      maxlength="500"></textarea>
+            <div class="comment-write-footer">
+                <span class="char-counter">
+                    <span id="commentCharCount">0</span> / 500
+                </span>
+                <button onclick="submitComment()" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> 댓글 작성
+                </button>
+            </div>
+        </div>
+        
+        <!-- 댓글 목록 -->
+        <div id="commentList" class="comment-list">
+            <!-- 댓글이 여기에 동적으로 로드됩니다 -->
+        </div>
+    </div>
+    
+    <!-- 게시글 없음 -->
+    <div th:if="${board == null and error == null}" class="board-detail-card" style="text-align: center; padding: 60px;">
+        <i class="fas fa-exclamation-circle" style="font-size: 48px; color: #868e96; margin-bottom: 20px;"></i>
+        <p style="color: #868e96; font-size: 18px;">게시글을 찾을 수 없습니다.</p>
+        <a th:href="@{/boards}" class="btn btn-primary" style="margin-top: 20px;">목록으로 돌아가기</a>
+    </div>
+</div>
+
+<!-- 푸터 Include -->
+<div th:replace="~{common/footer}"></div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const boardId = /*[[${board != null ? board.boardId : null}]]*/ null;
+    const memberNum = /*[[${session.memberNum}]]*/ null;
+    /*]]>*/
+    
+    // 페이지 로드 시 댓글 목록 불러오기
+    document.addEventListener('DOMContentLoaded', function() {
+        if (boardId) {
+            loadComments();
+        }
+        
+        // 댓글 글자 수 카운터
+        const commentInput = document.getElementById('commentContent');
+        if (commentInput) {
+            commentInput.addEventListener('input', function() {
+                document.getElementById('commentCharCount').textContent = this.value.length;
+            });
+        }
+    });
+    
+    // 댓글 목록 불러오기
+    async function loadComments() {
+        try {
+            const response = await fetch(`/api/boards/${boardId}/comments`);
+            
+            if (response.ok) {
+                const comments = await response.json();
+                displayComments(comments);
+            } else {
+                console.error('댓글 불러오기 실패');
+            }
+        } catch (error) {
+            console.error('댓글 불러오기 오류:', error);
+        }
+    }
+    
+    // 댓글 표시
+    function displayComments(comments) {
+        const commentList = document.getElementById('commentList');
+        
+        if (comments.length === 0) {
+            commentList.innerHTML = `
+                <div class="no-comments">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>첫 번째 댓글을 작성해보세요!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        commentList.innerHTML = comments.map(comment => `
+            <div class="comment-item" data-comment-id="${comment.commentId}">
+                <div class="comment-header">
+                    <div class="comment-author">
+                        <i class="fas fa-user-circle"></i>
+                        <span>${comment.memberName || '익명'}</span>
+                    </div>
+                    <div class="comment-meta">
+                        <span class="comment-date">${formatDate(comment.writeDate)}</span>
+                        ${memberNum && memberNum === comment.memberNum ? `
+                            <button onclick="deleteComment(${comment.commentId})" class="btn-delete-comment">
+                                <i class="fas fa-trash"></i> 삭제
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="comment-content">${escapeHtml(comment.commentContent)}</div>
+            </div>
+        `).join('');
+    }
+    
+    // 댓글 작성
+    async function submitComment() {
+        const content = document.getElementById('commentContent').value.trim();
+        
+        if (!memberNum) {
+            alert('로그인이 필요합니다.');
+            location.href = '/members/login';
+            return;
+        }
+        
+        if (!content) {
+            alert('댓글 내용을 입력해주세요.');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/boards/${boardId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    boardId: boardId,
+                    memberNum: memberNum,
+                    commentContent: content
+                })
+            });
+            
+            if (response.ok) {
+                document.getElementById('commentContent').value = '';
+                document.getElementById('commentCharCount').textContent = '0';
+                loadComments();
+                
+                // 댓글 수 업데이트
+                const countElement = document.querySelector('.comment-count');
+                if (countElement) {
+                    const currentCount = parseInt(countElement.textContent) || 0;
+                    countElement.textContent = currentCount + 1;
+                }
+                
+                // 통계의 댓글 수도 업데이트
+                const statElements = document.querySelectorAll('.stat-box .stat-value');
+                if (statElements.length >= 3) {
+                    const currentStatCount = parseInt(statElements[2].textContent) || 0;
+                    statElements[2].textContent = currentStatCount + 1;
+                }
+            } else {
+                const error = await response.json();
+                alert(error.message || '댓글 작성 중 오류가 발생했습니다.');
+            }
+        } catch (error) {
+            console.error('댓글 작성 오류:', error);
+            alert('댓글 작성 중 오류가 발생했습니다.');
+        }
+    }
+    
+    // 댓글 삭제
+    async function deleteComment(commentId) {
+        if (!confirm('댓글을 삭제하시겠습니까?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/boards/${boardId}/comments/${commentId}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                loadComments();
+                
+                // 댓글 수 업데이트
+                const countElement = document.querySelector('.comment-count');
+                if (countElement) {
+                    const currentCount = parseInt(countElement.textContent) || 0;
+                    countElement.textContent = Math.max(0, currentCount - 1);
+                }
+                
+                // 통계의 댓글 수도 업데이트
+                const statElements = document.querySelectorAll('.stat-box .stat-value');
+                if (statElements.length >= 3) {
+                    const currentStatCount = parseInt(statElements[2].textContent) || 0;
+                    statElements[2].textContent = Math.max(0, currentStatCount - 1);
+                }
+            } else {
+                const error = await response.json();
+                alert(error.message || '댓글 삭제 중 오류가 발생했습니다.');
+            }
+        } catch (error) {
+            console.error('댓글 삭제 오류:', error);
+            alert('댓글 삭제 중 오류가 발생했습니다.');
+        }
+    }
+    
+    // 날짜 포맷팅
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = now - date;
+        const diffMinutes = Math.floor(diff / 60000);
+        const diffHours = Math.floor(diff / 3600000);
+        const diffDays = Math.floor(diff / 86400000);
+        
+        if (diffMinutes < 1) return '방금 전';
+        if (diffMinutes < 60) return `${diffMinutes}분 전`;
+        if (diffHours < 24) return `${diffHours}시간 전`;
+        if (diffDays < 7) return `${diffDays}일 전`;
+        
+        return date.toLocaleDateString('ko-KR');
+    }
+    
+    // HTML 이스케이프
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML.replace(/\n/g, '<br>');
+    }
+    
+    // 좋아요 토글
+    async function toggleLike() {
+        if (!boardId) return;
+        
+        try {
+            const response = await fetch(`/api/boards/${boardId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                document.getElementById('likeCount').textContent = result.likeCnt || 0;
+                
+                const likeBtn = document.getElementById('likeBtn');
+                likeBtn.classList.toggle('liked');
+                
+                // 애니메이션 효과
+                likeBtn.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    likeBtn.style.transform = 'scale(1)';
+                }, 200);
+            } else {
+                const error = await response.json();
+                alert(error.message || '좋아요 처리 중 오류가 발생했습니다.');
+            }
+        } catch (error) {
+            console.error('좋아요 오류:', error);
+            alert('좋아요 처리 중 오류가 발생했습니다.');
+        }
+    }
+    
+    // 게시글 삭제
+    async function deleteBoard() {
+        if (!boardId) return;
+        
+        if (!confirm('정말 삭제하시겠습니까?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/boards/${boardId}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                alert('게시글이 삭제되었습니다.');
+                location.href = '/boards';
+            } else {
+                const error = await response.json();
+                alert(error.message || '삭제 중 오류가 발생했습니다.');
+            }
+        } catch (error) {
+            console.error('삭제 오류:', error);
+            alert('삭제 중 오류가 발생했습니다.');
+        }
+    }
+</script>
+
+</html>

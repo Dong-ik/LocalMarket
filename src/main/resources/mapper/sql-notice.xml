@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.localmarket.mapper.BoardMapper">
+<mapper namespace="com.localmarket.mapper.NoticeMapper">
 
     <!-- Notice 결과 매핑 -->
     <resultMap id="NoticeResultMap" type="com.localmarket.domain.Notice">
@@ -89,14 +89,14 @@
     </delete>
 
     <!-- 조회수 증가 -->
-    <update id="updateHitCount">
+    <update id="updateNoticeHitCount">
         UPDATE notice
         SET hit_cnt = hit_cnt + 1
         WHERE notice_id = #{noticeId}
     </update>
 
     <!-- 좋아요 수 증가/감소 -->
-    <update id="updateLikeCount">
+    <update id="updateNoticeLikeCount">
         UPDATE notice
         SET like_cnt = GREATEST(0, like_cnt + #{increment})
         WHERE notice_id = #{noticeId}
