@@ -54,7 +54,7 @@
 
             <!-- 공지사항 내용 -->
             <div class="detail-content">
-                <div class="content-text" th:utext="${#strings.replace(notice.noticeContent, T(System).lineSeparator(), '<br>')}">
+                <div class="content-text" th:utext="${#strings.replace(#strings.replace(notice.noticeContent, '\n', '<br>'), '\r', '')}">
                     공지사항 내용입니다.
                 </div>
             </div>
@@ -79,19 +79,19 @@
             </div>
 
             <!-- 액션 버튼들 -->
-            <div class="detail-actions">
-                <div class="actions-left">
-                    <a th:href="@{/notices}" class="btn-secondary">
+            <div class="action-buttons">
+                <div class="btn-group">
+                    <a th:href="@{/notices}" class="btn btn-outline">
                         <i class="fas fa-list"></i> 목록
                     </a>
                 </div>
                 
                 <!-- 관리자만 보이는 수정/삭제 버튼 -->
-                <div class="actions-right" th:if="${isAdmin}">
-                    <a th:href="@{/notices/{id}/edit(id=${notice.noticeId})}" class="btn-primary">
+                <div class="btn-group" th:if="${isAdmin}">
+                    <a th:href="@{/notices/{id}/edit(id=${notice.noticeId})}" class="btn btn-primary">
                         <i class="fas fa-edit"></i> 수정
                     </a>
-                    <button onclick="deleteNotice()" class="btn-danger">
+                    <button onclick="deleteNotice()" class="btn btn-danger">
                         <i class="fas fa-trash"></i> 삭제
                     </button>
                 </div>

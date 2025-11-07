@@ -2,6 +2,8 @@ package com.localmarket.controller;
 
 import com.localmarket.domain.Market;
 import com.localmarket.service.MarketService;
+import com.localmarket.service.FavoriteService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +24,7 @@ import java.util.List;
 public class MarketViewController {
     
     private final MarketService marketService;
+    private final FavoriteService favoriteService;
     
     @Value("${kakao.map.api.key}")
     private String kakaoMapApiKey;
@@ -77,10 +80,15 @@ public class MarketViewController {
             @RequestParam(name = "sort", defaultValue = "popular") String sort,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "12") int size,
+            HttpSession session,
             Model model) {
         
         try {
             log.info("시장 목록 페이지 요청 - search: {}, local: {}, sort: {}, page: {}", search, local, sort, page);
+            
+            // 로그인한 사용자 정보 가져오기
+            Integer memberNum = (Integer) session.getAttribute("memberNum");
+            
             List<Market> markets;
             // 복합 조건(검색+지역) 인기순 정렬(찜 포함)
             if ("popular".equals(sort)) {
@@ -133,6 +141,15 @@ public class MarketViewController {
             if (local != null && !local.trim().isEmpty()) {
                 model.addAttribute("selectedLocal", local);
             }
+            
+            // 로그인한 사용자의 찜 상태 설정
+            if (memberNum != null) {
+                for (Market market : markets) {
+                    boolean isFavorite = favoriteService.isFavorite(memberNum, "MARKET", market.getMarketId());
+                    market.setIsFavorite(isFavorite);
+                }
+            }
+            
             int start = (page - 1) * size;
             int end = Math.min(start + size, markets.size());
             List<Market> pagedMarkets = start < markets.size() ? markets.subList(start, end) : List.of();
@@ -142,6 +159,7 @@ public class MarketViewController {
             model.addAttribute("totalPages", totalPages);
             model.addAttribute("pageSize", size);
             model.addAttribute("totalCount", markets.size());
+            model.addAttribute("memberNum", memberNum); // 찜 기능을 위한 memberNum 전달
             return "markets/market-list"; // templates/markets/market-list.html
         } catch (Exception e) {
             log.error("시장 목록 조회 중 오류 발생: {}", e.getMessage(), e);

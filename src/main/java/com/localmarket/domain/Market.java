@@ -19,4 +19,7 @@ public class Market {
 
     // 찜 개수(통계 뷰 조인용)
     private Integer favoriteCount;
+    
+    // 현재 사용자의 찜 여부 (조회용)
+    private Boolean isFavorite;
 }

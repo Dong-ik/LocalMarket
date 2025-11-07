@@ -64,11 +64,11 @@
                 </div>
 
                 <!-- 버튼 그룹 -->
-                <div class="form-actions">
-                    <button type="button" onclick="history.back()" class="btn-cancel">
+                <div class="button-group">
+                    <a href="/notices" class="btn btn-secondary">
                         <i class="fas fa-times"></i> 취소
-                    </button>
-                    <button type="submit" class="btn-submit">
+                    </a>
+                    <button type="submit" class="btn btn-primary">
                         <i class="fas fa-check"></i> 수정 완료
                     </button>
                 </div>
@@ -132,13 +132,12 @@
             
             // 공지사항 수정 API 호출
             const noticeData = {
-                noticeId: noticeId,
                 noticeTitle: title,
                 noticeContent: content,
                 memberNum: memberNum
             };
             
-            fetch('/api/notices', {
+            fetch(`/api/notices/${noticeId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

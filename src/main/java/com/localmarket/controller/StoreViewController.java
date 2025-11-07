@@ -1,7 +1,9 @@
 package com.localmarket.controller;
 
 import com.localmarket.domain.Store;
+import com.localmarket.domain.Product;
 import com.localmarket.service.StoreService;
+import com.localmarket.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,7 @@ import java.util.List;
 public class StoreViewController {
     
     private final StoreService storeService;
+    private final ProductService productService;
     
     /**
      * 인기 가게 페이지
@@ -172,11 +175,15 @@ public class StoreViewController {
             if (store == null) {
                 log.warn("가게를 찾을 수 없음 - storeId: {}", storeId);
                 model.addAttribute("errorMessage", "가게를 찾을 수 없습니다.");
-                model.addAttribute("stores", List.of());
-                return "stores/store-list";
+                return "error/error-page";
             }
             
+            // 해당 가게의 상품 목록 조회
+            List<Product> products = productService.getProductsByStoreId(storeId);
+            log.info("가게의 상품 {} 개 조회 완료", products.size());
+            
             model.addAttribute("store", store);
+            model.addAttribute("products", products);
             
             log.info("가게 상세 페이지 렌더링 - {}", store.getStoreName());
             
@@ -185,8 +192,8 @@ public class StoreViewController {
         } catch (Exception e) {
             log.error("가게 상세 조회 중 오류 발생 - storeId: {}", storeId, e);
             model.addAttribute("errorMessage", "가게 정보를 불러오는 중 오류가 발생했습니다.");
-            model.addAttribute("stores", List.of());
-            return "stores/store-list";
+            model.addAttribute("exception", e);
+            return "error/error-page";
         }
     }
 }

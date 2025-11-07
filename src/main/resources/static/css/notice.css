@@ -461,16 +461,17 @@
    ======================================== */
 
 .btn {
-    padding: 14px 35px;
-    border-radius: 8px;
+    padding: 12px 24px;
     border: none;
-    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
     font-weight: 600;
-    font-size: 15px;
+    cursor: pointer;
     transition: all 0.3s;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
 }
 
@@ -485,6 +486,11 @@
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
+.btn-primary:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+}
+
 .btn-secondary {
     background: #6c757d;
     color: white;
@@ -493,6 +499,7 @@
 .btn-secondary:hover {
     background: #5a6268;
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
 .btn-danger {
@@ -505,24 +512,40 @@
     transform: translateY(-2px);
 }
 
-.btn-cancel {
-    background: #e9ecef;
-    color: #495057;
+.btn-outline {
+    background: white;
+    border: 2px solid #667eea;
+    color: #667eea;
 }
 
-.btn-cancel:hover {
-    background: #cbd3da;
-}
-
-.btn-submit {
+.btn-outline:hover {
     background: #667eea;
     color: white;
 }
 
-.btn-submit:hover {
-    background: #5568d3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #f1f3f5;
+}
+
+.button-group .btn {
+    padding: 12px 32px;
+    min-width: 120px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 /* ========================================
@@ -620,15 +643,6 @@
 
 .info-item i {
     color: #667eea;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 30px;
-    padding-top: 30px;
-    border-top: 1px solid #f1f3f5;
 }
 
 /* ========================================

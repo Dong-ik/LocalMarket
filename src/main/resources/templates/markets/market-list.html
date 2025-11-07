@@ -88,71 +88,47 @@
 <!-- 시장 목록 섹션 -->
 <section class="market-list-section">
     <div class="container">
-        <!-- 로딩 상태 -->
-        <div id="loadingSpinner" class="loading-spinner" style="display: none;">
-            <i class="fas fa-spinner fa-spin"></i> 로딩 중...
-        </div>
-        
-        <!-- 시장 목록 그리드 -->
         <div class="market-grid" id="marketGrid">
             <div th:each="market : ${markets}" class="market-card" 
                  th:onclick="'location.href=\'/markets/' + ${market.marketId} + '\''">
                 <div class="market-card-image" 
                      th:style="'background-image: url(/images/markets/' + ${market.marketFilename ?: 'default-market.jpg'} + ')'">
-                    <!-- 찜(좋아요) 버튼: isFavorite 미구현으로 임시 비활성화 -->
-                    <!--
+                    
+                    <!-- 찜 버튼 (항상 표시) -->
                     <button class="favorite-btn" 
-                            th:onclick="'event.stopPropagation(); toggleFavorite(\'MARKET\', ' + ${market.marketId} + ', this)'"
+                            th:onclick="'event.stopPropagation(); toggleFavorite(\'MARKET\', ' + ${market.marketId} + ', this);'"
                             th:classappend="${market.isFavorite} ? 'active' : ''">
                         <i th:class="${market.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"></i>
                     </button>
-                    -->
+                    
+                    <!-- 인기 배지 -->
                     <div class="market-badge" th:if="${market.favoriteCount != null && market.favoriteCount > 10}">
                         <i class="fas fa-fire"></i> 인기
                     </div>
                 </div>
                 
                 <div class="market-card-content">
-                    <h3 class="market-name" th:text="${market.marketName}">남대문시장</h3>
-                    
-                    <p class="market-introduce" th:text="${market.marketIntroduce ?: '전통과 현대가 어우러진 전통시장'}">
-                        전통과 현대가 어우러진 전통시장
-                    </p>
+                    <h3 class="market-name" th:text="${market.marketName}"></h3>
+                    <p class="market-introduce" th:text="${market.marketIntroduce ?: '전통과 현대가 어우러진 전통시장'}"></p>
                     
                     <div class="market-info">
                         <div class="info-item">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span th:text="${market.marketLocal}">서울특별시</span>
+                            <span th:text="${market.marketLocal}"></span>
                         </div>
-                        <div class="info-item" th:if="${market.marketAddress != null}">
+                        <div class="info-item" th:if="${market.marketAddress}">
                             <i class="fas fa-map"></i>
-                            <span th:text="${#strings.abbreviate(market.marketAddress, 30)}">서울시 중구 남대문로 21</span>
+                            <span th:text="${#strings.abbreviate(market.marketAddress, 30)}"></span>
                         </div>
                     </div>
                     
-                    <div class="market-footer">
-                        <div class="market-stats">
-                            <span class="stat-item" th:if="${market.favoriteCount != null}">
-                                <i class="fas fa-heart"></i>
-                                <span th:text="${market.favoriteCount}">24</span>
-                            </span>
-                            <!--
-                            <span class="stat-item" th:if="${market.storeCount != null}">
-                                <i class="fas fa-store"></i>
-                                <span th:text="${market.storeCount}">156</span>개 가게
-                            </span>
-                            -->
-                        </div>
-                        
-                        <div class="market-actions">
-                            <a th:href="${market.marketURL}" 
-                               th:if="${market.marketURL != null && market.marketURL != ''}"
-                               class="btn-link" 
-                               onclick="event.stopPropagation();"
-                               target="_blank">
-                                <i class="fas fa-external-link-alt"></i> 홈페이지
-                            </a>
-                        </div>
+                    <div class="market-footer" th:if="${market.marketURL}">
+                        <a th:href="${market.marketURL}" 
+                           class="btn-link" 
+                           onclick="event.stopPropagation();"
+                           target="_blank">
+                            <i class="fas fa-external-link-alt"></i> 홈페이지
+                        </a>
                     </div>
                 </div>
             </div>
@@ -195,37 +171,27 @@
     <!-- 푸터 Include -->
     <div th:replace="~{common/footer}"></div>
 
-    <script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    const memberNum = /*[[${memberNum}]]*/ null;
+    /*]]>*/
+    
     // 검색 기능
     function searchMarkets() {
         const searchInput = document.getElementById('searchInput');
         const keyword = searchInput.value.trim();
-        
-        if (keyword) {
-            window.location.href = `/markets?search=${encodeURIComponent(keyword)}`;
-        } else {
-            window.location.href = '/markets';
-        }
+        window.location.href = keyword ? `/markets?search=${encodeURIComponent(keyword)}` : '/markets';
     }
-    
-    // Enter 키로 검색
-    document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchMarkets();
-        }
-    });
     
     // 지역별 필터링
     function filterByLocal(local) {
         const currentUrl = new URL(window.location.href);
-        
         if (local) {
             currentUrl.searchParams.set('local', local);
         } else {
             currentUrl.searchParams.delete('local');
         }
-        
-        currentUrl.searchParams.delete('page'); // 필터 변경 시 첫 페이지로
+        currentUrl.searchParams.delete('page');
         window.location.href = currentUrl.toString();
     }
     
@@ -233,7 +199,7 @@
     function sortMarkets(sortType) {
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set('sort', sortType);
-        currentUrl.searchParams.delete('page'); // 정렬 변경 시 첫 페이지로
+        currentUrl.searchParams.delete('page');
         window.location.href = currentUrl.toString();
     }
     
@@ -244,41 +210,67 @@
         window.location.href = currentUrl.toString();
     }
     
-    // 찜하기 토글 (전역 함수로 가정)
+    // 찜하기 토글
     function toggleFavorite(type, id, element) {
-        // 여기에 찜하기 API 호출 로직 구현
-        console.log(`Toggle favorite: type=${type}, id=${id}`);
-        
-        // 예시: API 호출 후 UI 업데이트
-        const icon = element.querySelector('i');
-        const isActive = element.classList.contains('active');
-        
-        if (isActive) {
-            element.classList.remove('active');
-            icon.classList.remove('fas');
-            icon.classList.add('far');
-        } else {
-            element.classList.add('active');
-            icon.classList.remove('far');
-            icon.classList.add('fas');
+        if (!memberNum) {
+            if (confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
+                window.location.href = '/members/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
+            }
+            return;
         }
+        
+        const formData = new URLSearchParams();
+        formData.append('memberNum', memberNum);
+        formData.append('targetType', type);
+        formData.append('targetId', id);
+        
+        fetch('/api/favorites/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData.toString()
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답 오류');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const icon = element.querySelector('i');
+                if (data.isFavorite) {
+                    element.classList.add('active');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    element.classList.remove('active');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            } else {
+                alert(data.message || '처리 중 오류가 발생했습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('찜하기 오류:', error);
+            alert('찜하기 처리 중 오류가 발생했습니다.');
+        });
     }
     
-    // 페이지 로드 시 정렬 옵션 설정
+    // 페이지 초기화
     document.addEventListener('DOMContentLoaded', function() {
+        // 정렬 옵션 설정
         const urlParams = new URLSearchParams(window.location.search);
         const sortValue = urlParams.get('sort') || 'popular';
         document.getElementById('sortSelect').value = sortValue;
         
-        // 카드 호버 효과
-        const cards = document.querySelectorAll('.market-card');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-8px)';
-            });
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
+        // Enter 키로 검색
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchMarkets();
+            }
         });
     });
 </script>

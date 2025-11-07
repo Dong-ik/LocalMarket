@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${store.storeName} + ' - 가게 상세'"></title>
+    <link rel="stylesheet" th:href="@{/css/store-detail.css}">
+</head>
+<body>
+    <!-- 헤더 Include -->
+    <div th:replace="~{common/header}"></div>
+
+    <!-- 가게 정보 섹션 -->
+    <section class="store-info-section">
+        <div class="container">
+            <div class="store-header">
+                <div class="store-image">
+                    <img th:src="@{'/images/stores/' + ${store.storeFilename ?: 'default-store.jpg'}}" 
+                         th:alt="${store.storeName}">
+                </div>
+                <div class="store-details">
+                    <h1 class="store-name" th:text="${store.storeName}"></h1>
+                    <p class="store-category" th:text="${store.storeCategory}"></p>
+                    <p class="store-description" th:text="${store.storeIntroduce}"></p>
+                    
+                    <div class="store-meta">
+                        <div class="meta-item" th:if="${store.marketName}">
+                            <i class="fas fa-store"></i>
+                            <span th:text="${store.marketName}"></span>
+                        </div>
+                        <div class="meta-item" th:if="${store.storePhone}">
+                            <i class="fas fa-phone"></i>
+                            <span th:text="${store.storePhone}"></span>
+                        </div>
+                        <div class="meta-item" th:if="${store.storeHours}">
+                            <i class="fas fa-clock"></i>
+                            <span th:text="${store.storeHours}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 상품 목록 섹션 -->
+    <section class="products-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-shopping-bag"></i> 판매 상품
+            </h2>
+            
+            <!-- 상품 그리드 -->
+            <div class="products-grid" th:if="${products != null && !products.isEmpty()}">
+                <div th:each="product : ${products}" class="product-card">
+                    <div class="product-image">
+                        <img th:src="@{'/images/products/' + ${product.productFilename ?: 'default-product.jpg'}}" 
+                             th:alt="${product.productName}">
+                        <div class="product-badge" th:if="${product.productAmount != null && product.productAmount <= 0}">
+                            <span class="badge-soldout">품절</span>
+                        </div>
+                        <div class="product-badge" th:if="${product.productAmount != null && product.productAmount > 0 && product.productAmount < 10}">
+                            <span class="badge-low-stock">재고 부족</span>
+                        </div>
+                    </div>
+                    
+                    <div class="product-info">
+                        <h3 class="product-name" th:text="${product.productName}"></h3>
+                        <p class="product-description" th:text="${product.productIntroduce}"></p>
+                        
+                        <div class="product-footer">
+                            <div class="product-price">
+                                <span class="price" th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA')} + '원'"></span>
+                            </div>
+                            <div class="product-stock" th:if="${product.productAmount != null}">
+                                <span th:text="'재고: ' + ${product.productAmount} + '개'"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="product-actions">
+                            <button class="btn-cart" 
+                                    th:onclick="'addToCart(' + ${product.productId} + ')'"
+                                    th:disabled="${product.productAmount == null || product.productAmount <= 0}">
+                                <i class="fas fa-shopping-cart"></i> 
+                                <span th:text="${product.productAmount == null || product.productAmount <= 0} ? '품절' : '장바구니'"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 상품 없음 -->
+            <div class="no-products" th:if="${products == null || products.isEmpty()}">
+                <i class="fas fa-box-open"></i>
+                <h3>등록된 상품이 없습니다</h3>
+                <p>아직 판매 중인 상품이 없습니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 Include -->
+    <div th:replace="~{common/footer}"></div>
+
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    const memberNum = /*[[${session.memberNum}]]*/ null;
+    /*]]>*/
+    
+    // 장바구니 추가
+    function addToCart(productId) {
+        if (!memberNum) {
+            if (confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
+                window.location.href = '/members/login?redirect=' + encodeURIComponent(window.location.pathname);
+            }
+            return;
+        }
+        
+        const formData = new URLSearchParams();
+        formData.append('memberNum', memberNum);
+        formData.append('productId', productId);
+        formData.append('cartQuantity', 1);
+        
+        fetch('/api/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData.toString()
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답 오류');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                if (confirm('장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?')) {
+                    window.location.href = '/cart';
+                }
+            } else {
+                alert(data.message || '장바구니 추가 중 오류가 발생했습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('장바구니 추가 오류:', error);
+            alert('장바구니 추가 중 오류가 발생했습니다.');
+        });
+    }
+    </script>
+</body>
+</html>
