@@ -122,13 +122,24 @@
         ORDER BY p.product_price ASC
     </select>
     
-    <!-- 상품 정보 수정 -->
+    <!-- 상품 정보 수정 (동적 SQL) -->
     <update id="updateProduct" parameterType="com.localmarket.domain.Product">
         UPDATE product 
+        <set>
+            <if test="productName != null">product_name = #{productName},</if>
+            <if test="productPrice != null">product_price = #{productPrice},</if>
+            <if test="productAmount != null">product_amount = #{productAmount},</if>
+            <if test="productFilename != null">product_filename = #{productFilename},</if>
+            <if test="storeId != null">store_id = #{storeId},</if>
+            updated_date = NOW()
+        </set>
+        WHERE product_id = #{productId}
+    </update>
+    
+    <!-- 상품 이미지 파일명만 업데이트 -->
+    <update id="updateProductFilename">
+        UPDATE product 
         SET 
-            product_name = #{productName},
-            product_price = #{productPrice},
-            product_amount = #{productAmount},
             product_filename = #{productFilename},
             updated_date = NOW()
         WHERE product_id = #{productId}

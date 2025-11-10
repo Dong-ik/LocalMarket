@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<link rel="stylesheet" th:href="@{/css/product-register.css}">
+
+<div class="container" style="margin-top: 100px; margin-bottom: 60px;">
+    <div class="page-header">
+        <h1><i class="fas fa-box"></i> 상품 정보 수정</h1>
+        <p class="subtitle">상품 정보를 수정할 수 있습니다</p>
+    </div>
+    
+    <div class="form-container">
+        <form id="editForm" onsubmit="updateProduct(event)">
+            <input type="hidden" id="productId" th:value="${product.productId}">
+            
+            <!-- 상품 이미지 업로드 -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-image"></i> 상품 이미지
+                </label>
+                <div class="image-upload-container">
+                    <div class="image-preview" id="imagePreview">
+                        <img th:if="${product.productFilename != null}" 
+                             th:src="@{'/images/products/' + ${product.productFilename}}" 
+                             alt="상품 이미지"
+                             id="previewImg">
+                        <div th:unless="${product.productFilename != null}" class="no-image">
+                            <i class="fas fa-image"></i>
+                            <p>이미지 없음</p>
+                        </div>
+                    </div>
+                    <div class="image-upload-controls">
+                        <input type="file" id="imageFile" accept="image/*" onchange="previewImage(event)" style="display: none;">
+                        <button type="button" onclick="document.getElementById('imageFile').click()" class="btn btn-upload">
+                            <i class="fas fa-upload"></i> 이미지 선택
+                        </button>
+                        <button type="button" onclick="uploadImage()" class="btn btn-success" id="uploadBtn" style="display: none;">
+                            <i class="fas fa-check"></i> 업로드
+                        </button>
+                        <small class="form-help">JPG, PNG, GIF, WEBP 형식 (최대 5MB)</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="productName">
+                    <i class="fas fa-tag"></i> 상품명 <span class="required">*</span>
+                </label>
+                <input type="text" id="productName" th:value="${product.productName}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="productPrice">
+                    <i class="fas fa-won-sign"></i> 가격 <span class="required">*</span>
+                </label>
+                <input type="number" id="productPrice" th:value="${product.productPrice}" min="0" required>
+                <small class="form-help">원 단위로 입력해주세요.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="productAmount">
+                    <i class="fas fa-boxes"></i> 재고 수량 <span class="required">*</span>
+                </label>
+                <input type="number" id="productAmount" th:value="${product.productAmount}" min="0" required>
+                <small class="form-help">개수 단위로 입력해주세요.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="storeId">
+                    <i class="fas fa-store"></i> 소속 가게 <span class="required">*</span>
+                </label>
+                <select id="storeId" required>
+                    <option value="">가게를 선택하세요</option>
+                    <option th:each="store : ${stores}" 
+                            th:value="${store.storeId}"
+                            th:selected="${store.storeId == product.storeId}"
+                            th:text="${store.storeName + ' (' + store.marketName + ')'}"></option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" onclick="location.href='/products/adminlist'" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> 취소
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 저장
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{common/footer}"></div>
+
+<script>
+// 이미지 미리보기
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        // 파일 크기 체크 (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('파일 크기는 5MB를 초과할 수 없습니다.');
+            event.target.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.innerHTML = `<img src="${e.target.result}" alt="미리보기" id="previewImg">`;
+            document.getElementById('uploadBtn').style.display = 'inline-block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// 이미지 업로드
+function uploadImage() {
+    const fileInput = document.getElementById('imageFile');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert('파일을 선택해주세요.');
+        return;
+    }
+    
+    const productId = document.getElementById('productId').value;
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    // 업로드 버튼 비활성화
+    const uploadBtn = document.getElementById('uploadBtn');
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 업로드 중...';
+    
+    fetch(`/api/products/${productId}/upload-image`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            uploadBtn.style.display = 'none';
+            uploadBtn.disabled = false;
+            uploadBtn.innerHTML = '<i class="fas fa-check"></i> 업로드';
+            fileInput.value = '';
+        } else {
+            alert(data.message || '이미지 업로드에 실패했습니다.');
+            uploadBtn.disabled = false;
+            uploadBtn.innerHTML = '<i class="fas fa-check"></i> 업로드';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('이미지 업로드 중 오류가 발생했습니다.');
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = '<i class="fas fa-check"></i> 업로드';
+    });
+}
+
+// 상품 정보 수정
+function updateProduct(event) {
+    event.preventDefault();
+    
+    const productId = document.getElementById('productId').value;
+    const productData = {
+        productName: document.getElementById('productName').value,
+        productPrice: document.getElementById('productPrice').value,
+        productAmount: document.getElementById('productAmount').value,
+        storeId: document.getElementById('storeId').value
+    };
+    
+    fetch(`/api/products/${productId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(productData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            window.location.href = '/products/adminlist';
+        } else {
+            alert(data.message || '상품 정보 수정에 실패했습니다.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('상품 정보 수정 중 오류가 발생했습니다.');
+    });
+}
+</script>
+
+</body>
+</html>

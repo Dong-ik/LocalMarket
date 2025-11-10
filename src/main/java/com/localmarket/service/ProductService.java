@@ -44,4 +44,7 @@ public interface ProductService {
     
     // 재고 부족 상품 목록 조회
     List<Product> getLowStockProducts(Integer threshold);
+    
+    // 상품 이미지 업로드
+    String uploadProductImage(Integer productId, org.springframework.web.multipart.MultipartFile file) throws Exception;
 }

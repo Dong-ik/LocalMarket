@@ -88,9 +88,16 @@
             <!-- 가게 목록 그리드 -->
             <div class="store-grid" id="storeGrid">
                 <div th:each="store : ${stores}" class="store-card" 
-                     th:onclick="'location.href=\'/stores/' + ${store.storeId} + '\''">
+                     th:onclick="'location.href=\'/products?storeId=' + ${store.storeId} + '\''">
                     <div class="store-card-image" 
-                         th:style="'background-image: url(/images/stores/' + ${store.storeFilename ?: 'default-store.jpg'} + ')'">
+                         th:style="${store.storeFilename != null ? 'background-image: url(/images/stores/' + store.storeFilename + ')' : ''}">
+                        
+                        <!-- 이미지 없음 표시 -->
+                        <div th:if="${store.storeFilename == null}" class="no-image-text">
+                            <i class="fas fa-image"></i>
+                            <p>이미지 없음</p>
+                        </div>
+                        
                         <div class="store-badge" th:if="${store.storeCategory != null}">
                             <i class="fas fa-tag"></i> <span th:text="${store.storeCategory}">카테고리</span>
                         </div>

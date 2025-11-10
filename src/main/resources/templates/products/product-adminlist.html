@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<link rel="stylesheet" th:href="@{/css/product-admin.css}">
+
+<div class="container" style="margin-top: 100px; margin-bottom: 60px;">
+    <div class="page-header">
+        <h1><i class="fas fa-box"></i> 상품 관리</h1>
+        <p class="subtitle">전체 상품을 조회하고 관리할 수 있습니다</p>
+    </div>
+    
+    <!-- 검색 영역 -->
+    <div class="search-section">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="가게명, 카테고리, 시장명으로 검색하세요..." onkeyup="searchProducts()">
+            <button onclick="searchProducts()" class="btn-search">
+                <i class="fas fa-search"></i> 검색
+            </button>
+        </div>
+        <div class="member-count">
+            <i class="fas fa-box"></i>
+            전체 가게: <strong th:text="${totalCount}"></strong>개
+        </div>
+        <a href="/products/register" class="btn-register">
+            <i class="fas fa-plus-circle"></i> 상품 등록
+        </a>
+    </div>
+    
+    <!-- 상품 테이블 -->
+    <div class="table-container">
+        <table class="product-table" id="productTable">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">ID</th>
+                    <th>상품명</th>
+                    <th style="width: 120px;">가격</th>
+                    <th style="width: 100px;">재고</th>
+                    <th style="width: 200px;">소속 가게</th>
+                    <th style="width: 150px;">등록일</th>
+                    <th style="width: 180px;">관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product : ${products}">
+                    <td th:text="${product.productId}">1</td>
+                    <td th:text="${product.productName}">상품명</td>
+                    <td class="price" th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA')} + '원'">0원</td>
+                    <td th:text="${product.productAmount} + '개'">0개</td>
+                    <td th:text="${product.storeName != null ? product.storeName : '-'}">가게명</td>
+                    <td th:text="${#temporals.format(product.createdDate, 'yyyy-MM-dd')}">2024-01-01</td>
+                    <td class="action-cell">
+                        <div class="action-buttons-vertical">
+                            <button class="btn-edit" 
+                                    th:attr="data-product-id=${product.productId}"
+                                    onclick="editProduct(this.getAttribute('data-product-id'))">
+                                <i class="fas fa-edit"></i> 수정
+                            </button>
+                            <button class="btn-delete" 
+                                    th:attr="data-product-id=${product.productId}, data-product-name=${product.productName}"
+                                    onclick="deleteProduct(this.getAttribute('data-product-id'), this.getAttribute('data-product-name'))">
+                                <i class="fas fa-trash"></i> 삭제
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${products == null or products.isEmpty()}">
+                    <td colspan="7" class="no-data">
+                        <i class="fas fa-inbox"></i>
+                        <p>등록된 상품이 없습니다.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div th:replace="~{common/footer}"></div>
+
+<script>
+// 상품 검색
+function searchProducts() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('productTable');
+    const tr = table.getElementsByTagName('tr');
+    
+    for (let i = 1; i < tr.length; i++) {
+        const td = tr[i].getElementsByTagName('td')[2]; // 상품명 컬럼
+        if (td) {
+            const txtValue = td.textContent || td.innerText;
+            if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                tr[i].style.display = '';
+            } else {
+                tr[i].style.display = 'none';
+            }
+        }
+    }
+}
+
+// 상품 수정
+function editProduct(productId) {
+    window.location.href = `/products/${productId}/edit`;
+}
+
+// 상품 삭제
+function deleteProduct(productId, productName) {
+    if (!confirm(`'${productName}' 상품을 정말 삭제하시겠습니까?\n\n삭제된 상품 정보는 복구할 수 없습니다.`)) {
+        return;
+    }
+    
+    fetch(`/api/products/${productId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert(data.message || '상품 삭제에 실패했습니다.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('상품 삭제 중 오류가 발생했습니다.');
+    });
+}
+</script>
+
+</body>
+</html>

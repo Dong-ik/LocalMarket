@@ -41,4 +41,7 @@ public interface MarketService {
     // 유틸리티 관련
     boolean checkMarketExists(String marketName, String marketAddress);
     Market convertDtoToDomain(MarketDto marketDto);
+    
+    // 이미지 업로드
+    String uploadMarketImage(Integer marketId, org.springframework.web.multipart.MultipartFile file);
 }

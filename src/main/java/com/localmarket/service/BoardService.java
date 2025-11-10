@@ -25,6 +25,9 @@ public interface BoardService {
     // 가게별 게시글(리뷰) 조회
     List<Board> getBoardsByStoreId(Integer storeId);
     
+    // 시장별 게시글 조회
+    List<Board> getBoardsByMarketId(Integer marketId, int limit);
+    
     // 게시글 수정
     int updateBoard(BoardDto boardDto);
     

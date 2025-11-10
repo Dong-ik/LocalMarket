@@ -1,0 +1,314 @@
+/* 상품 관리 페이지 전용 스타일 */
+
+/* ========================================
+   페이지 헤더
+   ======================================== */
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.page-header h1 i {
+    color: #667eea;
+    margin-right: 15px;
+}
+
+.page-header .subtitle {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+}
+
+/* ========================================
+   검색 섹션
+   ======================================== */
+.search-section {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 30px !important;
+    gap: 20px !important;
+}
+
+.search-box {
+    flex: 1 !important;
+    display: flex !important;
+    gap: 10px !important;
+}
+
+.search-box input {
+    flex: 1 !important;
+    padding: 12px 20px !important;
+    border: 2px solid #e9ecef !important;
+    border-radius: 8px !important;
+    font-size: 1rem !important;
+    transition: all 0.3s !important;
+}
+
+.search-box input:focus {
+    outline: none !important;
+    border-color: #667eea !important;
+}
+
+.btn-search {
+    padding: 12px 30px !important;
+    background: #667eea !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 1rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s !important;
+    white-space: nowrap !important;
+}
+
+.btn-search:hover {
+    background: #5568d3 !important;
+    transform: translateY(-2px) !important;
+}
+
+.member-count {
+    font-size: 1.1rem !important;
+    color: #495057 !important;
+    white-space: nowrap !important;
+}
+
+.member-count i {
+    color: #667eea !important;
+    margin-right: 8px !important;
+}
+
+.member-count strong {
+    color: #667eea !important;
+    font-size: 1.3rem !important;
+}
+
+.btn-register {
+    padding: 12px 24px !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    transition: all 0.3s !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+}
+
+.btn-register:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* 통계 섹션 */
+.stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s;
+    border-left: 4px solid #4CAF50;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.stat-card i {
+    font-size: 40px;
+    color: #4CAF50;
+    width: 50px;
+    text-align: center;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+/* 테이블 */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.product-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.product-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.product-table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.2s;
+}
+
+.product-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.product-table td {
+    padding: 15px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* 상품명 셀 */
+.product-name-cell {
+    display: flex;
+    align-items: center;
+}
+
+/* 가격 */
+.price {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+/* 액션 버튼 */
+.action-cell {
+    vertical-align: middle;
+}
+
+.action-buttons-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-edit, .btn-delete {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    width: 100px;
+    justify-content: center;
+}
+
+.btn-edit {
+    background: #3498db;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+/* 데이터 없음 */
+.no-data {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.no-data i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    display: block;
+    color: #ddd;
+}
+
+.no-data p {
+    font-size: 16px;
+    margin: 0;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .search-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        max-width: 100%;
+    }
+    
+    .action-buttons {
+        justify-content: stretch;
+    }
+    
+    .btn-register {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .stats-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    .product-table {
+        min-width: 1000px;
+    }
+}

@@ -6,93 +6,91 @@ import com.localmarket.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-@Controller
-@RequestMapping("/members")
+/**
+ * 회원 관련 API 컨트롤러
+ */
+@RestController
+@RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberController {
-    /**
-     * 마이페이지 진입
-     */
-    @GetMapping("/mypage")
-    public String mypage(HttpSession session, Model model) {
-        // 세션에 member가 없으면 로그인 페이지로 리다이렉트
-        if (session.getAttribute("member") == null) {
-            return "redirect:/members/login";
-        }
-        // 세션의 member를 모델에 전달(Thymeleaf에서 session.member로도 접근 가능하지만, 명시적으로 전달)
-        model.addAttribute("member", session.getAttribute("member"));
-        return "members/mypage";
-    }
     
     private final MemberService memberService;
     
-    @GetMapping("/register")
-    public String registerForm(Model model) {
-        model.addAttribute("memberDto", new MemberDto());
-        return "members/register";
-    }
-    
-    @PostMapping("/register")
-    public String register(@ModelAttribute MemberDto memberDto, Model model) {
-        boolean success = memberService.registerMember(memberDto);
-        if (success) {
-            return "redirect:/members/login";
-        } else {
-            model.addAttribute("error", "회원가입에 실패했습니다.");
-            model.addAttribute("memberDto", memberDto); // 실패 시에도 memberDto 바인딩
-            return "members/register";
-        }
-    }
-    
     /**
-     * 로그아웃: 세션에서 member 속성 제거 후 메인으로 이동
+     * 회원 ID 중복 체크 API
      */
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.removeAttribute("member");
-        return "redirect:/";
-    }
-    
-    @GetMapping("/login")
-    public String loginForm() {
-        return "members/login";
-    }
-    
-    @PostMapping("/login")
-    public String login(@RequestParam("memberId") String memberId, @RequestParam("password") String password, Model model, HttpSession session) {
-        Member member = memberService.loginMember(memberId, password);
-        if (member != null) {
-            session.setAttribute("member", member); // 헤더에서 사용하는 이름과 동일하게 저장
-            session.setAttribute("memberNum", member.getMemberNum());
-            session.setAttribute("memberId", member.getMemberId());
-            return "redirect:/";
-        } else {
-            model.addAttribute("error", "로그인에 실패했습니다.");
-            return "members/login";
-        }
-    }
-    
-    @GetMapping("/list")
-    public String memberList(Model model) {
-        List<Member> members = memberService.getAllMembers();
-        model.addAttribute("members", members);
-        return "members/list";
-    }
-    
     @PostMapping("/check-id")
-    @ResponseBody
     public ResponseEntity<Map<String, Object>> checkMemberId(@RequestParam(name = "memberId") String memberId) {
         Map<String, Object> response = new HashMap<>();
         boolean exists = memberService.checkMemberIdExists(memberId);
         response.put("exists", exists);
+        return ResponseEntity.ok(response);
+    }
+    
+    /**
+     * 회원 삭제 API
+     */
+    @DeleteMapping("/{memberNum}")
+    public ResponseEntity<Map<String, Object>> deleteMember(@PathVariable("memberNum") Integer memberNum, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        
+        // 관리자 권한 체크
+        Member loginMember = (Member) session.getAttribute("member");
+        if (loginMember == null) {
+            response.put("success", false);
+            response.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.status(401).body(response);
+        }
+        
+        boolean success = memberService.deleteMember(memberNum);
+        response.put("success", success);
+        response.put("message", success ? "회원이 삭제되었습니다." : "회원 삭제에 실패했습니다.");
+        return ResponseEntity.ok(response);
+    }
+    
+    /**
+     * 회원 수정 API
+     */
+    @PutMapping("/{memberNum}")
+    public ResponseEntity<Map<String, Object>> updateMember(
+            @PathVariable("memberNum") Integer memberNum,
+            @RequestBody MemberDto memberDto,
+            HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        
+        Member loginMember = (Member) session.getAttribute("member");
+        if (loginMember == null) {
+            response.put("success", false);
+            response.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.status(401).body(response);
+        }
+        
+        // 본인 정보이거나 관리자인 경우에만 수정 가능
+        if (!loginMember.getMemberNum().equals(memberNum) && !"ADMIN".equals(loginMember.getMemberGrade())) {
+            response.put("success", false);
+            response.put("message", "권한이 없습니다.");
+            return ResponseEntity.status(403).body(response);
+        }
+        
+        // 등급 변경은 관리자만 가능
+        if (!"ADMIN".equals(loginMember.getMemberGrade())) {
+            Member originalMember = memberService.getMemberByNum(memberNum);
+            if (originalMember != null) {
+                // 관리자가 아니면 기존 등급 유지
+                memberDto.setMemberGrade(originalMember.getMemberGrade());
+            }
+        }
+        
+        // memberNum을 DTO에 설정
+        memberDto.setMemberNum(memberNum);
+        boolean success = memberService.updateMember(memberDto);
+        response.put("success", success);
+        response.put("message", success ? "회원 정보가 수정되었습니다." : "회원 정보 수정에 실패했습니다.");
         return ResponseEntity.ok(response);
     }
 }

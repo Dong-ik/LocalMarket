@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +28,86 @@ public class StoreController {
     private StoreService storeService;
     
     /**
-     * 가게 등록 (판매자가 정보 입력 후 관리자의 승인에 의한 등록)
+     * 가게 등록 (이미지 포함)
      * POST /api/stores
      */
-    @PostMapping
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<Map<String, Object>> createStoreWithImage(
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam("storeName") String storeName,
+            @RequestParam("storeCategory") String storeCategory,
+            @RequestParam("marketId") Integer marketId,
+            @RequestParam("memberNum") Integer memberNum,
+            @RequestParam("storeIndex") String storeIndex) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // StoreDto 생성
+            StoreDto storeDto = new StoreDto();
+            storeDto.setStoreName(storeName);
+            storeDto.setStoreCategory(storeCategory);
+            storeDto.setMarketId(marketId);
+            storeDto.setMemberNum(memberNum);
+            storeDto.setStoreIndex(storeIndex);
+            
+            // 입력값 검증
+            if (storeName == null || storeName.trim().isEmpty()) {
+                response.put("success", false);
+                response.put("message", "가게명은 필수 입력 항목입니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            if (marketId == null) {
+                response.put("success", false);
+                response.put("message", "전통시장 선택은 필수입니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            if (memberNum == null) {
+                response.put("success", false);
+                response.put("message", "판매자 선택은 필수입니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // 중복 체크
+            if (storeService.isStoreExist(storeName, marketId)) {
+                response.put("success", false);
+                response.put("message", "해당 시장에 같은 이름의 가게가 이미 존재합니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // 이미지 업로드 처리
+            if (file != null && !file.isEmpty()) {
+                String filename = storeService.uploadStoreImage(null, file);
+                storeDto.setStoreFilename(filename);
+            }
+            
+            boolean result = storeService.insertStore(storeDto);
+            
+            if (result) {
+                response.put("success", true);
+                response.put("message", "가게가 성공적으로 등록되었습니다.");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "가게 등록에 실패했습니다.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "서버 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    /**
+     * 가게 등록 (JSON 전용 - 기존 호환성)
+     * POST /api/stores/json
+     */
+    @PostMapping("/json")
     public ResponseEntity<Map<String, Object>> createStore(@RequestBody StoreDto storeDto) {
         Map<String, Object> response = new HashMap<>();
         
@@ -268,6 +347,27 @@ public class StoreController {
                 return ResponseEntity.badRequest().body(response);
             }
             
+            if (storeDto.getMarketId() == null) {
+                response.put("success", false);
+                response.put("message", "전통시장 선택은 필수입니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            if (storeDto.getMemberNum() == null) {
+                response.put("success", false);
+                response.put("message", "판매자 선택은 필수입니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // 이름 중복 체크 (현재 가게 제외)
+            if (!existingStore.getStoreName().equals(storeDto.getStoreName())) {
+                if (storeService.isStoreExist(storeDto.getStoreName(), storeDto.getMarketId())) {
+                    response.put("success", false);
+                    response.put("message", "해당 시장에 같은 이름의 가게가 이미 존재합니다.");
+                    return ResponseEntity.badRequest().body(response);
+                }
+            }
+            
             boolean result = storeService.updateStore(storeDto);
             
             if (result) {
@@ -403,6 +503,54 @@ public class StoreController {
             response.put("exists", exists);
             response.put("message", exists ? "같은 이름의 가게가 이미 존재합니다." : "사용 가능한 가게명입니다.");
             return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "서버 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    
+    /**
+     * 가게 이미지 업로드 (수정 페이지용)
+     * POST /api/stores/{storeId}/upload-image
+     */
+    @PostMapping("/{storeId}/upload-image")
+    public ResponseEntity<Map<String, Object>> uploadStoreImage(@PathVariable("storeId") Integer storeId,
+                                                                @RequestParam("file") MultipartFile file) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // 가게 존재 여부 확인
+            Store existingStore = storeService.getStoreById(storeId);
+            if (existingStore == null) {
+                response.put("success", false);
+                response.put("message", "해당 가게를 찾을 수 없습니다.");
+                return ResponseEntity.notFound().build();
+            }
+            
+            // 파일 검증
+            if (file == null || file.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "파일을 선택해주세요.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // 이미지 업로드
+            String filename = storeService.uploadStoreImage(storeId, file);
+            
+            if (filename != null) {
+                response.put("success", true);
+                response.put("message", "이미지가 성공적으로 업로드되었습니다.");
+                response.put("filename", filename);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "이미지 업로드에 실패했습니다.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
             
         } catch (Exception e) {
             e.printStackTrace();

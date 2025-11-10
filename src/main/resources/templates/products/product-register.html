@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<link rel="stylesheet" th:href="@{/css/product-register.css}">
+
+<div class="container" style="margin-top: 100px; margin-bottom: 60px;">
+    <div class="page-header">
+        <h1><i class="fas fa-box"></i> 상품 등록</h1>
+        <p class="subtitle">새로운 상품을 등록할 수 있습니다</p>
+    </div>
+    
+    <div class="form-container">
+        <form id="registerForm" onsubmit="registerProduct(event)">
+            <!-- 상품 이미지 업로드 -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-image"></i> 상품 이미지
+                </label>
+                <div class="image-upload-container">
+                    <div class="image-preview" id="imagePreview">
+                        <div class="no-image">
+                            <i class="fas fa-image"></i>
+                            <p>이미지를 선택해주세요</p>
+                        </div>
+                    </div>
+                    <div class="image-upload-controls">
+                        <input type="file" id="imageFile" accept="image/*" onchange="previewImage(event)" style="display: none;">
+                        <button type="button" onclick="document.getElementById('imageFile').click()" class="btn btn-upload">
+                            <i class="fas fa-upload"></i> 이미지 선택
+                        </button>
+                        <small class="form-help">JPG, PNG, GIF, WEBP 형식 (최대 5MB)</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="productName">
+                    <i class="fas fa-tag"></i> 상품명 <span class="required">*</span>
+                </label>
+                <input type="text" id="productName" placeholder="상품명을 입력하세요" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="productPrice">
+                    <i class="fas fa-won-sign"></i> 가격 <span class="required">*</span>
+                </label>
+                <input type="number" id="productPrice" placeholder="0" min="0" required>
+                <small class="form-help">원 단위로 입력해주세요.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="productAmount">
+                    <i class="fas fa-boxes"></i> 재고 수량 <span class="required">*</span>
+                </label>
+                <input type="number" id="productAmount" placeholder="0" min="0" required>
+                <small class="form-help">개수 단위로 입력해주세요.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="storeSearch">
+                    <i class="fas fa-store"></i> 소속 가게 <span class="required">*</span>
+                </label>
+                <div class="search-container">
+                    <input type="text" 
+                           id="storeSearch" 
+                           placeholder="가게명을 검색하세요..." 
+                           onkeyup="searchStores()"
+                           autocomplete="off">
+                    <input type="hidden" id="storeId" required>
+                    <div id="storeSearchResults" class="search-results"></div>
+                </div>
+                <div id="selectedStore" class="selected-item" style="display: none;">
+                    <span id="selectedStoreName"></span>
+                    <button type="button" onclick="clearStore()" class="btn-clear">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" onclick="location.href='/products/adminlist'" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> 취소
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-check"></i> 등록
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+// 가게 데이터 (Thymeleaf에서 JavaScript로 전달)
+const storesData = [
+    /*[# th:each="store : ${stores}"]*/
+    {
+        storeId: /*[[${store.storeId}]]*/ 0,
+        storeName: /*[[${store.storeName}]]*/ ''
+    },
+    /*[/]*/
+];
+
+// 가게 검색
+function searchStores() {
+    const searchInput = document.getElementById('storeSearch');
+    const searchValue = searchInput.value.trim().toLowerCase();
+    const resultsDiv = document.getElementById('storeSearchResults');
+    
+    if (searchValue === '') {
+        resultsDiv.style.display = 'none';
+        return;
+    }
+    
+    const filteredStores = storesData.filter(store => 
+        store.storeName.toLowerCase().includes(searchValue)
+    );
+    
+    if (filteredStores.length > 0) {
+        resultsDiv.innerHTML = filteredStores.map(store => `
+            <div class="search-result-item" onclick="selectStore(${store.storeId}, '${store.storeName}')">
+                <strong>${store.storeName}</strong>
+            </div>
+        `).join('');
+        resultsDiv.style.display = 'block';
+    } else {
+        resultsDiv.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
+        resultsDiv.style.display = 'block';
+    }
+}
+
+// 가게 선택
+function selectStore(storeId, storeName) {
+    document.getElementById('storeId').value = storeId;
+    document.getElementById('storeSearch').value = '';
+    document.getElementById('storeSearchResults').style.display = 'none';
+    
+    const selectedStore = document.getElementById('selectedStore');
+    const selectedStoreName = document.getElementById('selectedStoreName');
+    selectedStoreName.textContent = storeName;
+    selectedStore.style.display = 'flex';
+}
+
+// 가게 선택 해제
+function clearStore() {
+    document.getElementById('storeId').value = '';
+    document.getElementById('storeSearch').value = '';
+    document.getElementById('selectedStore').style.display = 'none';
+    document.getElementById('storeSearchResults').style.display = 'none';
+}
+
+// 이미지 미리보기
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        // 파일 크기 체크 (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('파일 크기는 5MB를 초과할 수 없습니다.');
+            event.target.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.innerHTML = `<img src="${e.target.result}" alt="미리보기" id="previewImg">`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// 검색 결과 외부 클릭 시 닫기
+document.addEventListener('click', function(event) {
+    const searchContainer = document.querySelector('.search-container');
+    if (searchContainer && !searchContainer.contains(event.target)) {
+        const resultsDiv = document.getElementById('storeSearchResults');
+        if (resultsDiv) {
+            resultsDiv.style.display = 'none';
+        }
+    }
+});
+
+// 상품 등록
+function registerProduct(event) {
+    event.preventDefault();
+    
+    const formData = new FormData();
+    const imageFile = document.getElementById('imageFile').files[0];
+    
+    // 이미지가 있으면 FormData에 추가
+    if (imageFile) {
+        formData.append('file', imageFile);
+    }
+    
+    // 상품 데이터를 개별 파라미터로 추가
+    formData.append('productName', document.getElementById('productName').value);
+    formData.append('productPrice', document.getElementById('productPrice').value);
+    formData.append('productAmount', document.getElementById('productAmount').value);
+    formData.append('storeId', document.getElementById('storeId').value);
+    
+    // 등록 버튼 비활성화
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 등록 중...';
+    
+    fetch('/api/products', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message || '상품이 성공적으로 등록되었습니다.');
+            window.location.href = '/products/adminlist';
+        } else {
+            alert(data.message || '상품 등록에 실패했습니다.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> 등록';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('상품 등록 중 오류가 발생했습니다.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check"></i> 등록';
+    });
+}
+</script>
+
+<div th:replace="~{common/footer}"></div>
+</body>
+</html>

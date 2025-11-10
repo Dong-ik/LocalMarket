@@ -16,8 +16,13 @@
         <div class="container">
             <div class="store-header">
                 <div class="store-image">
-                    <img th:src="@{'/images/stores/' + ${store.storeFilename ?: 'default-store.jpg'}}" 
+                    <img th:if="${store.storeFilename != null}" 
+                         th:src="@{'/images/stores/' + ${store.storeFilename}}" 
                          th:alt="${store.storeName}">
+                    <div th:unless="${store.storeFilename != null}" class="no-image-placeholder">
+                        <i class="fas fa-image"></i>
+                        <p>이미지 없음</p>
+                    </div>
                 </div>
                 <div class="store-details">
                     <h1 class="store-name" th:text="${store.storeName}"></h1>
@@ -54,8 +59,13 @@
             <div class="products-grid" th:if="${products != null && !products.isEmpty()}">
                 <div th:each="product : ${products}" class="product-card">
                     <div class="product-image">
-                        <img th:src="@{'/images/products/' + ${product.productFilename ?: 'default-product.jpg'}}" 
+                        <img th:if="${product.productFilename != null}" 
+                             th:src="@{'/images/products/' + ${product.productFilename}}" 
                              th:alt="${product.productName}">
+                        <div th:unless="${product.productFilename != null}" class="no-image-placeholder">
+                            <i class="fas fa-image"></i>
+                            <p>이미지 없음</p>
+                        </div>
                         <div class="product-badge" th:if="${product.productAmount != null && product.productAmount <= 0}">
                             <span class="badge-soldout">품절</span>
                         </div>

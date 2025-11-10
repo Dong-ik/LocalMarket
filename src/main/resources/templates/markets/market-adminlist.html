@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<link rel="stylesheet" th:href="@{/css/member.css}">
+
+<div class="container" style="margin-top: 100px; margin-bottom: 60px;">
+    <div class="page-header">
+        <h1><i class="fas fa-store"></i> 시장 관리</h1>
+        <p class="subtitle">전체 시장 목록을 조회하고 관리할 수 있습니다</p>
+    </div>
+    
+    <!-- 검색 영역 -->
+    <div class="search-section">
+        <div class="search-box">
+            <input type="text" id="searchKeyword" placeholder="시장명, 지역, 주소로 검색하세요..." />
+            <button onclick="searchMarkets()" class="btn-search">
+                <i class="fas fa-search"></i> 검색
+            </button>
+        </div>
+        <div class="member-count">
+            <i class="fas fa-shopping-bag"></i>
+            전체 시장: <strong th:text="${totalCount}"></strong>개
+        </div>
+    </div>
+    
+    <!-- 지역별 필터 버튼 -->
+    <div class="filter-section">
+        <button class="filter-btn active" onclick="filterByLocation('ALL')">
+            <i class="fas fa-globe"></i> 전체
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('서울')">
+            <i class="fas fa-map-marker-alt"></i> 서울
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('부산')">
+            <i class="fas fa-map-marker-alt"></i> 부산
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('대구')">
+            <i class="fas fa-map-marker-alt"></i> 대구
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('인천')">
+            <i class="fas fa-map-marker-alt"></i> 인천
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('광주')">
+            <i class="fas fa-map-marker-alt"></i> 광주
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('대전')">
+            <i class="fas fa-map-marker-alt"></i> 대전
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('울산')">
+            <i class="fas fa-map-marker-alt"></i> 울산
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('세종')">
+            <i class="fas fa-map-marker-alt"></i> 세종
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('경기')">
+            <i class="fas fa-map-marker-alt"></i> 경기
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('강원')">
+            <i class="fas fa-map-marker-alt"></i> 강원
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('충북')">
+            <i class="fas fa-map-marker-alt"></i> 충북
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('충남')">
+            <i class="fas fa-map-marker-alt"></i> 충남
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('전북')">
+            <i class="fas fa-map-marker-alt"></i> 전북
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('전남')">
+            <i class="fas fa-map-marker-alt"></i> 전남
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('경북')">
+            <i class="fas fa-map-marker-alt"></i> 경북
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('경남')">
+            <i class="fas fa-map-marker-alt"></i> 경남
+        </button>
+        <button class="filter-btn" onclick="filterByLocation('제주')">
+            <i class="fas fa-map-marker-alt"></i> 제주
+        </button>
+    </div>
+    
+    <!-- 시장 목록 테이블 -->
+    <div class="member-list-container">
+        <table class="member-table">
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>시장명</th>
+                <th>지역</th>
+                <th>주소</th>
+                <th>등록일</th>
+                <th>찜수</th>
+                <th>관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="market, stat : ${markets}" th:id="'market-row-' + ${market.marketId}">
+                <td th:text="${stat.count}"></td>
+                <td>
+                    <strong th:text="${market.marketName}"></strong>
+                </td>
+                <td th:text="${market.marketLocal}"></td>
+                <td>
+                    <span class="address" th:text="${market.marketAddress}"></span>
+                </td>
+                <td th:text="${#temporals.format(market.createdDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${market.favoriteCount != null ? market.favoriteCount : 0}"></td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-edit" 
+                                th:data-market-id="${market.marketId}"
+                                onclick="editMarket(this.dataset.marketId)">
+                            <i class="fas fa-edit"></i> 수정
+                        </button>
+                        <button class="btn-delete" 
+                                th:data-market-id="${market.marketId}"
+                                th:data-market-name="${market.marketName}"
+                                onclick="deleteMarket(this.dataset.marketId, this.dataset.marketName)">
+                            <i class="fas fa-trash"></i> 삭제
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <!-- 데이터 없을 때 -->
+    <div th:if="${markets.isEmpty()}" class="no-data">
+        <i class="fas fa-store-slash"></i>
+        <p>등록된 시장이 없습니다.</p>
+    </div>
+    </div>
+</div>
+
+<div th:replace="~{common/footer}"></div>
+
+<script>
+// 현재 선택된 지역 필터
+let currentLocationFilter = 'ALL';
+
+// 시장 검색
+function searchMarkets() {
+    const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+    const rows = document.querySelectorAll('.member-table tbody tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const locationCell = row.cells[2]; // 지역 컬럼 (3번째)
+        const location = locationCell ? locationCell.textContent.trim() : '';
+        
+        // 키워드 매치
+        const keywordMatch = text.includes(keyword);
+        
+        // 지역 필터 매치
+        let locationMatch = true;
+        if (currentLocationFilter !== 'ALL') {
+            locationMatch = location.includes(currentLocationFilter);
+        }
+        
+        // 둘 다 매치되어야 표시
+        if (keywordMatch && locationMatch) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    updateTotalCount();
+}
+
+// 지역별 필터
+function filterByLocation(location) {
+    currentLocationFilter = location;
+    
+    // 버튼 활성화 상태 변경
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.closest('.filter-btn').classList.add('active');
+    
+    // 검색 실행
+    searchMarkets();
+}
+
+// 엔터키로 검색
+document.getElementById('searchKeyword').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchMarkets();
+    }
+});
+
+// 실시간 검색
+document.getElementById('searchKeyword').addEventListener('input', function() {
+    searchMarkets();
+});
+
+// 시장 수정
+function editMarket(marketId) {
+    window.location.href = `/markets/${marketId}/edit`;
+}
+
+// 시장 삭제
+function deleteMarket(marketId, marketName) {
+    if (!confirm(`'${marketName}' 시장을 정말 삭제하시겠습니까?\n\n삭제된 시장 정보는 복구할 수 없습니다.`)) {
+        return;
+    }
+    
+    fetch(`/api/market/${marketId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            // 해당 행 제거
+            const row = document.getElementById(`market-row-${marketId}`);
+            if (row) {
+                row.style.transition = 'opacity 0.3s';
+                row.style.opacity = '0';
+                setTimeout(() => {
+                    row.remove();
+                    // 전체 카운트 업데이트
+                    updateTotalCount();
+                }, 300);
+            }
+        } else {
+            alert(data.message || '시장 삭제에 실패했습니다.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('시장 삭제 중 오류가 발생했습니다.');
+    });
+}
+
+// 시장 수 업데이트
+function updateTotalCount() {
+    const visibleRows = document.querySelectorAll('.member-table tbody tr:not([style*="display: none"])');
+    const countElement = document.querySelector('.member-count strong');
+    if (countElement) {
+        countElement.textContent = visibleRows.length;
+    }
+}
+</script>
+
+</html>

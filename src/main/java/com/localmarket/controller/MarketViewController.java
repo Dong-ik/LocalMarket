@@ -1,6 +1,8 @@
 package com.localmarket.controller;
 
+import com.localmarket.domain.Board;
 import com.localmarket.domain.Market;
+import com.localmarket.service.BoardService;
 import com.localmarket.service.MarketService;
 import com.localmarket.service.FavoriteService;
 import jakarta.servlet.http.HttpSession;
@@ -25,6 +27,7 @@ public class MarketViewController {
     
     private final MarketService marketService;
     private final FavoriteService favoriteService;
+    private final BoardService boardService;
     
     @Value("${kakao.map.api.key}")
     private String kakaoMapApiKey;
@@ -58,7 +61,11 @@ public class MarketViewController {
                 return "markets/market-list";
             }
             
+            // 해당 시장의 게시글 조회 (최대 5개)
+            List<Board> marketBoards = boardService.getBoardsByMarketId(marketId, 2);
+            
             model.addAttribute("market", market);
+            model.addAttribute("marketBoards", marketBoards);
             model.addAttribute("kakaoMapApiKey", kakaoMapApiKey); // API 키 전달
             return "markets/market-detail"; // templates/markets/market-detail.html
             
@@ -168,6 +175,56 @@ public class MarketViewController {
             model.addAttribute("exceptionMessage", e.getMessage());
             model.addAttribute("stackTrace", e.getStackTrace());
             return "error/error-page"; // 에러 페이지
+        }
+    }
+    
+    /**
+     * 시장 관리 페이지 (관리자용)
+     * GET /markets/adminlist
+     */
+    @GetMapping("/adminlist")
+    public String adminMarketList(Model model, HttpSession session) {
+        try {
+            // 관리자 권한 체크
+            if (session.getAttribute("member") == null) {
+                return "redirect:/members/login";
+            }
+            
+            // 모든 시장 목록 조회 (찜 개수 포함)
+            List<Market> markets = marketService.getAllMarketsWithFavorite();
+            model.addAttribute("markets", markets);
+            model.addAttribute("totalCount", markets.size());
+            
+            return "markets/market-adminlist";
+        } catch (Exception e) {
+            log.error("시장 관리 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "시장 목록을 불러오는 중 오류가 발생했습니다.");
+            return "error/error-page";
+        }
+    }
+    
+    /**
+     * 시장 수정 페이지 (관리자용)
+     * GET /markets/{marketId}/edit
+     */
+    @GetMapping("/{marketId}/edit")
+    public String editMarketForm(@PathVariable("marketId") Integer marketId, Model model, HttpSession session) {
+        try {
+            // 관리자 권한 체크
+            if (session.getAttribute("member") == null) {
+                return "redirect:/members/login";
+            }
+            
+            Market market = marketService.getMarketById(marketId);
+            if (market == null) {
+                return "redirect:/markets/adminlist";
+            }
+            
+            model.addAttribute("market", market);
+            return "markets/market-edit";
+        } catch (Exception e) {
+            log.error("시장 수정 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
+            return "redirect:/markets/adminlist";
         }
     }
 }

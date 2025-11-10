@@ -14,6 +14,7 @@ public class Board {
     private LocalDateTime updatedDate;
     private Integer memberNum;
     private Integer storeId;
+    private Integer marketId;     // 시장 ID 추가
     
     // JOIN 필드들 (조회 시 추가 정보)
     private String memberName;    // 작성자 이름

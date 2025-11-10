@@ -14,4 +14,13 @@ public class CartDto {
     private Boolean cartSelected;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+    
+    // cartAmount getter/setter를 cartQuantity와 연결 (호환성)
+    public Integer getCartAmount() {
+        return cartQuantity;
+    }
+    
+    public void setCartAmount(Integer cartAmount) {
+        this.cartQuantity = cartAmount;
+    }
 }

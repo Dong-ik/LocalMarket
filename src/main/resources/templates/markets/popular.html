@@ -13,7 +13,11 @@
     <h2>인기 전통시장</h2>
     <div class="popular-market-grid">
         <div class="popular-market-card" th:each="market : ${popularMarkets}" th:if="${popularMarkets != null and #lists.size(popularMarkets) > 0}">
-            <img th:src="@{'/images/market/' + ${market.marketFilename}}" alt="시장 이미지" class="popular-market-img" onerror="this.src='/images/noimg.png'">
+            <img th:src="@{'/images/markets/' + ${market.marketFilename}}" alt="시장 이미지" class="popular-market-img" onerror="this.src='/images/noimg.png'" th:if="${market.marketFilename != null}">
+            <div th:if="${market.marketFilename == null}" class="no-image-placeholder">
+                <i class="fas fa-image"></i>
+                <p>이미지 없음</p>
+            </div>
             <div class="popular-market-info">
                 <h3 th:text="${market.marketName}"></h3>
                 <p th:text="${market.marketLocal}"></p>

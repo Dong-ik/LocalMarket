@@ -572,6 +572,42 @@ public class MarketController {
     }
     
     /**
+     * 시장 이미지 업로드
+     */
+    @PostMapping("/{marketId}/upload-image")
+    public ResponseEntity<Map<String, Object>> uploadMarketImage(@PathVariable("marketId") Integer marketId,
+                                                                @RequestParam("file") MultipartFile file) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            if (file.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "업로드할 파일이 없습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // 파일 업로드 처리
+            String filename = marketService.uploadMarketImage(marketId, file);
+            
+            if (filename != null) {
+                response.put("success", true);
+                response.put("message", "이미지가 성공적으로 업로드되었습니다.");
+                response.put("filename", filename);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "이미지 업로드에 실패했습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+        } catch (Exception e) {
+            log.error("이미지 업로드 실패 - 시장 ID: {}, 오류: {}", marketId, e.getMessage(), e);
+            response.put("success", false);
+            response.put("message", "이미지 업로드 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    /**
      * 시장 정보 수정
      */
     @PutMapping("/{marketId}")

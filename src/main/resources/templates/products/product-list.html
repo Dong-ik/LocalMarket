@@ -91,7 +91,14 @@
                 <div th:each="product : ${products}" class="product-card" 
                      th:onclick="'location.href=\'/products/' + ${product.productId} + '\''">
                     <div class="product-card-image" 
-                         th:style="'background-image: url(/images/products/' + ${product.productFilename ?: 'default-product.jpg'} + ')'">
+                         th:style="${product.productFilename != null ? 'background-image: url(/images/products/' + product.productFilename + ')' : ''}">
+                        
+                        <!-- 이미지 없음 표시 -->
+                        <div th:if="${product.productFilename == null}" class="no-image-text">
+                            <i class="fas fa-image"></i>
+                            <p>이미지 없음</p>
+                        </div>
+                        
                         <div class="product-badge new" th:if="${product.createdDate != null && #temporals.day(product.createdDate) == #temporals.day(#temporals.createNow())}">
                             <i class="fas fa-star"></i> 신상품
                         </div>
@@ -130,7 +137,9 @@
                             </div>
                             
                             <div class="product-actions">
-                                <button class="btn-link" onclick="event.stopPropagation();">
+                                <button class="btn-link" 
+                                        th:onclick="'event.stopPropagation(); addToCart(' + ${product.productId} + ');'"
+                                        th:disabled="${product.productAmount == null || product.productAmount <= 0}">
                                     <i class="fas fa-shopping-cart"></i> 장바구니
                                 </button>
                             </div>
@@ -270,6 +279,34 @@
             });
         });
     });
+    
+    // 장바구니 추가 함수
+    function addToCart(productId) {
+        fetch('/api/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productId: productId,
+                cartAmount: 1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (confirm('장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?')) {
+                    window.location.href = '/cart';
+                }
+            } else {
+                alert(data.message || '장바구니 추가 중 오류가 발생했습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('장바구니 추가 오류:', error);
+            alert('장바구니 추가 중 오류가 발생했습니다.');
+        });
+    }
     </script>
 </body>
 </html>

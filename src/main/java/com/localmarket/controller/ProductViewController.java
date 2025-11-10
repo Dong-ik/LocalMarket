@@ -1,7 +1,9 @@
 package com.localmarket.controller;
 
 import com.localmarket.domain.Product;
+import com.localmarket.domain.Store;
 import com.localmarket.service.ProductService;
+import com.localmarket.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import java.util.List;
 public class ProductViewController {
     
     private final ProductService productService;
+    private final StoreService storeService;
     
     /**
      * 인기 상품 페이지
@@ -219,6 +222,103 @@ public class ProductViewController {
             model.addAttribute("errorMessage", "상품 정보를 불러오는 중 오류가 발생했습니다.");
             model.addAttribute("products", List.of());
             return "products/product-list";
+        }
+    }
+    
+    /**
+     * 상품 관리 페이지 (관리자용)
+     * GET /products/adminlist
+     */
+    @GetMapping("/adminlist")
+    public String adminProductList(Model model, jakarta.servlet.http.HttpSession session) {
+        try {
+            // 관리자 권한 체크
+            if (session.getAttribute("member") == null) {
+                return "redirect:/members/login";
+            }
+            
+            log.info("=== 상품 관리 페이지 ===");
+            
+            // 모든 상품 조회
+            List<Product> products = productService.getAllProducts();
+            
+            log.info("전체 상품: {} 개", products != null ? products.size() : 0);
+            
+            model.addAttribute("products", products);
+            model.addAttribute("totalCount", products != null ? products.size() : 0);
+            
+            return "products/product-adminlist";
+        } catch (Exception e) {
+            log.error("상품 관리 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "상품 목록을 불러오는 중 오류가 발생했습니다.");
+            return "error/error-page";
+        }
+    }
+    
+    /**
+     * 상품 등록 페이지 (관리자용)
+     * GET /products/register
+     */
+    @GetMapping("/register")
+    public String registerProductPage(Model model, jakarta.servlet.http.HttpSession session) {
+        try {
+            // 관리자 권한 체크
+            if (session.getAttribute("member") == null) {
+                return "redirect:/members/login";
+            }
+            
+            // 가게 목록 조회
+            List<Store> stores = storeService.getAllStores();
+            
+            log.info("=== 상품 등록 페이지 ===");
+            log.info("가게 목록: {} 개", stores != null ? stores.size() : 0);
+            
+            model.addAttribute("stores", stores);
+            
+            return "products/product-register";
+        } catch (Exception e) {
+            log.error("상품 등록 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "페이지를 불러오는 중 오류가 발생했습니다.");
+            return "error/error-page";
+        }
+    }
+    
+    /**
+     * 상품 수정 페이지 (관리자용)
+     * GET /products/{productId}/edit
+     */
+    @GetMapping("/{productId}/edit")
+    public String editProductPage(@PathVariable("productId") Integer productId, Model model, jakarta.servlet.http.HttpSession session) {
+        try {
+            // 관리자 권한 체크
+            if (session.getAttribute("member") == null) {
+                return "redirect:/members/login";
+            }
+            
+            // 상품 정보 조회
+            Product product = productService.getProductById(productId);
+            
+            if (product == null) {
+                log.warn("상품을 찾을 수 없음 - productId: {}", productId);
+                model.addAttribute("errorMessage", "상품을 찾을 수 없습니다.");
+                return "error/error-page";
+            }
+            
+            // 가게 목록 조회
+            List<Store> stores = storeService.getAllStores();
+            
+            log.info("=== 상품 수정 페이지 ===");
+            log.info("상품 ID: {}, 상품명: {}", productId, product.getProductName());
+            log.info("가게 목록: {} 개", stores != null ? stores.size() : 0);
+            
+            model.addAttribute("product", product);
+            model.addAttribute("stores", stores);
+            
+            return "products/product-edit";
+        } catch (Exception e) {
+            log.error("상품 수정 페이지 조회 중 오류 발생 - productId: {}", productId, e);
+            model.addAttribute("errorMessage", "페이지를 불러오는 중 오류가 발생했습니다.");
+            return "error/error-page";
         }
     }
 }

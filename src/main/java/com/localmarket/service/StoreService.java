@@ -76,6 +76,19 @@ public interface StoreService {
     boolean isStoreExist(String storeName, Integer marketId);
     
     /**
+     * 가게 이미지 업로드
+     * @param storeId 가게 ID (null이면 신규 등록 시)
+     * @param file 업로드할 이미지 파일
+     * @return 저장된 파일명
+     */
+    String uploadStoreImage(Integer storeId, org.springframework.web.multipart.MultipartFile file);
+    
+    /**
+     * 판매자(SELLER) 등급 회원 목록 조회
+     */
+    List<com.localmarket.domain.Member> getSellerMembers();
+    
+    /**
      * 페이징을 위한 가게 목록 조회
      */
     List<Store> getStoresWithPaging(int page, int size);

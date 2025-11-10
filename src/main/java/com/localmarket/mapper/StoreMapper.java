@@ -58,6 +58,11 @@ public interface StoreMapper {
     int updateStore(Store store);
     
     /**
+     * 가게 이미지 파일명만 수정
+     */
+    int updateStoreFilename(@Param("storeId") Integer storeId, @Param("storeFilename") String storeFilename);
+    
+    /**
      * 가게 삭제
      */
     int deleteStore(@Param("storeId") Integer storeId);

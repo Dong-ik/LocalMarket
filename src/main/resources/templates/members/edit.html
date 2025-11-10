@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<link rel="stylesheet" th:href="@{/css/member.css}">
+
+<div class="container" style="margin-top: 100px; margin-bottom: 60px;">
+    <div class="page-header">
+        <h1><i class="fas fa-user-edit"></i> 회원 정보 수정</h1>
+        <p class="subtitle">회원 정보를 수정할 수 있습니다</p>
+    </div>
+    
+    <div class="form-container">
+        <form id="editForm" onsubmit="updateMember(event)">
+            <div class="form-group">
+                <label for="memberId">
+                    <i class="fas fa-id-card"></i> 회원 ID
+                </label>
+                <input type="text" id="memberId" th:value="${member.memberId}" readonly class="readonly-input">
+                <small class="form-help">회원 ID는 변경할 수 없습니다.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="memberName">
+                    <i class="fas fa-user"></i> 이름 <span class="required">*</span>
+                </label>
+                <input type="text" id="memberName" th:value="${member.memberName}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">
+                    <i class="fas fa-envelope"></i> 이메일 <span class="required">*</span>
+                </label>
+                <input type="email" id="email" th:value="${member.email}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">
+                    <i class="fas fa-phone"></i> 전화번호 <span class="required">*</span>
+                </label>
+                <input type="tel" id="phone" th:value="${member.phone}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="address">
+                    <i class="fas fa-map-marker-alt"></i> 주소
+                </label>
+                <input type="text" id="address" th:value="${member.memberAddress}">
+            </div>
+            
+            <div class="form-group">
+                <label for="memberGrade">
+                    <i class="fas fa-star"></i> 회원 등급
+                </label>
+                <!-- 관리자인 경우에만 등급 수정 가능 -->
+                <select id="memberGrade" 
+                        th:value="${member.memberGrade}"
+                        th:disabled="${session.member.memberGrade != 'ADMIN'}"
+                        th:classappend="${session.member.memberGrade != 'ADMIN' ? 'readonly-input' : ''}">
+                    <option value="BUYER" th:selected="${member.memberGrade == 'BUYER'}">구매자</option>
+                    <option value="SELLER" th:selected="${member.memberGrade == 'SELLER'}">판매자</option>
+                    <option value="ADMIN" th:selected="${member.memberGrade == 'ADMIN'}">관리자</option>
+                </select>
+                <small class="form-help" th:if="${session.member.memberGrade != 'ADMIN'}">
+                    회원 등급은 관리자만 변경할 수 있습니다.
+                </small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" onclick="history.back()" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> 취소
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 저장
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 푸터 Include -->
+<div th:replace="~{common/footer}"></div>
+
+<script th:inline="javascript">
+const memberNum = /*[[${member.memberNum}]]*/ 0;
+
+function updateMember(event) {
+    event.preventDefault();
+    
+    const memberData = {
+        memberId: document.getElementById('memberId').value,
+        memberName: document.getElementById('memberName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        memberAddress: document.getElementById('address').value,
+        memberGrade: document.getElementById('memberGrade').value
+    };
+    
+    fetch(`/api/members/${memberNum}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(memberData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            // 세션의 회원 등급에 따라 리다이렉트
+            const currentMemberGrade = '[[${session.member.memberGrade}]]';
+            if (currentMemberGrade === 'ADMIN') {
+                window.location.href = '/members/adminlist';
+            } else {
+                window.location.href = '/members/mypage';
+            }
+        } else {
+            alert(data.message || '회원 정보 수정에 실패했습니다.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('회원 정보 수정 중 오류가 발생했습니다.');
+    });
+}
+</script>
+
+</html>

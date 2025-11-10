@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<link rel="stylesheet" th:href="@{/css/member.css}">
+
+<div class="container" style="margin-top: 100px; margin-bottom: 60px;">
+    <div class="page-header">
+        <h1><i class="fas fa-store"></i> 시장 정보 수정</h1>
+        <p class="subtitle">시장 정보를 수정할 수 있습니다</p>
+    </div>
+    
+    <div class="form-container">
+        <form id="editForm" onsubmit="updateMarket(event)">
+            <input type="hidden" id="marketId" th:value="${market.marketId}">
+            
+            <!-- 시장 이미지 업로드 -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-image"></i> 시장 이미지
+                </label>
+                <div class="image-upload-container">
+                    <div class="image-preview" id="imagePreview">
+                        <img th:if="${market.marketFilename != null}" 
+                             th:src="@{'/images/markets/' + ${market.marketFilename}}" 
+                             alt="시장 이미지"
+                             id="previewImg">
+                        <div th:unless="${market.marketFilename != null}" class="no-image">
+                            <i class="fas fa-image"></i>
+                            <p>이미지 없음</p>
+                        </div>
+                    </div>
+                    <div class="image-upload-controls">
+                        <input type="file" id="imageFile" accept="image/*" onchange="previewImage(event)" style="display: none;">
+                        <button type="button" onclick="document.getElementById('imageFile').click()" class="btn btn-upload">
+                            <i class="fas fa-upload"></i> 이미지 선택
+                        </button>
+                        <button type="button" onclick="uploadImage()" class="btn btn-success" id="uploadBtn" style="display: none;">
+                            <i class="fas fa-check"></i> 업로드
+                        </button>
+                        <small class="form-help">JPG, PNG, GIF, WEBP 형식 (최대 5MB)</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="marketName">
+                    <i class="fas fa-store-alt"></i> 시장명 <span class="required">*</span>
+                </label>
+                <input type="text" id="marketName" th:value="${market.marketName}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="marketLocal">
+                    <i class="fas fa-map-marker-alt"></i> 지역 <span class="required">*</span>
+                </label>
+                <input type="text" id="marketLocal" th:value="${market.marketLocal}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="marketAddress">
+                    <i class="fas fa-map"></i> 주소 <span class="required">*</span>
+                </label>
+                <input type="text" id="marketAddress" th:value="${market.marketAddress}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="marketIntroduce">
+                    <i class="fas fa-align-left"></i> 시장 소개
+                </label>
+                <textarea id="marketIntroduce" rows="5" th:text="${market.marketIntroduce}"></textarea>
+                <small class="form-help">시장의 특징과 소개를 입력해주세요.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="marketURL">
+                    <i class="fas fa-link"></i> 홈페이지 URL
+                </label>
+                <input type="url" id="marketURL" th:value="${market.marketURL}" placeholder="http://example.com">
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" onclick="location.href='/markets/adminlist'" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> 취소
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 저장
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{common/footer}"></div>
+
+<script th:inline="javascript">
+// 이미지 미리보기
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        // 파일 크기 체크 (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('파일 크기는 5MB를 초과할 수 없습니다.');
+            event.target.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.innerHTML = `<img src="${e.target.result}" alt="미리보기" id="previewImg">`;
+            document.getElementById('uploadBtn').style.display = 'inline-block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// 이미지 업로드
+function uploadImage() {
+    const fileInput = document.getElementById('imageFile');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert('파일을 선택해주세요.');
+        return;
+    }
+    
+    const marketId = document.getElementById('marketId').value;
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    // 업로드 버튼 비활성화
+    const uploadBtn = document.getElementById('uploadBtn');
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 업로드 중...';
+    
+    fetch(`/api/market/${marketId}/upload-image`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            uploadBtn.style.display = 'none';
+            uploadBtn.disabled = false;
+            uploadBtn.innerHTML = '<i class="fas fa-check"></i> 업로드';
+            fileInput.value = '';
+        } else {
+            alert(data.message || '이미지 업로드에 실패했습니다.');
+            uploadBtn.disabled = false;
+            uploadBtn.innerHTML = '<i class="fas fa-check"></i> 업로드';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('이미지 업로드 중 오류가 발생했습니다.');
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = '<i class="fas fa-check"></i> 업로드';
+    });
+}
+
+// 시장 정보 수정
+function updateMarket(event) {
+    event.preventDefault();
+    
+    const marketId = document.getElementById('marketId').value;
+    const marketData = {
+        marketName: document.getElementById('marketName').value,
+        marketLocal: document.getElementById('marketLocal').value,
+        marketAddress: document.getElementById('marketAddress').value,
+        marketIntroduce: document.getElementById('marketIntroduce').value,
+        marketURL: document.getElementById('marketURL').value
+    };
+    
+    fetch(`/api/market/${marketId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(marketData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            window.location.href = '/markets/adminlist';
+        } else {
+            alert(data.message || '시장 정보 수정에 실패했습니다.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('시장 정보 수정 중 오류가 발생했습니다.');
+    });
+}
+</script>
+
+</body>
+</html>

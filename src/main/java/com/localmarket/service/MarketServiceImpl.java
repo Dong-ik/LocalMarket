@@ -283,4 +283,86 @@ public class MarketServiceImpl implements MarketService {
             throw new RuntimeException("인기시장 조회에 실패했습니다.", e);
         }
     }
+    
+    @Override
+    public String uploadMarketImage(Integer marketId, org.springframework.web.multipart.MultipartFile file) {
+        try {
+            // 파일이 비어있는지 확인
+            if (file.isEmpty()) {
+                log.warn("업로드할 파일이 비어있습니다.");
+                return null;
+            }
+            
+            // 파일 확장자 확인
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String[] allowedExtensions = {".jpg", ".jpeg", ".png", ".gif", ".webp"};
+            
+            boolean isAllowed = false;
+            for (String ext : allowedExtensions) {
+                if (extension.toLowerCase().equals(ext)) {
+                    isAllowed = true;
+                    break;
+                }
+            }
+            
+            if (!isAllowed) {
+                log.warn("허용되지 않는 파일 형식입니다: {}", extension);
+                return null;
+            }
+            
+            // 파일명 생성 (market_ID_timestamp.확장자)
+            String filename = "market_" + marketId + "_" + System.currentTimeMillis() + extension;
+            
+            // 파일 저장 경로 설정 (절대 경로 사용)
+            String projectPath = System.getProperty("user.dir");
+            String uploadDir = projectPath + "/src/main/static/images/markets/";
+            java.io.File dir = new java.io.File(uploadDir);
+            if (!dir.exists()) {
+                boolean created = dir.mkdirs();
+                log.info("업로드 디렉토리 생성: {}, 성공: {}", uploadDir, created);
+            }
+            
+            // 파일 저장
+            java.io.File dest = new java.io.File(uploadDir + filename);
+            log.info("파일 저장 경로: {}", dest.getAbsolutePath());
+            file.transferTo(dest);
+            
+            // DB 업데이트
+            Market market = marketMapper.selectMarketById(marketId);
+            if (market != null) {
+                log.info("업데이트 전 시장 정보 - ID: {}, 이름: {}, 기존 파일명: {}", 
+                    marketId, market.getMarketName(), market.getMarketFilename());
+                
+                // 파일명만 설정 (다른 필드는 유지)
+                market.setMarketFilename(filename);
+                
+                log.info("업데이트할 Market 객체: ID={}, Name={}, Local={}, Address={}, Filename={}", 
+                    market.getMarketId(), market.getMarketName(), market.getMarketLocal(), 
+                    market.getMarketAddress(), market.getMarketFilename());
+                
+                int updateResult = marketMapper.updateMarket(market);
+                log.info("DB 업데이트 결과: {} (1이면 성공), 새 파일명: {}", updateResult, filename);
+                
+                // 업데이트 후 다시 조회해서 확인
+                Market updatedMarket = marketMapper.selectMarketById(marketId);
+                log.info("업데이트 후 확인 - 파일명: {}", updatedMarket.getMarketFilename());
+                
+                if (updateResult > 0) {
+                    log.info("시장 이미지 업로드 완료 - 시장 ID: {}, 파일명: {}", marketId, filename);
+                    return filename;
+                } else {
+                    log.error("DB 업데이트 실패 - 시장 ID: {}", marketId);
+                    return null;
+                }
+            } else {
+                log.warn("존재하지 않는 시장 ID: {}", marketId);
+                return null;
+            }
+            
+        } catch (Exception e) {
+            log.error("시장 이미지 업로드 중 오류 발생 - 시장 ID: {}, 오류: {}", marketId, e.getMessage(), e);
+            return null;
+        }
+    }
 }

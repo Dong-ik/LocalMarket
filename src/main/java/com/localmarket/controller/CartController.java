@@ -3,6 +3,7 @@ package com.localmarket.controller;
 import com.localmarket.domain.Cart;
 import com.localmarket.dto.CartDto;
 import com.localmarket.service.CartService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,33 @@ public class CartController {
      * 장바구니에 상품 추가
      */
     @PostMapping("/add")
-    public ResponseEntity<Map<String, Object>> addCartItem(@RequestBody CartDto cartDto) {
-        log.info("장바구니 추가 요청 - 회원번호: {}, 상품ID: {}", cartDto.getMemberNum(), cartDto.getProductId());
-        
+    public ResponseEntity<Map<String, Object>> addCartItem(@RequestBody CartDto cartDto, HttpSession session) {
         Map<String, Object> response = new HashMap<>();
+        
+        // 세션에서 회원번호 가져오기
+        Integer memberNum = (Integer) session.getAttribute("memberNum");
+        if (memberNum == null) {
+            response.put("success", false);
+            response.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.status(401).body(response);
+        }
+        
+        cartDto.setMemberNum(memberNum);
+        
+        // cartQuantity가 null이거나 0이면 기본값 1 설정
+        if (cartDto.getCartQuantity() == null || cartDto.getCartQuantity() <= 0) {
+            cartDto.setCartQuantity(1);
+        }
+        
+        // cartSelected 기본값 설정 (true로 설정)
+        if (cartDto.getCartSelected() == null) {
+            cartDto.setCartSelected(true);
+        }
+        
+        // cartPrice는 서비스에서 상품 정보를 통해 설정되므로 null 허용
+        
+        log.info("장바구니 추가 요청 - 회원번호: {}, 상품ID: {}, 수량: {}", 
+                cartDto.getMemberNum(), cartDto.getProductId(), cartDto.getCartQuantity());
         
         try {
             boolean success = cartService.addCartItem(cartDto);

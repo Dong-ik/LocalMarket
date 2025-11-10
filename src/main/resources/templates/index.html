@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
+<body> 
 <!-- 헤더 Include -->
 <div th:replace="~{common/header}"></div>
-
+ 
 <!-- 히어로 섹션 -->
 <section class="hero-section">
     <div class="container">
@@ -27,7 +28,14 @@
             <div th:each="market : ${popularMarkets}" class="card" 
                  th:onclick="'location.href=\'/markets/' + ${market.marketId} + '\''">
                 <div class="card-image" 
-                     th:style="${market.marketFilename != null ? 'background-image: url(/images/markets/' + market.marketFilename + ')' : 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}">
+                     th:style="${market.marketFilename != null ? 'background-image: url(/images/markets/' + market.marketFilename + ')' : ''}">
+                    
+                    <!-- 이미지 없음 표시 -->
+                    <div th:if="${market.marketFilename == null}" class="no-image-text">
+                        <i class="fas fa-image"></i>
+                        <p>이미지 없음</p>
+                    </div>
+                    
                     <div class="card-badge">HOT</div>
                 </div>
                 <div class="card-content">
@@ -67,7 +75,14 @@
             <div th:each="store : ${popularStores}" class="card" 
                  th:onclick="'location.href=\'/stores/' + ${store.storeId} + '\''">
                 <div class="card-image" 
-                     th:style="${store.storeFilename != null ? 'background-image: url(/images/stores/' + store.storeFilename + ')' : 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'}">
+                     th:style="${store.storeFilename != null ? 'background-image: url(/images/stores/' + store.storeFilename + ')' : ''}">
+                    
+                    <!-- 이미지 없음 표시 -->
+                    <div th:if="${store.storeFilename == null}" class="no-image-text">
+                        <i class="fas fa-image"></i>
+                        <p>이미지 없음</p>
+                    </div>
+                    
                     <div class="card-badge" th:text="${store.storeCategory}">정육점</div>
                 </div>
                 <div class="card-content">
@@ -106,7 +121,13 @@
         <div class="product-grid">
             <div th:each="product : ${newProducts}" class="product-card">
                 <div class="product-image" 
-                     th:style="${product.productFilename != null ? 'background-image: url(/images/products/' + product.productFilename + ')' : 'background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)'}">
+                     th:style="${product.productFilename != null ? 'background-image: url(/images/products/' + product.productFilename + ')' : ''}">
+                    
+                    <!-- 이미지 없음 표시 -->
+                    <div th:if="${product.productFilename == null}" class="no-image-text">
+                        <i class="fas fa-image"></i>
+                        <p>이미지 없음</p>
+                    </div>
                 </div>
                 <div class="product-info">
                     <h4 class="product-name" th:text="${product.productName}">한우 등심</h4>
@@ -128,50 +149,6 @@
     </div>
 </section>
 
-<!-- 최신 게시글 섹션 -->
-<section class="section">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">커뮤니티</h2>
-            <p class="section-subtitle">전통시장 이용후기와 생생한 정보를 공유해보세요</p>
-        </div>
-        
-        <div class="card-grid">
-            <div th:each="board : ${recentBoards}" class="card" 
-                 th:onclick="'location.href=\'/boards/' + ${board.boardId} + '\''">
-                <div class="card-content">
-                    <h3 class="card-title" th:text="${board.boardTitle}">게시글 제목</h3>
-                    <p class="card-description" 
-                       th:text="${#strings.length(board.boardContent) > 100 ? #strings.substring(board.boardContent, 0, 100) + '...' : board.boardContent}">
-                        게시글 내용 미리보기...
-                    </p>
-                    <div class="card-meta">
-                        <span class="card-location">
-                            <i class="fas fa-user"></i>
-                            <span th:text="${board.memberName ?: '익명'}">작성자</span>
-                        </span>
-                        <span class="card-location" th:if="${board.storeName != null}">
-                            <i class="fas fa-store"></i>
-                            <span th:text="${board.storeName}">가게명</span>
-                        </span>
-                        <span class="post-stats">
-                            <i class="fas fa-eye"></i> <span th:text="${board.hitCnt ?: 0}">0</span>
-                            <i class="fas fa-heart" style="margin-left: 10px;"></i> <span th:text="${board.likeCnt ?: 0}">0</span>
-                        </span>
-                    </div>
-                    <div class="card-meta" style="margin-top: 10px; color: #95a5a6; font-size: 0.85rem;">
-                        <span th:text="${#temporals.format(board.writeDate, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="text-center mt-40">
-            <a th:href="@{/boards}" class="btn-secondary">커뮤니티 더 보기</a>
-        </div>
-    </div>
-</section>
-
 <!-- 이벤트/공지사항 섹션 -->
 <section class="section" style="background-color: white; padding: 60px 0; margin-top: 0;">
     <div class="container">
@@ -188,22 +165,10 @@
                     공지사항
                 </h3>
                 <ul style="list-style: none;">
-                    <li style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
-                        <a href="/notices/1" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between;">
-                            <span>추석 연휴 배송 안내</span>
-                            <span style="color: #7f8c8d; font-size: 0.9rem;">2025.09.25</span>
-                        </a>
-                    </li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
-                        <a href="/notices/2" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between;">
-                            <span>개인정보처리방침 개정 안내</span>
-                            <span style="color: #7f8c8d; font-size: 0.9rem;">2025.09.20</span>
-                        </a>
-                    </li>
-                    <li style="padding: 10px 0;">
-                        <a href="/notices/3" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between;">
-                            <span>신규 전통시장 입점 안내</span>
-                            <span style="color: #7f8c8d; font-size: 0.9rem;">2025.09.15</span>
+                    <li th:each="notice : ${recentNotices}" style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
+                        <a th:href="@{/notices/{id}(id=${notice.noticeId})}" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;" th:text="${notice.noticeTitle}">공지사항 제목</span>
+                            <span style="color: #7f8c8d; font-size: 0.9rem; margin-left: 10px;" th:text="${#temporals.format(notice.writeDate, 'MM-dd')}">11-10</span>
                         </a>
                     </li>
                 </ul>
@@ -212,34 +177,22 @@
                 </div>
             </div>
             
-            <!-- 이벤트 -->
+            <!-- 최신 게시글 -->
             <div style="background: #f8f9fa; padding: 30px; border-radius: 15px;">
                 <h3 style="color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center;">
-                    <i class="fas fa-gift" style="margin-right: 10px; color: #e74c3c;"></i>
-                    이벤트
+                    <i class="fas fa-comments" style="margin-right: 10px; color: #e74c3c;"></i>
+                    최신 게시글
                 </h3>
                 <ul style="list-style: none;">
-                    <li style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
-                        <a href="/events/1" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between;">
-                            <span>🎉 신규회원 첫 구매 20% 할인</span>
-                            <span style="color: #e74c3c; font-size: 0.9rem;">진행중</span>
-                        </a>
-                    </li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
-                        <a href="/events/2" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between;">
-                            <span>🏪 전통시장 투어 이벤트</span>
-                            <span style="color: #e74c3c; font-size: 0.9rem;">진행중</span>
-                        </a>
-                    </li>
-                    <li style="padding: 10px 0;">
-                        <a href="/events/3" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between;">
-                            <span>📝 리뷰 작성하고 적립금 받기</span>
-                            <span style="color: #e74c3c; font-size: 0.9rem;">진행중</span>
+                    <li th:each="board : ${recentBoards}" style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
+                        <a th:href="@{/boards/{id}(id=${board.boardId})}" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;" th:text="${board.boardTitle}">게시글 제목</span>
+                            <span style="color: #7f8c8d; font-size: 0.9rem; margin-left: 10px;" th:text="${#temporals.format(board.writeDate, 'MM-dd')}">11-10</span>
                         </a>
                     </li>
                 </ul>
                 <div style="text-align: right; margin-top: 15px;">
-                    <a href="/events" style="color: #3498db; text-decoration: none; font-size: 0.9rem;">더보기 →</a>
+                    <a href="/boards" style="color: #3498db; text-decoration: none; font-size: 0.9rem;">더보기 →</a>
                 </div>
             </div>
         </div>

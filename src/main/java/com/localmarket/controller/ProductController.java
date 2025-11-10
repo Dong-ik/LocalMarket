@@ -15,21 +15,46 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
     
     private final ProductService productService;
     
-    // 상품 등록
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> registerProduct(@RequestBody Product product) {
+    // 상품 등록 (이미지 포함)
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<Map<String, Object>> createProduct(
+            @RequestParam(value = "file", required = false) org.springframework.web.multipart.MultipartFile file,
+            @RequestParam("productName") String productName,
+            @RequestParam("productPrice") BigDecimal productPrice,
+            @RequestParam("productAmount") Integer productAmount,
+            @RequestParam("storeId") Integer storeId) {
+        
         Map<String, Object> response = new HashMap<>();
+        
         try {
-            log.info("상품 등록 요청 - 상품명: {}, 가격: {}", product.getProductName(), product.getProductPrice());
+            log.info("상품 등록 요청 - 상품명: {}, 가격: {}", productName, productPrice);
+            
+            // Product 객체 생성
+            Product product = new Product();
+            product.setProductName(productName);
+            product.setProductPrice(productPrice);
+            product.setProductAmount(productAmount);
+            product.setStoreId(storeId);
             
             boolean success = productService.insertProduct(product);
             if (success) {
+                // 이미지 업로드 처리 (상품 ID 생성 후)
+                if (file != null && !file.isEmpty()) {
+                    try {
+                        String filename = productService.uploadProductImage(product.getProductId(), file);
+                        log.info("상품 이미지 업로드 성공 - 파일명: {}", filename);
+                    } catch (Exception e) {
+                        log.warn("상품 이미지 업로드 실패: {}", e.getMessage());
+                        // 이미지 업로드 실패해도 상품 등록은 성공으로 처리
+                    }
+                }
+                
                 response.put("success", true);
                 response.put("message", "상품이 성공적으로 등록되었습니다.");
                 response.put("productId", product.getProductId());
@@ -41,10 +66,9 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
         } catch (Exception e) {
-            log.error("상품 등록 중 오류 발생: {}", e.getMessage());
+            log.error("상품 등록 중 오류 발생: {}", e.getMessage(), e);
             response.put("success", false);
-            response.put("message", "상품 등록 중 오류가 발생했습니다.");
-            response.put("error", e.getMessage());
+            response.put("message", "상품 등록 중 오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -178,18 +202,20 @@ public class ProductController {
     // 상품 수정
     @PutMapping("/{productId}")
     public ResponseEntity<Map<String, Object>> updateProduct(
-            @PathVariable("productId") Integer productId, 
+            @PathVariable("productId") Integer productId,
             @RequestBody Product product) {
+        
         Map<String, Object> response = new HashMap<>();
+        
         try {
-            product.setProductId(productId);
-            log.info("상품 수정 요청 - ID: {}, 상품명: {}", productId, product.getProductName());
+            log.info("상품 수정 요청 - ID: {}", productId);
             
+            product.setProductId(productId);
             boolean success = productService.updateProduct(product);
+            
             if (success) {
                 response.put("success", true);
                 response.put("message", "상품이 성공적으로 수정되었습니다.");
-                response.put("data", product);
                 return ResponseEntity.ok(response);
             } else {
                 response.put("success", false);
@@ -197,10 +223,34 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
         } catch (Exception e) {
-            log.error("상품 수정 중 오류 발생: {}", e.getMessage());
+            log.error("상품 수정 중 오류 발생: {}", e.getMessage(), e);
             response.put("success", false);
-            response.put("message", "상품 수정 중 오류가 발생했습니다.");
-            response.put("error", e.getMessage());
+            response.put("message", "상품 수정 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    // 상품 이미지 업로드
+    @PostMapping("/{productId}/upload-image")
+    public ResponseEntity<Map<String, Object>> uploadImage(
+            @PathVariable("productId") Integer productId,
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            log.info("상품 이미지 업로드 요청 - ID: {}", productId);
+            
+            String filename = productService.uploadProductImage(productId, file);
+            
+            response.put("success", true);
+            response.put("message", "이미지가 성공적으로 업로드되었습니다.");
+            response.put("filename", filename);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("상품 이미지 업로드 중 오류 발생: {}", e.getMessage(), e);
+            response.put("success", false);
+            response.put("message", "이미지 업로드 중 오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -223,10 +273,9 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
         } catch (Exception e) {
-            log.error("상품 삭제 중 오류 발생: {}", e.getMessage());
+            log.error("상품 삭제 중 오류 발생: {}", e.getMessage(), e);
             response.put("success", false);
-            response.put("message", "상품 삭제 중 오류가 발생했습니다.");
-            response.put("error", e.getMessage());
+            response.put("message", "상품 삭제 중 오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

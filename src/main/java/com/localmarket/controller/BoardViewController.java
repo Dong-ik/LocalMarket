@@ -1,8 +1,12 @@
 package com.localmarket.controller;
 
 import com.localmarket.domain.Board;
+import com.localmarket.domain.Market;
+import com.localmarket.domain.Store;
 import com.localmarket.service.BoardService;
 import com.localmarket.service.CommentService;
+import com.localmarket.service.MarketService;
+import com.localmarket.service.StoreService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +28,8 @@ public class BoardViewController {
     
     private final BoardService boardService;
     private final CommentService commentService;
+    private final StoreService storeService;
+    private final MarketService marketService;
     
     /**
      * 게시판 목록 페이지
@@ -121,8 +127,16 @@ public class BoardViewController {
             return "redirect:/members/login";
         }
         
+        // 시장 목록 조회
+        List<Market> markets = marketService.getAllMarkets();
+        
+        // 가게 목록 조회
+        List<Store> stores = storeService.getAllStores();
+        
         model.addAttribute("memberNum", memberNum);
         model.addAttribute("memberId", memberId);
+        model.addAttribute("markets", markets);
+        model.addAttribute("stores", stores);
         
         return "boards/board-write";
     }

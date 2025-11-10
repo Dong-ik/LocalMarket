@@ -2,10 +2,12 @@ package com.localmarket.controller;
 
 import com.localmarket.domain.Board;
 import com.localmarket.domain.Market;
+import com.localmarket.domain.Notice;
 import com.localmarket.domain.Product;
 import com.localmarket.domain.Store;
 import com.localmarket.service.BoardService;
 import com.localmarket.service.MarketService;
+import com.localmarket.service.NoticeService;
 import com.localmarket.service.ProductService;
 import com.localmarket.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class HomeController {
     private final StoreService storeService;
     private final ProductService productService;
     private final BoardService boardService;
+    private final NoticeService noticeService;
 
     /**
      * 메인 페이지
@@ -110,6 +113,27 @@ public class HomeController {
                 model.addAttribute("recentBoards", new ArrayList<>());
             }
             
+            // 최신 공지사항 (상위 3개) - 최신순
+            List<Notice> allNotices = noticeService.getAllNotices();
+            log.info(">>> 전체 공지사항 조회 결과: {} 개", allNotices != null ? allNotices.size() : "null");
+            
+            if (allNotices != null && !allNotices.isEmpty()) {
+                allNotices.sort((n1, n2) -> {
+                    if (n1.getWriteDate() == null && n2.getWriteDate() == null) return 0;
+                    if (n1.getWriteDate() == null) return 1;
+                    if (n2.getWriteDate() == null) return -1;
+                    return n2.getWriteDate().compareTo(n1.getWriteDate());
+                });
+                List<Notice> recentNotices = allNotices.size() > 3 ? allNotices.subList(0, 3) : allNotices;
+                log.info(">>> 최신 공지사항 필터링 결과: {} 개", recentNotices.size());
+                recentNotices.forEach(n -> log.info("  - 공지사항: {} (ID: {}, 작성일: {})", 
+                    n.getNoticeTitle(), n.getNoticeId(), n.getWriteDate()));
+                model.addAttribute("recentNotices", recentNotices);
+            } else {
+                log.warn(">>> 조회된 공지사항이 없습니다!");
+                model.addAttribute("recentNotices", new ArrayList<>());
+            }
+            
             log.info("=== 메인 페이지 데이터 조회 완료 ===");
             
         } catch (Exception e) {
@@ -119,6 +143,7 @@ public class HomeController {
             model.addAttribute("popularStores", new ArrayList<>());
             model.addAttribute("newProducts", new ArrayList<>());
             model.addAttribute("recentBoards", new ArrayList<>());
+            model.addAttribute("recentNotices", new ArrayList<>());
         }
         
         return "index";

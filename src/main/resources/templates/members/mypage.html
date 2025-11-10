@@ -14,7 +14,11 @@
         <div class="mypage-info">
             <p><strong>아이디:</strong> <span th:text="${session.member.memberId}"></span></p>
             <p><strong>이름:</strong> <span th:text="${session.member.memberName}"></span></p>
-            <p><strong>등급:</strong> <span th:text="${session.member.memberGrade}"></span></p>
+            <p><strong>등급:</strong> 
+                <span th:if="${session.member.memberGrade == 'ADMIN'}">관리자</span>
+                <span th:if="${session.member.memberGrade == 'SELLER'}">판매자</span>
+                <span th:if="${session.member.memberGrade == 'BUYER'}">구매자</span>
+            </p>
         </div>
         <div class="mypage-menu">
             <!-- 구매자(BUYER) 메뉴 -->
@@ -23,7 +27,7 @@
                     <li><a th:href="@{/favorites}">관심 시장/가게 목록</a></li>
                     <li><a th:href="@{/orders}">주문 내역</a></li>
                     <li><a th:href="@{/cart}">장바구니</a></li>
-                    <li><a th:href="@{/members/info}">내 정보 조회/수정</a></li>
+                    <li><a th:href="@{/members/{memberNum}/edit(memberNum=${session.member.memberNum})}">내 정보 조회/수정</a></li>
                     <li><a th:href="@{/members/withdraw}" class="withdraw-btn">회원 탈퇴</a></li>
                 </ul>
             </div>
@@ -33,19 +37,19 @@
                     <li><a th:href="@{/seller/orders}">내 가게 주문내역</a></li>
                     <li><a th:href="@{/seller/products}">내 상품 관리</a></li>
                     <li><a th:href="@{/seller/stores}">내 가게 관리</a></li>
-                    <li><a th:href="@{/members/info}">내 정보 조회/수정</a></li>
+                    <li><a th:href="@{/members/{memberNum}/edit(memberNum=${session.member.memberNum})}">내 정보 조회/수정</a></li>
                     <li><a th:href="@{/members/withdraw}" class="withdraw-btn">회원 탈퇴</a></li>
                 </ul>
             </div>
             <!-- 관리자(ADMIN) 메뉴 -->
             <div th:if="${session.member.memberGrade == 'ADMIN'}">
                 <ul class="mypage-menu-horizontal">
-                    <li><a th:href="@{/members/list}">회원 목록 조회</a></li>
-                    <li><a th:href="@{/members/info}">회원 정보 조회/수정/삭제</a></li>
-                    <li><a th:href="@{/markets/list}">시장 목록/가게 관리</a></li>
-                    <li><a th:href="@{/products/list}">상품 관리</a></li>
-                    <li><a th:href="@{/orders/list}">주문/결제 관리</a></li>
-                    <li><a th:href="@{/boards/list}">게시글/리뷰 관리</a></li>
+                    <li><a th:href="@{/members/adminlist}">회원 관리</a></li>
+                    <li><a th:href="@{/markets/adminlist}">시장 관리</a></li>
+                    <li><a th:href="@{/stores/adminlist}">가게 관리</a></li>
+                    <li><a th:href="@{/products/adminlist}">상품 관리</a></li>
+                    <li><a th:href="@{/orders/adminlist}">주문/결제 관리</a></li>
+                    <li><a th:href="@{/boards/adminlist}">게시글/리뷰 관리</a></li>
                 </ul>
             </div>
         </div>

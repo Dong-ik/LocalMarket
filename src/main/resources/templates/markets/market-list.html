@@ -92,7 +92,13 @@
             <div th:each="market : ${markets}" class="market-card" 
                  th:onclick="'location.href=\'/markets/' + ${market.marketId} + '\''">
                 <div class="market-card-image" 
-                     th:style="'background-image: url(/images/markets/' + ${market.marketFilename ?: 'default-market.jpg'} + ')'">
+                     th:style="${market.marketFilename != null ? 'background-image: url(/images/markets/' + market.marketFilename + ')' : ''}">
+                    
+                    <!-- 이미지 없음 표시 -->
+                    <div th:if="${market.marketFilename == null}" class="no-image-text">
+                        <i class="fas fa-image"></i>
+                        <p>이미지 없음</p>
+                    </div>
                     
                     <!-- 찜 버튼 (항상 표시) -->
                     <button class="favorite-btn" 

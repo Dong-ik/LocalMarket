@@ -1,8 +1,10 @@
 package com.localmarket.service;
 
 import com.localmarket.domain.Cart;
+import com.localmarket.domain.Product;
 import com.localmarket.dto.CartDto;
 import com.localmarket.mapper.CartMapper;
+import com.localmarket.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.List;
 public class CartServiceImpl implements CartService {
     
     private final CartMapper cartMapper;
+    private final ProductMapper productMapper;
     
     @Override
     @Transactional
@@ -24,6 +27,18 @@ public class CartServiceImpl implements CartService {
         try {
             log.info("장바구니 아이템 추가 시작 - 회원번호: {}, 상품ID: {}", 
                     cartDto.getMemberNum(), cartDto.getProductId());
+            
+            // 상품 정보 조회 (가격 정보 가져오기)
+            Product product = productMapper.selectProductById(cartDto.getProductId());
+            if (product == null) {
+                log.error("상품을 찾을 수 없습니다 - 상품ID: {}", cartDto.getProductId());
+                return false;
+            }
+            
+            // 상품 가격 설정
+            if (cartDto.getCartPrice() == null) {
+                cartDto.setCartPrice(product.getProductPrice());
+            }
             
             // 이미 장바구니에 있는 상품인지 확인
             Cart existingItem = cartMapper.selectCartItemByMemberAndProduct(

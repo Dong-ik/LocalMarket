@@ -193,14 +193,24 @@
         ORDER BY s.store_name ASC
     </select>
 
-    <!-- 가게 정보 수정 -->
+    <!-- 가게 정보 수정 (null이 아닌 값만 업데이트) -->
     <update id="updateStore" parameterType="com.localmarket.domain.Store">
         UPDATE store 
-        SET 
-            store_name = #{storeName},
-            store_index = #{storeIndex},
-            store_category = #{storeCategory},
-            store_filename = #{storeFilename}
+        <set>
+            <if test="storeName != null">store_name = #{storeName},</if>
+            <if test="storeIndex != null">store_index = #{storeIndex},</if>
+            <if test="storeCategory != null">store_category = #{storeCategory},</if>
+            <if test="storeFilename != null">store_filename = #{storeFilename},</if>
+            <if test="marketId != null">market_id = #{marketId},</if>
+            <if test="memberNum != null">member_num = #{memberNum},</if>
+        </set>
+        WHERE store_id = #{storeId}
+    </update>
+
+    <!-- 가게 이미지 파일명만 수정 -->
+    <update id="updateStoreFilename" parameterType="map">
+        UPDATE store 
+        SET store_filename = #{storeFilename}
         WHERE store_id = #{storeId}
     </update>
 

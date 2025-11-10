@@ -266,13 +266,14 @@
     <!-- 시장 정보 수정 -->
     <update id="updateMarket" parameterType="com.localmarket.domain.Market">
         UPDATE market
-        SET 
-            market_name = #{marketName},
-            market_local = #{marketLocal},
-            market_address = #{marketAddress},
-            market_introduce = #{marketIntroduce},
-            market_filename = #{marketFilename},
-            market_URL = #{marketURL}
+        <set>
+            <if test="marketName != null">market_name = #{marketName},</if>
+            <if test="marketLocal != null">market_local = #{marketLocal},</if>
+            <if test="marketAddress != null">market_address = #{marketAddress},</if>
+            <if test="marketIntroduce != null">market_introduce = #{marketIntroduce},</if>
+            <if test="marketFilename != null">market_filename = #{marketFilename},</if>
+            <if test="marketURL != null">market_URL = #{marketURL}</if>
+        </set>
         WHERE market_id = #{marketId}
     </update>
 

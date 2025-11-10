@@ -49,4 +49,8 @@ public interface ProductMapper {
     
     // 재고 부족 상품 목록 조회 (지정된 수량 이하)
     List<Product> selectLowStockProducts(@Param("threshold") Integer threshold);
+    
+    // 상품 이미지 파일명 업데이트
+    int updateProductFilename(@Param("productId") Integer productId, 
+                             @Param("productFilename") String productFilename);
 }

@@ -84,25 +84,13 @@
                         <!-- 시장 대표 이미지 -->
                         <div class="market-image-section">
                             <div class="main-image">
-                                <img th:src="${market.marketURL != null && !market.marketURL.isEmpty() 
-                                    ? market.marketURL 
-                                    : '/images/default-market.jpg'}" 
+                                <img th:if="${market.marketFilename != null && !market.marketFilename.isEmpty()}"
+                                     th:src="@{'/images/markets/' + ${market.marketFilename}}" 
                                      th:alt="${market.marketName}"
                                      onerror="this.src='/images/default-market.jpg'">
-                            </div>
-                        </div>
-
-                        <!-- 시장 소개 -->
-                        <div class="market-description-section">
-                            <h2 class="section-title">
-                                <i class="fas fa-store"></i>
-                                시장 소개
-                            </h2>
-                            <div class="description-content" th:if="${market.marketIntroduce != null && !market.marketIntroduce.isEmpty()}">
-                                <p th:text="${market.marketIntroduce}">시장 소개 내용</p>
-                            </div>
-                            <div class="description-content" th:if="${market.marketIntroduce == null || market.marketIntroduce.isEmpty()}">
-                                <p class="no-info">시장 소개 정보가 없습니다.</p>
+                                <img th:if="${market.marketFilename == null || market.marketFilename.isEmpty()}"
+                                     src="/images/default-market.jpg" 
+                                     th:alt="${market.marketName}">
                             </div>
                         </div>
 
@@ -180,15 +168,43 @@
                             </div>
                         </div>
 
-                        <!-- 시장 파일 정보 -->
-                        <div class="features-card" th:if="${market.marketFilename != null && !market.marketFilename.isEmpty()}">
-                            <h3 class="card-title">추가 정보</h3>
+                        <!-- 시장 소개 정보 -->
+                        <div class="features-card" th:if="${market.marketIntroduce != null && !market.marketIntroduce.isEmpty()}">
+                            <h3 class="card-title">시장 소개</h3>
                             <div class="features-list">
                                 <div class="feature-item">
-                                    <i class="fas fa-file"></i>
-                                    <span class="feature-label">관련 파일:</span>
-                                    <span class="feature-value" th:text="${market.marketFilename}">파일명</span>
+                                    <i class="fas fa-store"></i>
+                                    <span class="feature-value" th:text="${market.marketIntroduce}" style="margin-left: 0; line-height: 1.6;">시장 소개 내용</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 이 시장에 대한 게시글 -->
+                        <div class="features-card" th:if="${marketBoards != null && !marketBoards.isEmpty()}">
+                            <h3 class="card-title">
+                                <i class="fas fa-comments"></i> 이 시장에 대한 게시글
+                            </h3>
+                            <div class="board-list">
+                                <div class="board-item" th:each="board : ${marketBoards}">
+                                    <a th:href="@{/boards/{boardId}(boardId=${board.boardId})}" class="board-link">
+                                        <div class="board-item-header">
+                                            <h4 class="board-title" th:text="${board.boardTitle}">게시글 제목</h4>
+                                            <span class="board-meta">
+                                                <i class="fas fa-user"></i> <span th:text="${board.memberName}">작성자</span>
+                                            </span>
+                                        </div>
+                                        <div class="board-item-footer">
+                                            <span class="board-date" th:text="${#temporals.format(board.writeDate, 'yyyy-MM-dd')}">작성일</span>
+                                            <div class="board-stats">
+                                                <span><i class="fas fa-eye"></i> <span th:text="${board.hitCnt}">0</span></span>
+                                                <span><i class="fas fa-heart"></i> <span th:text="${board.likeCnt}">0</span></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <a th:href="@{/boards(marketId=${market.marketId})}" class="view-all-btn">
+                                    <i class="fas fa-list"></i> 모든 게시글 보기
+                                </a>
                             </div>
                         </div>
 

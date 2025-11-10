@@ -14,4 +14,5 @@ public class BoardDto {
     private LocalDateTime updatedDate;
     private Integer memberNum;
     private Integer storeId;
+    private Integer marketId;     // 시장 ID 추가
 }

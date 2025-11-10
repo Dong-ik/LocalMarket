@@ -222,4 +222,19 @@ public class BoardServiceImpl implements BoardService {
             throw e;
         }
     }
+    
+    @Override
+    public List<Board> getBoardsByMarketId(Integer marketId, int limit) {
+        log.info("=== 시장별 게시글 조회 시작 ===");
+        log.info("시장 ID: {}, 조회 개수: {}", marketId, limit);
+        
+        try {
+            List<Board> boards = boardMapper.selectBoardsByMarketId(marketId, limit);
+            log.info("시장별 게시글 조회 완료. 조회된 게시글 수: {}", boards.size());
+            return boards;
+        } catch (Exception e) {
+            log.error("시장별 게시글 조회 실패: ", e);
+            throw e;
+        }
+    }
 }

@@ -414,6 +414,148 @@ body {
     color: #333;
 }
 
+/* 게시글 리스트 스타일 - 구체적 선택자 사용 */
+.features-card .board-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    margin-top: 20px !important;
+}
+
+.features-card .board-list .board-item {
+    background: #ffffff !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    margin-bottom: 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+.features-card .board-list .board-item:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    border-color: #3498db !important;
+}
+
+.features-card .board-list .board-item:last-child {
+    margin-bottom: 0 !important;
+}
+
+.features-card .board-list .board-link {
+    display: block !important;
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+.features-card .board-list .board-item-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 12px !important;
+    gap: 12px !important;
+}
+
+.features-card .board-list .board-title {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+    margin: 0 !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    line-height: 1.4 !important;
+}
+
+.features-card .board-list .board-link:hover .board-title {
+    color: #3498db !important;
+}
+
+.features-card .board-list .board-meta {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 13px !important;
+    color: #666 !important;
+    white-space: nowrap !important;
+    padding: 4px 12px !important;
+    background: #f8f9fa !important;
+    border-radius: 20px !important;
+}
+
+.features-card .board-list .board-meta i {
+    color: #3498db !important;
+    font-size: 12px !important;
+}
+
+.features-card .board-list .board-item-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-top: 12px !important;
+    border-top: 1px solid #f1f3f5 !important;
+}
+
+.features-card .board-list .board-date {
+    font-size: 13px !important;
+    color: #868e96 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.features-card .board-list .board-date::before {
+    content: '📅' !important;
+    font-size: 12px !important;
+}
+
+.features-card .board-list .board-stats {
+    display: flex !important;
+    gap: 16px !important;
+    font-size: 13px !important;
+    color: #495057 !important;
+}
+
+.features-card .board-list .board-stats span {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    font-weight: 500 !important;
+}
+
+.features-card .board-list .board-stats i {
+    color: #3498db !important;
+    font-size: 14px !important;
+}
+
+.features-card .board-list .board-stats span:hover {
+    color: #3498db !important;
+}
+
+.features-card .board-list .view-all-btn {
+    display: block !important;
+    text-align: center !important;
+    padding: 14px !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-radius: 12px !important;
+    color: white !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    margin-top: 20px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.2) !important;
+}
+
+.features-card .board-list .view-all-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3) !important;
+}
+
+.features-card .board-list .view-all-btn i {
+    margin-right: 8px !important;
+}
+
 /* 액션 버튼 */
 .action-buttons {
     display: flex;

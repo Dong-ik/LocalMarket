@@ -2,8 +2,10 @@ package com.localmarket.controller;
 
 import com.localmarket.domain.Store;
 import com.localmarket.domain.Product;
+import com.localmarket.domain.Market;
 import com.localmarket.service.StoreService;
 import com.localmarket.service.ProductService;
+import com.localmarket.service.MarketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,7 @@ public class StoreViewController {
     
     private final StoreService storeService;
     private final ProductService productService;
+    private final MarketService marketService;
     
     /**
      * 인기 가게 페이지
@@ -193,6 +196,119 @@ public class StoreViewController {
             log.error("가게 상세 조회 중 오류 발생 - storeId: {}", storeId, e);
             model.addAttribute("errorMessage", "가게 정보를 불러오는 중 오류가 발생했습니다.");
             model.addAttribute("exception", e);
+            return "error/error-page";
+        }
+    }
+    
+    /**
+     * 가게 관리 페이지 (관리자용)
+     * GET /stores/adminlist
+     */
+    @GetMapping("/adminlist")
+    public String adminStoreList(Model model, jakarta.servlet.http.HttpSession session) {
+        try {
+            // 관리자 권한 체크
+            if (session.getAttribute("member") == null) {
+                return "redirect:/members/login";
+            }
+            
+            // 모든 가게 목록 조회
+            List<Store> stores = storeService.getAllStores();
+            
+            log.info("=== 가게 관리 페이지 ===");
+            log.info("조회된 가게 수: {}", stores != null ? stores.size() : 0);
+            if (stores != null && !stores.isEmpty()) {
+                stores.forEach(store -> log.info("가게: {} (ID: {}), 시장: {}, 카테고리: {}", 
+                    store.getStoreName(), store.getStoreId(), store.getMarketName(), store.getStoreCategory()));
+            }
+            
+            model.addAttribute("stores", stores);
+            model.addAttribute("totalCount", stores != null ? stores.size() : 0);
+            
+            return "stores/store-adminlist";
+        } catch (Exception e) {
+            log.error("가게 관리 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "가게 목록을 불러오는 중 오류가 발생했습니다.");
+            return "error/error-page";
+        }
+    }
+    
+    /**
+     * 가게 등록 페이지 (관리자용)
+     * GET /stores/register
+     */
+    @GetMapping("/register")
+    public String registerStorePage(Model model, jakarta.servlet.http.HttpSession session) {
+        try {
+            // 관리자 권한 체크
+            if (session.getAttribute("member") == null) {
+                return "redirect:/members/login";
+            }
+            
+            // 시장 목록 조회 (가게 등록 시 선택 가능하도록)
+            List<Market> markets = marketService.getAllMarkets();
+            
+            // 판매자(SELLER) 회원 목록 조회
+            List<com.localmarket.domain.Member> sellers = storeService.getSellerMembers();
+            
+            log.info("=== 가게 등록 페이지 ===");
+            log.info("시장 목록: {} 개", markets != null ? markets.size() : 0);
+            log.info("판매자 목록: {} 개", sellers != null ? sellers.size() : 0);
+            
+            model.addAttribute("markets", markets);
+            model.addAttribute("sellers", sellers);
+            
+            return "stores/store-register";
+        } catch (Exception e) {
+            log.error("가게 등록 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "페이지를 불러오는 중 오류가 발생했습니다.");
+            return "error/error-page";
+        }
+    }
+    
+    /**
+     * 가게 수정 페이지 (관리자용)
+     * GET /stores/{storeId}/edit
+     */
+    @GetMapping("/{storeId}/edit")
+    public String editStorePage(@PathVariable("storeId") Integer storeId, Model model, jakarta.servlet.http.HttpSession session) {
+        try {
+            // 관리자 권한 체크
+            if (session.getAttribute("member") == null) {
+                return "redirect:/members/login";
+            }
+            
+            // 가게 정보 조회
+            Store store = storeService.getStoreById(storeId);
+            
+            if (store == null) {
+                log.warn("가게를 찾을 수 없음 - storeId: {}", storeId);
+                model.addAttribute("errorMessage", "가게를 찾을 수 없습니다.");
+                return "error/error-page";
+            }
+            
+            // 시장 목록 조회
+            List<Market> markets = marketService.getAllMarkets();
+            
+            // 판매자(SELLER) 회원 목록 조회
+            List<com.localmarket.domain.Member> sellers = storeService.getSellerMembers();
+            
+            log.info("=== 가게 수정 페이지 ===");
+            log.info("가게 ID: {}, 가게명: {}", storeId, store.getStoreName());
+            log.info("카테고리: {}", store.getStoreCategory());
+            log.info("판매자번호: {}, 판매자명: {}, 판매자ID: {}", 
+                    store.getMemberNum(), store.getMemberName(), store.getMemberId());
+            log.info("시장 목록: {} 개", markets != null ? markets.size() : 0);
+            log.info("판매자 목록: {} 개", sellers != null ? sellers.size() : 0);
+            
+            model.addAttribute("store", store);
+            model.addAttribute("markets", markets);
+            model.addAttribute("sellers", sellers);
+            
+            return "stores/store-edit";
+        } catch (Exception e) {
+            log.error("가게 수정 페이지 조회 중 오류 발생 - storeId: {}", storeId, e);
+            model.addAttribute("errorMessage", "페이지를 불러오는 중 오류가 발생했습니다.");
             return "error/error-page";
         }
     }
