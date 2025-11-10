@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주문 목록 - LocalMarket</title>
+    <link rel="stylesheet" th:href="@{/css/localmarket.css}">
+    <link rel="stylesheet" th:href="@{/css/order-list.css}">
+</head>
+<body>
+    <div th:replace="~{common/header :: header}"></div>
+
+    <div class="order-list-container">
+        <h1 class="page-title">주문 내역</h1>
+        
+        <div class="order-filter">
+            <button class="filter-btn active" onclick="filterOrders('all')">전체</button>
+            <button class="filter-btn" onclick="filterOrders('주문완료')">주문완료</button>
+            <button class="filter-btn" onclick="filterOrders('배송준비')">배송준비</button>
+            <button class="filter-btn" onclick="filterOrders('배송중')">배송중</button>
+            <button class="filter-btn" onclick="filterOrders('배송완료')">배송완료</button>
+        </div>
+        
+        <div class="order-list" th:if="${orders != null and !orders.isEmpty()}">
+            <div class="order-card" th:each="order : ${orders}" th:data-status="${order.orderStatus}">
+                <div class="order-header">
+                    <div class="order-date" th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">
+                        2024-01-15 14:30
+                    </div>
+                    <div class="order-status" th:classappend="${order.orderStatus}">
+                        <span th:text="${order.orderStatus}">배송준비</span>
+                    </div>
+                </div>
+                
+                <div class="order-body">
+                    <div class="order-products">
+                        <div class="product-item" th:each="detail, iterStat : ${order.orderDetails}" 
+                             th:if="${iterStat.index < 2}">
+                            <div class="product-image">
+                                <img th:src="@{${detail.productImage}}" 
+                                     th:alt="${detail.productName}"
+                                     onerror="this.src='/images/no-image.jpg'">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name" th:text="${detail.productName}">상품명</div>
+                                <div class="product-quantity">
+                                    <span th:text="${detail.orderDetailQuantity}">1</span>개 / 
+                                    <span th:text="${#numbers.formatInteger(detail.orderDetailPrice, 0, 'COMMA')}">0</span>원
+                                </div>
+                            </div>
+                        </div>
+                        <div class="more-products" th:if="${order.orderDetails.size() > 2}">
+                            외 <span th:text="${order.orderDetails.size() - 2}">0</span>개 상품
+                        </div>
+                    </div>
+                    
+                    <div class="order-summary">
+                        <div class="order-total">
+                            총 결제금액: 
+                            <strong th:text="${#numbers.formatInteger(order.orderTotalPrice, 0, 'COMMA')} + '원'">
+                                30,000원
+                            </strong>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn-detail" th:onclick="'viewOrderDetail(' + ${order.orderId} + ')'">
+                                상세보기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="empty-state" th:if="${orders == null or orders.isEmpty()}">
+            <div class="empty-icon">📦</div>
+            <h3>주문 내역이 없습니다</h3>
+            <p>지금 바로 LocalMarket에서 쇼핑을 시작해보세요!</p>
+            <button class="btn-shopping" onclick="goToProducts()">
+                쇼핑하러 가기
+            </button>
+        </div>
+    </div>
+
+    <div th:replace="~{common/footer :: footer}"></div>
+
+    <script>
+        // 주문 상세 보기
+        function viewOrderDetail(orderId) {
+            window.location.href = '/order/' + orderId;
+        }
+        
+        // 상품 목록으로 이동
+        function goToProducts() {
+            window.location.href = '/products';
+        }
+        
+        // 주문 상태별 필터링
+        function filterOrders(status) {
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 주문 카드 필터링
+            const orderCards = document.querySelectorAll('.order-card');
+            orderCards.forEach(card => {
+                if (status === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    if (card.dataset.status === status) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

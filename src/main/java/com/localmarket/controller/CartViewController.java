@@ -50,6 +50,14 @@ public class CartViewController {
             log.info("회원번호: {}", member.getMemberNum());
             log.info("장바구니 아이템 수: {}", cartItems != null ? cartItems.size() : 0);
             
+            if (cartItems != null && !cartItems.isEmpty()) {
+                for (Cart item : cartItems) {
+                    log.info("장바구니 아이템: ID={}, 상품={}, 수량={}, 가격={}", 
+                            item.getCartId(), item.getProductName(), 
+                            item.getCartQuantity(), item.getCartPrice());
+                }
+            }
+            
             model.addAttribute("cartItems", cartItems);
             model.addAttribute("member", member);
             

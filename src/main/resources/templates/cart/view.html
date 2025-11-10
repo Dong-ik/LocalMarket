@@ -2,6 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>장바구니 - Local Market</title>
     
@@ -15,209 +16,173 @@
     <!-- 헤더 Include -->
     <div th:replace="~{common/header}"></div>
 
+    <!-- 페이지 타이틀 섹션 -->
+    <section class="page-title-section">
+        <div class="container">
+            <h1 class="page-title"><i class="fas fa-shopping-cart"></i> 장바구니</h1>
+            <p class="page-subtitle">선택하신 상품을 확인하세요</p>
+        </div>
+    </section>
+
     <!-- 메인 컨테이너 -->
-    <div class="container" style="margin-top: 100px; margin-bottom: 60px;">
-        
-        <!-- 페이지 헤더 -->
-        <div class="page-header">
-            <h1><i class="fas fa-shopping-cart"></i> 장바구니</h1>
-            <p class="subtitle">선택하신 상품을 확인하세요</p>
-        </div>
+    <section class="cart-section">
+        <div class="container">
+            <!-- 장바구니 비어있을 때 -->
+            <div class="empty-cart" th:if="${cartItems == null || cartItems.isEmpty()}">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>장바구니가 비어있습니다</h3>
+                <p>상품을 담아주세요!</p>
+                <a th:href="@{/products}" class="btn-primary">
+                    <i class="fas fa-shopping-bag"></i> 상품 보러가기
+                </a>
+            </div>
 
-        <!-- 장바구니 비어있을 때 -->
-        <div class="empty-cart" th:if="${cartItems == null || cartItems.isEmpty()}">
-            <i class="fas fa-shopping-cart"></i>
-            <h3>장바구니가 비어있습니다</h3>
-            <p>상품을 담아주세요!</p>
-            <a th:href="@{/products}" class="btn btn-primary">
-                <i class="fas fa-shopping-bag"></i> 상품 보러가기
-            </a>
-        </div>
-
-        <!-- 장바구니 아이템이 있을 때 -->
-        <div class="cart-content" th:if="${cartItems != null && !cartItems.isEmpty()}">
-            <div class="row">
+            <!-- 장바구니 아이템이 있을 때 -->
+            <div th:if="${cartItems != null && !cartItems.isEmpty()}">
                 
-                <!-- 장바구니 아이템 목록 (왼쪽) -->
-                <div class="col-lg-8">
-                    
-                    <!-- 전체 선택 및 선택 삭제 -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4>담은 상품 <span class="text-muted" th:text="'(' + ${#lists.size(cartItems)} + '개)'">(0개)</span></h4>
-                        <div>
-                            <button class="btn btn-outline-danger btn-sm" onclick="selectAll()">
-                                <i class="fas fa-check-square"></i> 전체선택
-                            </button>
-                            <button class="btn btn-outline-danger btn-sm" onclick="deleteSelected()">
-                                <i class="fas fa-trash"></i> 선택삭제
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- 가게별로 그룹화된 장바구니 아이템 -->
-                    <div th:each="storeGroup : ${cartItemsByStore}" class="store-group mb-4">
-                        
-                        <!-- 가게 헤더 -->
-                        <div class="store-header">
-                            <i class="fas fa-store"></i>
-                            <span th:text="${storeGroup.storeName}">가게명</span>
-                            <small class="text-muted ms-2" th:text="'(' + ${#lists.size(storeGroup.items)} + '개 상품)'">(0개 상품)</small>
-                        </div>
-
-                        <!-- 해당 가게의 상품 목록 -->
-                        <div th:each="item : ${storeGroup.items}" class="cart-item">
-                            <div class="row align-items-center">
-                                
-                                <!-- 체크박스 -->
-                                <div class="col-md-1">
-                                    <input type="checkbox" class="form-check-input item-checkbox" 
-                                           th:value="${item.cartId}" checked>
-                                </div>
-
-                                <!-- 상품 이미지 -->
-                                <div class="col-md-2">
-                                    <img th:if="${item.productFilename != null}"
-                                         th:src="@{'/images/products/' + ${item.productFilename}}" 
-                                         th:alt="${item.productName}"
-                                         class="product-image">
-                                    <div th:if="${item.productFilename == null}" class="no-image">
-                                        <i class="fas fa-image"></i>
-                                    </div>
-                                </div>
-
-                                <!-- 상품 정보 -->
-                                <div class="col-md-4">
-                                    <h6 th:text="${item.productName}">상품명</h6>
-                                    <p class="text-muted mb-1" th:text="${item.storeName}">가게명</p>
-                                    <small class="text-muted" th:text="${item.category}">카테고리</small>
-                                </div>
-
-                                <!-- 수량 조절 -->
-                                <div class="col-md-2">
-                                    <div class="quantity-control">
-                                        <div class="quantity-btn" th:onclick="'decreaseQuantity(' + ${item.cartId} + ')'">
-                                            <i class="fas fa-minus"></i>
-                                        </div>
-                                        <input type="number" class="quantity-input" 
-                                               th:id="'qty-' + ${item.cartId}"
-                                               th:value="${item.cartAmount}" 
-                                               min="1" max="99"
-                                               th:onchange="'updateQuantity(' + ${item.cartId} + ', this.value)'">
-                                        <div class="quantity-btn" th:onclick="'increaseQuantity(' + ${item.cartId} + ', ' + ${item.productAmount} + ')'">
-                                            <i class="fas fa-plus"></i>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- 가격 -->
-                                <div class="col-md-2">
-                                    <div class="price-info" 
-                                         th:id="'total-' + ${item.cartId}"
-                                         th:text="${#numbers.formatInteger(item.productPrice * item.cartAmount, 0, 'COMMA')} + '원'">
-                                        가격
-                                    </div>
-                                    <div th:if="${item.originalPrice != null and item.originalPrice > item.productPrice}">
-                                        <span class="original-price text-muted text-decoration-line-through" 
-                                              th:text="${#numbers.formatInteger(item.originalPrice * item.cartAmount, 0, 'COMMA')} + '원'">
-                                            원가
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- 삭제 버튼 -->
-                                <div class="col-md-1">
-                                    <button class="btn btn-outline-danger btn-sm" 
-                                            th:onclick="'removeItem(' + ${item.cartId} + ')'">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                <!-- 전체 선택 및 선택 삭제 헤더 -->
+                <div class="cart-header">
+                    <h4>담은 상품 <span class="item-count" th:text="'(' + ${#lists.size(cartItems)} + '개)'">(0개)</span></h4>
+                    <div class="cart-actions">
+                        <button class="btn-outline" onclick="selectAll()">
+                            <i class="fas fa-check-square"></i> 전체선택
+                        </button>
+                        <button class="btn-outline" onclick="deleteSelected()">
+                            <i class="fas fa-trash"></i> 선택삭제
+                        </button>
                     </div>
                 </div>
 
-                <!-- 주문 요약 (오른쪽) -->
-                <div class="col-lg-4">
-                    <div class="cart-summary">
-                        <h5 class="mb-4">주문 요약</h5>
-                        
-                        <div class="summary-row">
-                            <span>선택 상품 수</span>
-                            <span id="selectedCount">0개</span>
+                <!-- 장바구니 콘텐츠 -->
+                <div class="cart-content">
+                    <!-- 장바구니 아이템 목록 -->
+                    <div class="cart-items-container">
+                    <div th:each="item : ${cartItems}" class="cart-item">
+                        <!-- 체크박스 -->
+                        <div class="item-checkbox">
+                            <input type="checkbox" class="checkbox-input" 
+                                   th:id="'check-' + ${item.cartId}"
+                                   th:value="${item.cartId}" 
+                                   checked
+                                   onchange="updateTotal()">
                         </div>
-                        
-                        <div class="summary-row">
-                            <span>상품금액</span>
-                            <span id="totalProductPrice" 
-                                  th:text="${#numbers.formatInteger(subtotal ?: 0, 0, 'COMMA')} + '원'">
-                                0원
-                            </span>
+
+                        <!-- 상품 이미지 -->
+                        <div class="item-image">
+                            <img th:if="${item.productFilename != null}"
+                                 th:src="@{'/images/products/' + ${item.productFilename}}" 
+                                 th:alt="${item.productName}">
+                            <div th:if="${item.productFilename == null}" class="no-image">
+                                <i class="fas fa-image"></i>
+                            </div>
                         </div>
-                        
-                        <div class="summary-row">
-                            <span>할인금액</span>
-                            <span class="text-danger" id="discount" 
-                                  th:text="'-' + ${#numbers.formatInteger(discount ?: 0, 0, 'COMMA')} + '원'">
-                                -0원
-                            </span>
+
+                        <!-- 상품 정보 -->
+                        <div class="item-info">
+                            <h5 class="product-name" th:text="${item.productName}">상품명</h5>
+                            <p class="store-name">
+                                <i class="fas fa-store"></i> 
+                                <span th:text="${item.storeName}">가게명</span>
+                            </p>
+                            <p class="market-name">
+                                <i class="fas fa-map-marker-alt"></i> 
+                                <span th:text="${item.marketName}">시장명</span>
+                            </p>
                         </div>
-                        
-                        <div class="summary-row">
-                            <span>배송비</span>
-                            <span id="deliveryFee" 
-                                  th:text="${#numbers.formatInteger(deliveryFee ?: 0, 0, 'COMMA')} + '원'">
-                                0원
-                            </span>
-                        </div>
-                        
-                        <div class="summary-divider"></div>
-                        
-                        <div class="summary-row summary-total">
-                            <span>총 결제금액</span>
-                            <span id="totalPrice" 
-                                  th:text="${#numbers.formatInteger(total ?: 0, 0, 'COMMA')} + '원'">
-                                0원
-                            </span>
-                        </div>
-                        
-                        <div class="d-grid gap-2 mt-4">
-                            <button class="btn btn-success btn-lg" onclick="proceedToCheckout()">
-                                <i class="fas fa-credit-card"></i> 주문하기
+
+                        <!-- 수량 조절 -->
+                        <div class="item-quantity">
+                            <button class="qty-btn" th:onclick="'decreaseQuantity(' + ${item.cartId} + ')'">
+                                <i class="fas fa-minus"></i>
                             </button>
-                            <button class="btn btn-outline-success" onclick="continueShopping()">
-                                <i class="fas fa-shopping-bag"></i> 계속 쇼핑하기
+                            <input type="number" 
+                                   th:id="'qty-' + ${item.cartId}"
+                                   th:value="${item.cartQuantity}" 
+                                   min="1" 
+                                   th:max="${item.productAmount}"
+                                   readonly
+                                   class="qty-input">
+                            <button class="qty-btn" 
+                                    th:onclick="'increaseQuantity(' + ${item.cartId} + ', ' + ${item.productAmount} + ')'">
+                                <i class="fas fa-plus"></i>
                             </button>
                         </div>
-                        
-                        <div class="mt-4 small text-muted">
-                            <p><i class="fas fa-truck"></i> 30,000원 이상 무료배송</p>
-                            <p><i class="fas fa-shield-alt"></i> 안전한 결제 보장</p>
-                            <p><i class="fas fa-undo"></i> 7일 무료 취소/교환</p>
+
+                        <!-- 가격 -->
+                        <div class="item-price">
+                            <div class="current-price" 
+                                 th:id="'total-' + ${item.cartId}"
+                                 th:data-price="${item.cartPrice}"
+                                 th:data-quantity="${item.cartQuantity}">
+                                <span th:text="${#numbers.formatInteger(item.cartPrice * item.cartQuantity, 0, 'COMMA')}">0</span>원
+                            </div>
+                        </div>
+
+                        <!-- 삭제 버튼 -->
+                        <div class="item-delete">
+                            <button class="btn-delete" 
+                                    th:onclick="'removeItem(' + ${item.cartId} + ')'">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
+                    </div>
+
+                    <!-- 주문 요약 -->
+                    <div class="cart-summary">
+                    <h5 class="summary-title">주문 요약</h5>
+                    
+                    <div class="summary-row">
+                        <span>선택 상품 수</span>
+                        <span id="selectedCount">0개</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span>상품금액</span>
+                        <span id="totalProductPrice">0원</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span>배송비</span>
+                        <span id="deliveryFee">3,000원</span>
+                    </div>
+                    
+                    <div class="summary-divider"></div>
+                    
+                    <div class="summary-row summary-total">
+                        <span>총 결제금액</span>
+                        <span id="totalPrice">0원</span>
+                    </div>
+                    
+                    <div class="summary-buttons">
+                        <button class="btn-primary btn-block" onclick="proceedToCheckout()">
+                            <i class="fas fa-credit-card"></i> 주문하기
+                        </button>
+                        <button class="btn-outline btn-block" onclick="continueShopping()">
+                            <i class="fas fa-shopping-bag"></i> 계속 쇼핑하기
+                        </button>
+                    </div>
+                    
+                    <div class="summary-notice">
+                        <p><i class="fas fa-truck"></i> 30,000원 이상 무료배송</p>
+                        <p><i class="fas fa-shield-alt"></i> 안전한 결제 보장</p>
+                        <p><i class="fas fa-undo"></i> 7일 무료 취소/교환</p>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
 <script th:inline="javascript">
-        // 장바구니 데이터
-        const cartItems = /*[[${cartItems}]]*/ [];
-
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', function() {
             updateTotal();
-            
-            // 체크박스 변경 이벤트 리스너
-            const checkboxes = document.querySelectorAll('.item-checkbox');
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', updateTotal);
-            });
         });
 
         // 전체 선택/해제
         function selectAll() {
-            const checkboxes = document.querySelectorAll('.item-checkbox');
+            const checkboxes = document.querySelectorAll('.checkbox-input');
             const allChecked = Array.from(checkboxes).every(cb => cb.checked);
             
             checkboxes.forEach(cb => {
@@ -234,7 +199,7 @@
             
             if (currentQty < maxAmount) {
                 qtyInput.value = currentQty + 1;
-                updateItemTotal(cartId);
+                updateItemTotal(cartId, currentQty + 1);
                 updateCartQuantity(cartId, currentQty + 1);
             } else {
                 alert('재고가 부족합니다.');
@@ -248,46 +213,30 @@
             
             if (currentQty > 1) {
                 qtyInput.value = currentQty - 1;
-                updateItemTotal(cartId);
+                updateItemTotal(cartId, currentQty - 1);
                 updateCartQuantity(cartId, currentQty - 1);
             }
         }
 
-        // 수량 직접 변경
-        function updateQuantity(cartId, quantity) {
-            quantity = parseInt(quantity);
-            if (quantity < 1) quantity = 1;
-            
-            const qtyInput = document.getElementById('qty-' + cartId);
-            qtyInput.value = quantity;
-            
-            updateItemTotal(cartId);
-            updateCartQuantity(cartId, quantity);
-        }
-
         // 아이템 총액 업데이트
-        function updateItemTotal(cartId) {
-            const qtyInput = document.getElementById('qty-' + cartId);
-            const quantity = parseInt(qtyInput.value);
+        function updateItemTotal(cartId, quantity) {
+            const totalEl = document.getElementById('total-' + cartId);
+            const price = parseInt(totalEl.getAttribute('data-price'));
+            const totalPrice = price * quantity;
             
-            const item = cartItems.find(i => i.cartId === cartId);
-            if (item) {
-                const totalPrice = item.productPrice * quantity;
-                document.getElementById('total-' + cartId).textContent = 
-                    totalPrice.toLocaleString('ko-KR') + '원';
-            }
+            totalEl.querySelector('span').textContent = totalPrice.toLocaleString('ko-KR');
+            totalEl.setAttribute('data-quantity', quantity);
             
             updateTotal();
         }
 
         // 서버에 수량 업데이트
         function updateCartQuantity(cartId, quantity) {
-            fetch(`/api/cart/${cartId}`, {
+            fetch(`/api/cart/${cartId}/quantity?cartQuantity=${quantity}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ cartAmount: quantity })
+                }
             })
             .then(response => response.json())
             .then(data => {
@@ -304,35 +253,28 @@
 
         // 총액 계산
         function updateTotal() {
-            const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+            const checkboxes = document.querySelectorAll('.checkbox-input:checked');
             let selectedCount = checkboxes.length;
             let totalPrice = 0;
             
             checkboxes.forEach(checkbox => {
-                const cartId = parseInt(checkbox.value);
-                const qtyInput = document.getElementById('qty-' + cartId);
-                const quantity = parseInt(qtyInput.value);
+                const cartId = checkbox.value;
+                const totalEl = document.getElementById('total-' + cartId);
+                const price = parseInt(totalEl.getAttribute('data-price'));
+                const quantity = parseInt(totalEl.getAttribute('data-quantity'));
                 
-                const item = cartItems.find(i => i.cartId === cartId);
-                if (item) {
-                    totalPrice += item.productPrice * quantity;
-                }
+                totalPrice += price * quantity;
             });
             
             // 배송비 계산 (30,000원 이상 무료)
             const deliveryFee = totalPrice >= 30000 ? 0 : 3000;
             const finalTotal = totalPrice + deliveryFee;
             
-            // 화면 업데이트 (요소가 존재할 때만)
-            const selectedCountEl = document.getElementById('selectedCount');
-            const totalProductPriceEl = document.getElementById('totalProductPrice');
-            const deliveryFeeEl = document.getElementById('deliveryFee');
-            const totalPriceEl = document.getElementById('totalPrice');
-            
-            if (selectedCountEl) selectedCountEl.textContent = selectedCount + '개';
-            if (totalProductPriceEl) totalProductPriceEl.textContent = totalPrice.toLocaleString('ko-KR') + '원';
-            if (deliveryFeeEl) deliveryFeeEl.textContent = deliveryFee.toLocaleString('ko-KR') + '원';
-            if (totalPriceEl) totalPriceEl.textContent = finalTotal.toLocaleString('ko-KR') + '원';
+            // 화면 업데이트
+            document.getElementById('selectedCount').textContent = selectedCount + '개';
+            document.getElementById('totalProductPrice').textContent = totalPrice.toLocaleString('ko-KR') + '원';
+            document.getElementById('deliveryFee').textContent = deliveryFee.toLocaleString('ko-KR') + '원';
+            document.getElementById('totalPrice').textContent = finalTotal.toLocaleString('ko-KR') + '원';
         }
 
         // 아이템 삭제
@@ -397,7 +339,7 @@
 
         // 주문 진행
         function proceedToCheckout() {
-            const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+            const checkboxes = document.querySelectorAll('.checkbox-input:checked');
             
             if (checkboxes.length === 0) {
                 alert('주문할 상품을 선택해주세요.');

@@ -27,4 +27,17 @@ public class OrderDetail {
     private String memberName;
     private String orderStatus;
     private LocalDateTime orderDate;
+    
+    // Alias getter for Thymeleaf templates
+    public Integer getOrderDetailQuantity() {
+        return orderQuantity;
+    }
+    
+    public BigDecimal getOrderDetailPrice() {
+        return orderPrice;
+    }
+    
+    public String getProductImage() {
+        return productFilename != null ? "/upload/product/" + productFilename : "/images/no-image.jpg";
+    }
 }

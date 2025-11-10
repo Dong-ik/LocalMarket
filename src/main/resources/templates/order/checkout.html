@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주문하기 - LocalMarket</title>
+    <link rel="stylesheet" th:href="@{/css/localmarket.css}">
+    <link rel="stylesheet" th:href="@{/css/order-checkout.css}">
+</head>
+<body>
+    <div th:replace="~{common/header :: header}"></div>
+
+    <div class="checkout-container">
+        <h1 class="checkout-title">주문하기</h1>
+        
+        <!-- 주문 상품 정보 -->
+        <div class="checkout-content">
+            <!-- 왼쪽: 배송지 및 상품 정보 -->
+            <div class="checkout-main">
+                <!-- 배송지 정보 -->
+                <section class="checkout-section">
+                    <h2 class="section-title">배송지 정보</h2>
+                    <div class="delivery-info">
+                        <div class="form-group">
+                            <label for="receiverName">받는 사람</label>
+                            <input type="text" id="receiverName" name="receiverName" 
+                                   th:value="${member.memberName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="receiverPhone">연락처</label>
+                            <input type="tel" id="receiverPhone" name="receiverPhone" 
+                                   placeholder="010-1234-5678" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="deliveryAddress">배송 주소</label>
+                            <div class="address-input-group">
+                                <input type="text" id="deliveryPostcode" name="deliveryPostcode" 
+                                       placeholder="우편번호" readonly>
+                                <button type="button" class="address-search-btn" onclick="searchAddress()">
+                                    주소 찾기
+                                </button>
+                            </div>
+                            <input type="text" id="deliveryAddress" name="deliveryAddress" 
+                                   placeholder="기본 주소" readonly required>
+                            <input type="text" id="deliveryAddressDetail" name="deliveryAddressDetail" 
+                                   placeholder="상세 주소를 입력하세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="deliveryRequest">배송 요청사항</label>
+                            <select id="deliveryRequest" name="deliveryRequest">
+                                <option value="">배송 시 요청사항을 선택해주세요</option>
+                                <option value="문 앞에 놓아주세요">문 앞에 놓아주세요</option>
+                                <option value="배송 전 연락 부탁드립니다">배송 전 연락 부탁드립니다</option>
+                                <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
+                                <option value="택배함에 넣어주세요">택배함에 넣어주세요</option>
+                                <option value="direct">직접 입력</option>
+                            </select>
+                            <input type="text" id="deliveryRequestCustom" name="deliveryRequestCustom" 
+                                   placeholder="요청사항을 입력하세요" style="display: none;">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 주문 상품 정보 -->
+                <section class="checkout-section">
+                    <h2 class="section-title">주문 상품 정보</h2>
+                    <div class="order-items">
+                        <div class="order-item" th:each="item : ${cartItems}">
+                            <div class="item-image">
+                                <img th:if="${item.productFilename != null}"
+                                     th:src="@{'/images/products/' + ${item.productFilename}}"
+                                     th:alt="${item.productName}">
+                                <div th:if="${item.productFilename == null}" class="no-image">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            </div>
+                            <div class="item-info">
+                                <div class="item-name" th:text="${item.productName}">상품명</div>
+                                <div class="item-quantity">
+                                    수량: <span th:text="${item.cartQuantity}">1</span>개
+                                </div>
+                            </div>
+                            <div class="item-price">
+                                <span class="price-value" 
+                                      th:text="${#numbers.formatInteger(item.cartPrice * item.cartQuantity, 0, 'COMMA')}">
+                                    0
+                                </span>원
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 결제 수단 -->
+                <section class="checkout-section">
+                    <h2 class="section-title">결제 수단</h2>
+                    <div class="payment-methods">
+                        <label class="payment-method">
+                            <input type="radio" name="paymentMethod" value="card" checked>
+                            <span>신용/체크카드</span>
+                        </label>
+                        <label class="payment-method">
+                            <input type="radio" name="paymentMethod" value="bank">
+                            <span>무통장 입금</span>
+                        </label>
+                        <label class="payment-method">
+                            <input type="radio" name="paymentMethod" value="kakao">
+                            <span>카카오페이</span>
+                        </label>
+                        <label class="payment-method">
+                            <input type="radio" name="paymentMethod" value="naver">
+                            <span>네이버페이</span>
+                        </label>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 오른쪽: 주문 요약 -->
+            <div class="checkout-summary">
+                <div class="summary-content">
+                    <h3 class="summary-title">결제 금액</h3>
+                    
+                    <div class="summary-row">
+                        <span>상품 금액</span>
+                        <span class="summary-value" id="totalProductPrice">0원</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span>배송비</span>
+                        <span class="summary-value" id="deliveryFee">0원</span>
+                    </div>
+                    
+                    <div class="summary-divider"></div>
+                    
+                    <div class="summary-row summary-total">
+                        <span>총 결제 금액</span>
+                        <span class="summary-value total-price" id="totalPayment">0원</span>
+                    </div>
+                    
+                    <button type="button" class="order-button" onclick="createOrder()">
+                        <span id="orderButtonText">주문하기</span>
+                    </button>
+                    
+                    <div class="agreement-text">
+                        <label>
+                            <input type="checkbox" id="agreeTerms" required>
+                            <span>주문 내용을 확인하였으며, 결제에 동의합니다.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{common/footer :: footer}"></div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // 장바구니 아이템 데이터
+        const cartItems = /*[[${cartItems}]]*/ [];
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateTotal();
+            
+            // 배송 요청사항 선택 이벤트
+            document.getElementById('deliveryRequest').addEventListener('change', function() {
+                const customInput = document.getElementById('deliveryRequestCustom');
+                if (this.value === 'direct') {
+                    customInput.style.display = 'block';
+                    customInput.required = true;
+                } else {
+                    customInput.style.display = 'none';
+                    customInput.required = false;
+                    customInput.value = '';
+                }
+            });
+        });
+        
+        // 총 금액 계산
+        function calculateTotal() {
+            let totalPrice = 0;
+            
+            cartItems.forEach(item => {
+                totalPrice += item.cartPrice * item.cartQuantity;
+            });
+            
+            // 배송비 계산 (30,000원 이상 무료)
+            const deliveryFee = totalPrice >= 30000 ? 0 : 3000;
+            const totalPayment = totalPrice + deliveryFee;
+            
+            // UI 업데이트
+            document.getElementById('totalProductPrice').textContent = 
+                totalPrice.toLocaleString() + '원';
+            document.getElementById('deliveryFee').textContent = 
+                deliveryFee.toLocaleString() + '원';
+            document.getElementById('totalPayment').textContent = 
+                totalPayment.toLocaleString() + '원';
+        }
+        
+        // 주소 검색 (Daum 우편번호 API)
+        function searchAddress() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    document.getElementById('deliveryPostcode').value = data.zonecode;
+                    document.getElementById('deliveryAddress').value = data.address;
+                    document.getElementById('deliveryAddressDetail').focus();
+                }
+            }).open();
+        }
+        
+        // 주문 생성
+        async function createOrder() {
+            try {
+                // 필수 입력 확인
+                const receiverName = document.getElementById('receiverName').value.trim();
+                const receiverPhone = document.getElementById('receiverPhone').value.trim();
+                const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+                const deliveryAddressDetail = document.getElementById('deliveryAddressDetail').value.trim();
+                const agreeTerms = document.getElementById('agreeTerms').checked;
+                
+                if (!receiverName) {
+                    alert('받는 사람을 입력해주세요.');
+                    return;
+                }
+                
+                if (!receiverPhone) {
+                    alert('연락처를 입력해주세요.');
+                    return;
+                }
+                
+                if (!deliveryAddress) {
+                    alert('배송 주소를 입력해주세요.');
+                    return;
+                }
+                
+                if (!deliveryAddressDetail) {
+                    alert('상세 주소를 입력해주세요.');
+                    return;
+                }
+                
+                if (!agreeTerms) {
+                    alert('주문 내용 및 결제에 동의해주세요.');
+                    return;
+                }
+                
+                // 배송 요청사항
+                let deliveryRequest = document.getElementById('deliveryRequest').value;
+                if (deliveryRequest === 'direct') {
+                    deliveryRequest = document.getElementById('deliveryRequestCustom').value.trim();
+                }
+                
+                // 결제 수단
+                const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+                
+                // 주문 데이터 생성
+                const orderData = {
+                    receiverName: receiverName,
+                    receiverPhone: receiverPhone,
+                    deliveryAddress: deliveryAddress + ' ' + deliveryAddressDetail,
+                    deliveryRequest: deliveryRequest,
+                    paymentMethod: paymentMethod,
+                    cartItems: cartItems.map(item => ({
+                        productId: item.productId,
+                        productName: item.productName,
+                        quantity: item.cartQuantity,
+                        price: item.cartPrice
+                    }))
+                };
+                
+                // 버튼 비활성화
+                const orderButton = document.querySelector('.order-button');
+                orderButton.disabled = true;
+                document.getElementById('orderButtonText').textContent = '주문 처리중...';
+                
+                // 주문 생성 API 호출
+                const response = await fetch('/api/order/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('주문이 완료되었습니다.');
+                    // 주문 상세 페이지로 이동
+                    window.location.href = '/order/' + result.orderId;
+                } else {
+                    const error = await response.text();
+                    alert('주문 실패: ' + error);
+                    orderButton.disabled = false;
+                    document.getElementById('orderButtonText').textContent = '주문하기';
+                }
+            } catch (error) {
+                console.error('주문 생성 중 오류:', error);
+                alert('주문 처리 중 오류가 발생했습니다.');
+                document.querySelector('.order-button').disabled = false;
+                document.getElementById('orderButtonText').textContent = '주문하기';
+            }
+        }
+        /*]]>*/
+    </script>
+    
+    <!-- Daum 우편번호 API -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</body>
+</html>
