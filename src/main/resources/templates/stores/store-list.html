@@ -101,8 +101,8 @@
                         <!-- 찜 버튼 (항상 표시) -->
                         <button class="favorite-btn"
                                 th:onclick="'event.stopPropagation(); toggleFavorite(\'STORE\', ' + ${store.storeId} + ', this);'"
-                                th:classappend="${store.isFavorite != null && store.isFavorite == true} ? 'active' : ''">
-                            <i th:class="${store.isFavorite != null && store.isFavorite == true} ? 'fas fa-heart' : 'far fa-heart'"></i>
+                                th:classappend="${store.isFavorite} ? 'active' : ''">
+                            <i th:class="${store.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"></i>
                         </button>
 
                         <div class="store-badge" th:if="${store.storeCategory != null}">
@@ -194,10 +194,6 @@
     /*<![CDATA[*/
     const memberNum = /*[[${memberNum}]]*/ null;
     /*]]>*/
-
-    // 디버깅: memberNum 확인
-    console.log('[가게 목록] memberNum:', memberNum);
-    console.log('[가게 목록] 로그인 상태:', memberNum !== null ? '로그인됨' : '로그인 안됨');
 
     // 검색 기능
     function searchStores() {
@@ -305,18 +301,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const sortValue = urlParams.get('sort') || 'name';
         document.getElementById('sortSelect').value = sortValue;
-
-        // 디버깅: 찜 버튼 상태 확인
-        const favoriteButtons = document.querySelectorAll('.favorite-btn');
-        console.log('[가게 목록] 찜 버튼 개수:', favoriteButtons.length);
-        let activeCount = 0;
-        favoriteButtons.forEach((btn, index) => {
-            if (btn.classList.contains('active')) {
-                activeCount++;
-                console.log('[가게 목록] 찜된 버튼 #' + index + ':', btn);
-            }
-        });
-        console.log('[가게 목록] 찜된 버튼 개수:', activeCount);
 
         // 카드 호버 효과
         const cards = document.querySelectorAll('.store-card');
