@@ -28,7 +28,12 @@
                         2024-01-15 14:30
                     </div>
                     <div class="order-status" th:classappend="${order.orderStatus}">
-                        <span th:text="${order.orderStatus}">배송준비</span>
+                        <span th:text="${order.orderStatus == 'PENDING' ? '주문완료' :
+                                        order.orderStatus == 'PROCESSING' ? '배송준비' :
+                                        order.orderStatus == 'SHIPPED' ? '배송중' :
+                                        order.orderStatus == 'DELIVERED' ? '배송완료' :
+                                        order.orderStatus == 'CANCELLED' ? '주문취소' :
+                                        order.orderStatus}">배송준비</span>
                     </div>
                 </div>
                 
