@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관심 목록 - Local Market</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/localmarket.css}">
+    <link rel="stylesheet" th:href="@{/css/favorite.css}">
+</head>
+<body>
+    <!-- 헤더 Include -->
+    <div th:replace="~{common/header}"></div>
+
+    <!-- 페이지 타이틀 섹션 -->
+    <section class="page-title-section">
+        <div class="container">
+            <h1 class="page-title"><i class="fas fa-heart"></i> 관심 목록</h1>
+            <p class="page-subtitle">내가 관심있는 시장과 가게</p>
+        </div>
+    </section>
+
+    <!-- 메인 컨테이너 -->
+    <section class="favorite-section">
+        <div class="container">
+            <!-- 탭 메뉴 -->
+            <div class="favorite-tabs">
+                <button class="tab-button active" onclick="showTab('markets')">
+                    <i class="fas fa-store"></i> 시장
+                    <span class="tab-count" th:text="'(' + ${marketFavorites != null ? #lists.size(marketFavorites) : 0} + ')'"></span>
+                </button>
+                <button class="tab-button" onclick="showTab('stores')">
+                    <i class="fas fa-shop"></i> 가게
+                    <span class="tab-count" th:text="'(' + ${storeFavorites != null ? #lists.size(storeFavorites) : 0} + ')'"></span>
+                </button>
+            </div>
+
+            <!-- 시장 관심 목록 -->
+            <div id="markets-tab" class="tab-content active">
+                <!-- 시장이 비어있을 때 -->
+                <div class="empty-favorite" th:if="${marketFavorites == null || marketFavorites.isEmpty()}">
+                    <i class="fas fa-heart-broken"></i>
+                    <h3>관심 시장이 없습니다</h3>
+                    <p>마음에 드는 시장을 찾아보세요!</p>
+                    <a th:href="@{/markets}" class="btn-primary">
+                        <i class="fas fa-store"></i> 시장 둘러보기
+                    </a>
+                </div>
+
+                <!-- 시장 목록 -->
+                <div class="favorite-grid" th:if="${marketFavorites != null && !marketFavorites.isEmpty()}">
+                    <div class="favorite-card" th:each="favorite : ${marketFavorites}">
+                        <div class="favorite-image">
+                            <a th:href="@{/markets/{id}(id=${favorite.targetId})}">
+                                <img th:if="${favorite.marketFilename != null}"
+                                     th:src="@{'/images/markets/' + ${favorite.marketFilename}}"
+                                     th:alt="${favorite.marketName}">
+                                <img th:unless="${favorite.marketFilename != null}"
+                                     th:src="@{/images/default-market.jpg}"
+                                     alt="기본 이미지">
+                            </a>
+                            <button class="favorite-btn active"
+                                    th:attr="data-type='market',data-id=${favorite.targetId}"
+                                    onclick="toggleFavorite(this)">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="favorite-info">
+                            <h3 class="favorite-name">
+                                <a th:href="@{/markets/{id}(id=${favorite.targetId})}"
+                                   th:text="${favorite.marketName}">시장 이름</a>
+                            </h3>
+                            <p class="favorite-address" th:if="${favorite.marketAddress}">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span th:text="${favorite.marketAddress}">시장 주소</span>
+                            </p>
+                            <p class="favorite-phone" th:if="${favorite.marketPhone}">
+                                <i class="fas fa-phone"></i>
+                                <span th:text="${favorite.marketPhone}">전화번호</span>
+                            </p>
+                            <div class="favorite-date">
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${#temporals.format(favorite.createdAt, 'yyyy-MM-dd')}">2024-01-01</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 가게 관심 목록 -->
+            <div id="stores-tab" class="tab-content">
+                <!-- 가게가 비어있을 때 -->
+                <div class="empty-favorite" th:if="${storeFavorites == null || storeFavorites.isEmpty()}">
+                    <i class="fas fa-heart-broken"></i>
+                    <h3>관심 가게가 없습니다</h3>
+                    <p>마음에 드는 가게를 찾아보세요!</p>
+                    <a th:href="@{/stores}" class="btn-primary">
+                        <i class="fas fa-shop"></i> 가게 둘러보기
+                    </a>
+                </div>
+
+                <!-- 가게 목록 -->
+                <div class="favorite-grid" th:if="${storeFavorites != null && !storeFavorites.isEmpty()}">
+                    <div class="favorite-card" th:each="favorite : ${storeFavorites}">
+                        <div class="favorite-image">
+                            <a th:href="@{/stores/{id}(id=${favorite.targetId})}">
+                                <img th:if="${favorite.storeFilename != null}"
+                                     th:src="@{'/images/stores/' + ${favorite.storeFilename}}"
+                                     th:alt="${favorite.storeName}">
+                                <img th:unless="${favorite.storeFilename != null}"
+                                     th:src="@{/images/default-store.jpg}"
+                                     alt="기본 이미지">
+                            </a>
+                            <button class="favorite-btn active"
+                                    th:attr="data-type='store',data-id=${favorite.targetId}"
+                                    onclick="toggleFavorite(this)">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="favorite-info">
+                            <h3 class="favorite-name">
+                                <a th:href="@{/stores/{id}(id=${favorite.targetId})}"
+                                   th:text="${favorite.storeName}">가게 이름</a>
+                            </h3>
+                            <p class="favorite-description" th:if="${favorite.storeDescription}">
+                                <span th:text="${favorite.storeDescription}">가게 설명</span>
+                            </p>
+                            <p class="favorite-phone" th:if="${favorite.storePhone}">
+                                <i class="fas fa-phone"></i>
+                                <span th:text="${favorite.storePhone}">전화번호</span>
+                            </p>
+                            <div class="favorite-date">
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${#temporals.format(favorite.createdAt, 'yyyy-MM-dd')}">2024-01-01</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 Include -->
+    <div th:replace="~{common/footer}"></div>
+
+    <script>
+        /**
+         * 탭 전환
+         */
+        function showTab(tab) {
+            // 모든 탭 버튼과 컨텐츠에서 active 클래스 제거
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // 선택된 탭에 active 클래스 추가
+            if (tab === 'markets') {
+                document.querySelector('.tab-button:first-child').classList.add('active');
+                document.getElementById('markets-tab').classList.add('active');
+            } else {
+                document.querySelector('.tab-button:last-child').classList.add('active');
+                document.getElementById('stores-tab').classList.add('active');
+            }
+        }
+
+        /**
+         * 관심 토글
+         */
+        function toggleFavorite(button) {
+            const type = button.getAttribute('data-type');
+            const id = button.getAttribute('data-id');
+
+            // 현재 member 정보 가져오기
+            const memberNum = /*[[${member.memberNum}]]*/ 0;
+
+            if (!memberNum) {
+                alert('로그인이 필요합니다.');
+                location.href = '/members/login';
+                return;
+            }
+
+            $.ajax({
+                url: '/api/favorites/toggle',
+                type: 'POST',
+                data: {
+                    memberNum: memberNum,
+                    targetType: type,
+                    targetId: id
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // 페이지 새로고침 (목록에서 제거)
+                        location.reload();
+                    } else {
+                        alert(response.message || '처리 중 오류가 발생했습니다.');
+                    }
+                },
+                error: function() {
+                    alert('서버 오류가 발생했습니다.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
