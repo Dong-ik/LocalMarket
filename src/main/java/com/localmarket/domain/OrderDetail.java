@@ -38,6 +38,6 @@ public class OrderDetail {
     }
     
     public String getProductImage() {
-        return productFilename != null ? "/upload/product/" + productFilename : "/images/no-image.jpg";
+        return productFilename != null ? "/images/products/" + productFilename : "/images/no-image.jpg";
     }
 }
