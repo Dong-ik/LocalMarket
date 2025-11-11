@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,8 @@ public class SellerOrderViewController {
             @RequestParam(name = "storeId", required = false) Integer storeId,
             @RequestParam(name = "status", required = false) String status,
             HttpSession session,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         try {
             // 로그인한 판매자 정보 가져오기
@@ -52,8 +54,8 @@ public class SellerOrderViewController {
             // 판매자 권한 체크
             if (!"SELLER".equals(memberGrade) && !"ADMIN".equals(memberGrade)) {
                 log.warn("판매자 권한이 없는 사용자의 접근 시도 - memberNum: {}, memberGrade: {}", memberNum, memberGrade);
-                model.addAttribute("errorMessage", "판매자 권한이 필요합니다.");
-                return "error/403";
+                redirectAttributes.addFlashAttribute("errorMessage", "판매자 권한이 필요합니다. (SELLER 또는 ADMIN 등급만 접근 가능)");
+                return "redirect:/";
             }
 
             log.info("판매자 주문 내역 페이지 요청 - memberNum: {}, storeId: {}, status: {}", memberNum, storeId, status);
