@@ -243,16 +243,33 @@ public class FavoriteController {
 
     /**
      * 관심 개수 조회 (헤더용)
-     * GET /api/favorites/count?memberId={memberId}
+     * GET /api/favorites/count
      */
     @GetMapping("/count")
-    public ResponseEntity<Map<String, Object>> getFavoriteCount(@RequestParam("memberId") Integer memberId) {
+    public ResponseEntity<Map<String, Object>> getFavoriteCount(jakarta.servlet.http.HttpSession session) {
         Map<String, Object> response = new HashMap<>();
 
-        int count = favoriteService.getFavoriteCountByMember(memberId);
-        response.put("success", true);
-        response.put("count", count);
+        try {
+            // 세션에서 회원 정보 가져오기
+            com.localmarket.domain.Member member = (com.localmarket.domain.Member) session.getAttribute("member");
 
-        return ResponseEntity.ok(response);
+            if (member == null) {
+                // 로그인하지 않은 경우 0 반환
+                response.put("success", true);
+                response.put("count", 0);
+                return ResponseEntity.ok(response);
+            }
+
+            int count = favoriteService.getFavoriteCountByMember(member.getMemberNum());
+            response.put("success", true);
+            response.put("count", count);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("count", 0);
+            response.put("message", "서버 오류가 발생했습니다.");
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
 }
