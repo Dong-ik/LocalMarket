@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import jakarta.servlet.http.HttpSession;
 
 @Slf4j
 @RestController
@@ -24,15 +25,24 @@ public class OrderController {
      * 주문 등록 (장바구니에서 주문으로 전환)
      */
     @PostMapping("/create")
-    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDto orderDto) {
+    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDto orderDto, HttpSession session) {
         log.info("=== 주문 등록 API 호출 ===");
         log.info("요청 데이터: {}", orderDto);
-        
+
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
+            // 세션에서 memberNum 세팅
+            com.localmarket.domain.Member member = (com.localmarket.domain.Member) session.getAttribute("member");
+            if (member == null) {
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다.");
+                return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).body(response);
+            }
+            orderDto.setMemberNum(member.getMemberNum());
+
             int result = orderService.createOrder(orderDto);
-            
+
             if (result > 0) {
                 response.put("success", true);
                 response.put("message", "주문이 성공적으로 등록되었습니다.");
@@ -44,7 +54,7 @@ public class OrderController {
                 response.put("message", "주문 등록에 실패했습니다.");
                 return ResponseEntity.badRequest().body(response);
             }
-            
+
         } catch (Exception e) {
             log.error("주문 등록 중 오류 발생: ", e);
             response.put("success", false);

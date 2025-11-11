@@ -8,7 +8,7 @@
     <link rel="stylesheet" th:href="@{/css/order-checkout.css}">
 </head>
 <body>
-    <div th:replace="~{common/header :: header}"></div>
+    <div th:replace="~{common/header}"></div>
 
     <div class="checkout-container">
         <h1 class="checkout-title">주문하기</h1>
@@ -151,7 +151,7 @@
         </div>
     </div>
 
-    <div th:replace="~{common/footer :: footer}"></div>
+    <div th:replace="~{common/footer}"></div>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -252,19 +252,20 @@
                 // 결제 수단
                 const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
                 
-                // 주문 데이터 생성
+                // 주문 데이터 생성 (OrderDto 필드만 포함)
                 const orderData = {
-                    receiverName: receiverName,
-                    receiverPhone: receiverPhone,
                     deliveryAddress: deliveryAddress + ' ' + deliveryAddressDetail,
-                    deliveryRequest: deliveryRequest,
+                    deliveryPhone: receiverPhone,
+                    requestMessage: deliveryRequest, // 배송 요청사항 값 전달
                     paymentMethod: paymentMethod,
+                    transactionId: "TEST-" + Date.now(), // 임시 트랜잭션ID (실제 결제 연동시 변경)
                     cartItems: cartItems.map(item => ({
                         productId: item.productId,
-                        productName: item.productName,
-                        quantity: item.cartQuantity,
-                        price: item.cartPrice
-                    }))
+                        storeId: item.storeId, // 필요시
+                        orderQuantity: item.cartQuantity,
+                        orderPrice: item.cartPrice
+                    })),
+                    cartIds: cartItems.map(item => item.cartId)
                 };
                 
                 // 버튼 비활성화

@@ -80,7 +80,7 @@ public class OrderViewController {
      * GET /order/{orderId}
      */
     @GetMapping("/{orderId}")
-    public String orderDetail(@PathVariable Integer orderId, 
+    public String orderDetail(@PathVariable("orderId") Integer orderId, 
                              Model model, 
                              HttpSession session) {
         try {
@@ -110,7 +110,6 @@ public class OrderViewController {
             
             model.addAttribute("order", order);
             model.addAttribute("member", member);
-            
             return "order/detail";
         } catch (Exception e) {
             log.error("주문 상세 페이지 조회 중 오류 발생: {}", e.getMessage(), e);

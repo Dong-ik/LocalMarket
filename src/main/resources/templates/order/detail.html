@@ -8,18 +8,16 @@
     <link rel="stylesheet" th:href="@{/css/order-detail.css}">
 </head>
 <body>
-    <div th:replace="~{common/header :: header}"></div>
+    <div th:replace="~{common/header}"></div>
 
     <div class="order-detail-container">
         <div class="detail-header">
             <h1 class="detail-title">주문 상세</h1>
             <div class="order-info-summary">
                 <span class="order-number">
-                    주문번호: <strong th:text="${order.orderId}">12345</strong>
+                    주문번호: <strong th:text="${order.orderId}"></strong>
                 </span>
-                <span class="order-date" th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">
-                    2024-01-15 14:30
-                </span>
+                <span class="order-date" th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
             </div>
         </div>
 
@@ -63,7 +61,7 @@
             <section class="detail-section">
                 <h2 class="section-title">주문 상품</h2>
                 <div class="order-products">
-                    <div class="product-item" th:each="detail : ${order.orderDetails}">
+                    <div class="product-item" th:each="detail : ${order.cartItems}">
                         <div class="product-image">
                             <img th:if="${detail.productFilename != null}"
                                  th:src="@{'/images/products/' + ${detail.productFilename}}"
@@ -73,15 +71,13 @@
                             </div>
                         </div>
                         <div class="product-info">
-                            <div class="product-name" th:text="${detail.productName}">상품명</div>
+                            <div class="product-name" th:text="${detail.productName}"></div>
                             <div class="product-quantity">
-                                수량: <span th:text="${detail.orderDetailQuantity}">1</span>개
+                                수량: <span th:text="${detail.orderQuantity}"></span>개
                             </div>
                         </div>
                         <div class="product-price">
-                            <span th:text="${#numbers.formatInteger(detail.orderDetailPrice * detail.orderDetailQuantity, 0, 'COMMA')}">
-                                0
-                            </span>원
+                            <span th:text="${#numbers.formatInteger((detail.orderPrice != null ? detail.orderPrice : 0) * (detail.orderQuantity != null ? detail.orderQuantity : 0), 0, 'COMMA')}"></span>원
                         </div>
                     </div>
                 </div>
@@ -118,21 +114,18 @@
                 <div class="payment-summary">
                     <div class="payment-row">
                         <span>상품 금액</span>
-                        <span class="payment-value" th:text="${#numbers.formatInteger(order.orderTotalPrice - order.orderDeliveryFee, 0, 'COMMA')} + '원'">
-                            27,000원
+                        <span class="payment-value" th:text="${#numbers.formatInteger((order.orderTotalPrice != null ? order.orderTotalPrice : 0) - (order.orderDeliveryFee != null ? order.orderDeliveryFee : 0), 0, 'COMMA')} + '원'">
                         </span>
                     </div>
                     <div class="payment-row">
                         <span>배송비</span>
-                        <span class="payment-value" th:text="${#numbers.formatInteger(order.orderDeliveryFee, 0, 'COMMA')} + '원'">
-                            3,000원
+                        <span class="payment-value" th:text="${#numbers.formatInteger(order.orderDeliveryFee != null ? order.orderDeliveryFee : 0, 0, 'COMMA')} + '원'">
                         </span>
                     </div>
                     <div class="payment-divider"></div>
                     <div class="payment-row payment-total">
                         <span>총 결제 금액</span>
-                        <span class="payment-value total-price" th:text="${#numbers.formatInteger(order.orderTotalPrice, 0, 'COMMA')} + '원'">
-                            30,000원
+                        <span class="payment-value total-price" th:text="${#numbers.formatInteger(order.orderTotalPrice != null ? order.orderTotalPrice : 0, 0, 'COMMA')} + '원'">
                         </span>
                     </div>
                     <div class="payment-method">
@@ -158,7 +151,7 @@
         </div>
     </div>
 
-    <div th:replace="~{common/footer :: footer}"></div>
+    <div th:replace="~{common/footer}"></div>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -183,7 +176,7 @@
             
             try {
                 const response = await fetch(`/api/order/${orderId}/cancel`, {
-                    method: 'POST'
+                    method: 'PUT'
                 });
                 
                 if (response.ok) {

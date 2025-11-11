@@ -15,4 +15,7 @@ public class OrderDetailDto {
     private String cancelStatus;
     private LocalDateTime cancelDate;
     private String cancelReason;
+        // 뷰에서 상품명/이미지 출력을 위한 필드
+        private String productName;
+        private String productFilename;
 }
