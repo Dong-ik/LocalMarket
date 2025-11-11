@@ -137,10 +137,22 @@ public class StoreViewController {
             }
             
             // 로그인한 사용자의 찜 상태 설정
+            log.info("찜 상태 설정 시작 - memberNum: {}", memberNum);
             if (memberNum != null) {
+                int favoriteCount = 0;
                 for (Store store : stores) {
                     boolean isFavorite = favoriteService.isFavorite(memberNum, "STORE", store.getStoreId());
                     store.setIsFavorite(isFavorite);
+                    if (isFavorite) {
+                        favoriteCount++;
+                        log.info("찜한 가게 발견 - storeId: {}, storeName: {}", store.getStoreId(), store.getStoreName());
+                    }
+                }
+                log.info("찜 상태 설정 완료 - 전체: {} 개, 찜한 가게: {} 개", stores.size(), favoriteCount);
+            } else {
+                log.warn("로그인하지 않은 사용자 - 모든 가게의 찜 상태를 false로 설정");
+                for (Store store : stores) {
+                    store.setIsFavorite(false);
                 }
             }
 
