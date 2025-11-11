@@ -390,16 +390,25 @@ public class CartController {
 
     /**
      * 장바구니 개수 조회 (헤더용)
-     * GET /api/cart/count?memberId={memberId}
+     * GET /api/cart/count
      */
     @GetMapping("/count")
-    public ResponseEntity<Map<String, Object>> getCartCount(@RequestParam("memberId") Integer memberId) {
-        log.info("장바구니 개수 조회 요청 - 회원ID: {}", memberId);
-
+    public ResponseEntity<Map<String, Object>> getCartCount(HttpSession session) {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            int count = cartService.getCartItemCount(memberId);
+            // 세션에서 회원 정보 가져오기
+            com.localmarket.domain.Member member = (com.localmarket.domain.Member) session.getAttribute("member");
+
+            if (member == null) {
+                // 로그인하지 않은 경우 0 반환
+                response.put("success", true);
+                response.put("count", 0);
+                return ResponseEntity.ok(response);
+            }
+
+            log.info("장바구니 개수 조회 요청 - 회원번호: {}", member.getMemberNum());
+            int count = cartService.getCartItemCount(member.getMemberNum());
 
             response.put("success", true);
             response.put("count", count);
@@ -407,6 +416,7 @@ public class CartController {
         } catch (Exception e) {
             log.error("장바구니 개수 조회 중 오류: {}", e.getMessage());
             response.put("success", false);
+            response.put("count", 0);
             response.put("message", "서버 오류가 발생했습니다.");
             return ResponseEntity.internalServerError().body(response);
         }

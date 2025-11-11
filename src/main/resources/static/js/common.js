@@ -151,12 +151,9 @@ function addToCart(productId, quantity = 1) {
  * 장바구니 개수 업데이트
  */
 function updateCartCount() {
-    if (!currentMemberId) return;
-    
     $.ajax({
         url: '/api/cart/count',
         type: 'GET',
-        data: { memberId: currentMemberId },
         success: function(response) {
             if (response.success) {
                 const $cartBadge = $('.cart-count');
@@ -166,6 +163,34 @@ function updateCartCount() {
                     $cartBadge.hide();
                 }
             }
+        },
+        error: function() {
+            // 에러 시 배지 숨김
+            $('.cart-count').hide();
+        }
+    });
+}
+
+/**
+ * 관심 개수 업데이트
+ */
+function updateFavoriteCount() {
+    $.ajax({
+        url: '/api/favorites/count',
+        type: 'GET',
+        success: function(response) {
+            if (response.success) {
+                const $favoriteBadge = $('.favorite-count');
+                if (response.count > 0) {
+                    $favoriteBadge.text(response.count).show();
+                } else {
+                    $favoriteBadge.hide();
+                }
+            }
+        },
+        error: function() {
+            // 에러 시 배지 숨김
+            $('.favorite-count').hide();
         }
     });
 }
@@ -336,7 +361,8 @@ function confirmDialog(message, callback) {
     }
 }
 
-// 페이지 로드 시 장바구니 개수 업데이트
+// 페이지 로드 시 장바구니 및 관심 개수 업데이트
 $(document).ready(function() {
     updateCartCount();
+    updateFavoriteCount();
 });
