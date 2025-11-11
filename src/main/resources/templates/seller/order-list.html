@@ -84,8 +84,7 @@
                     </td>
                     <td>
                         <div class="product-info">
-                            <img th:if="${order.productFilename != null}"
-                                 th:src="@{/upload/product/{filename}(filename=${order.productFilename})}"
+                            <img th:src="${order.productImage}"
                                  alt="상품 이미지"
                                  class="product-image"
                                  onerror="this.src='/images/no-image.jpg'">
