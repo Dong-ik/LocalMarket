@@ -1,0 +1,373 @@
+/* ========================================
+   판매자 주문 관리 페이지 스타일
+   ======================================== */
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.page-header h1 i {
+    color: #e74c3c;
+    margin-right: 15px;
+}
+
+.page-header .subtitle {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+}
+
+/* 알림 메시지 */
+.alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+
+.alert i {
+    font-size: 1.2rem;
+}
+
+.alert-info {
+    background: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #90caf9;
+}
+
+.alert-danger {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+/* 필터 섹션 */
+.filter-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 250px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: #2c3e50;
+    white-space: nowrap;
+    font-size: 0.95rem;
+}
+
+.filter-group label i {
+    color: #e74c3c;
+    margin-right: 5px;
+}
+
+.filter-select {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    background: white;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #e74c3c;
+}
+
+.order-count {
+    font-size: 1.1rem;
+    color: #495057;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+.order-count i {
+    color: #e74c3c;
+    margin-right: 8px;
+}
+
+.order-count strong {
+    color: #e74c3c;
+    font-size: 1.3rem;
+}
+
+/* 주문 목록 테이블 */
+.order-list-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.order-table thead {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.order-table thead th {
+    padding: 18px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.order-table tbody tr {
+    border-bottom: 1px solid #f1f3f5;
+    transition: all 0.3s;
+}
+
+.order-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.order-table tbody td {
+    padding: 15px;
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+/* 주문 ID */
+.order-id {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.order-id i {
+    color: #e74c3c;
+    font-size: 0.9rem;
+}
+
+/* 상품 정보 */
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.product-details strong {
+    display: block;
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+/* 가게 정보 */
+.store-info div {
+    line-height: 1.6;
+}
+
+.store-market {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+}
+
+/* 회원 정보 */
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.member-info i {
+    color: #e74c3c;
+    font-size: 0.9rem;
+}
+
+/* 텍스트 정렬 */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* 수량 */
+.quantity {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    font-weight: 600;
+    color: #495057;
+}
+
+/* 가격 */
+.price {
+    color: #e74c3c;
+    font-size: 1.05rem;
+}
+
+/* 주문 상태 배지 */
+.status-cell {
+    text-align: center;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 80px;
+    white-space: nowrap;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-paid {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-preparing {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.status-shipping {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-delivered {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.status-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* 액션 버튼 */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-detail {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #e74c3c;
+    color: white;
+    min-width: 70px;
+}
+
+.btn-detail:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+/* 데이터 없을 때 */
+.no-data {
+    text-align: center;
+    padding: 80px 20px;
+    color: #95a5a6;
+}
+
+.no-data i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    display: block;
+    opacity: 0.5;
+}
+
+.no-data p {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.no-data-sub {
+    font-size: 1rem;
+    color: #bdc3c7;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+        min-width: 100%;
+    }
+
+    .order-count {
+        text-align: center;
+        margin-left: 0;
+    }
+
+    .order-table {
+        font-size: 0.85rem;
+    }
+
+    .order-table thead th,
+    .order-table tbody td {
+        padding: 10px 8px;
+    }
+
+    .product-image {
+        width: 50px;
+        height: 50px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+}

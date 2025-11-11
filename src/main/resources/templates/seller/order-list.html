@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<link rel="stylesheet" th:href="@{/css/seller-order.css}">
+
+<div class="container" style="margin-top: 100px; margin-bottom: 60px;">
+    <div class="page-header">
+        <h1><i class="fas fa-store"></i> 내 가게 주문 내역</h1>
+        <p class="subtitle">판매자님의 가게에 들어온 주문을 관리할 수 있습니다</p>
+    </div>
+
+    <!-- 메시지 표시 -->
+    <div th:if="${message}" class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <span th:text="${message}"></span>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- 필터 섹션 -->
+    <div class="filter-section" th:if="${!stores.isEmpty()}">
+        <!-- 가게 선택 -->
+        <div class="filter-group">
+            <label for="storeSelect"><i class="fas fa-store"></i> 가게 선택:</label>
+            <select id="storeSelect" class="filter-select" onchange="filterByStore()">
+                <option value="">전체 가게</option>
+                <option th:each="store : ${stores}"
+                        th:value="${store.storeId}"
+                        th:text="${store.storeName} + ' (' + ${store.marketName} + ')'"
+                        th:selected="${selectedStoreId != null && selectedStoreId == store.storeId}"></option>
+            </select>
+        </div>
+
+        <!-- 주문 상태 선택 -->
+        <div class="filter-group">
+            <label for="statusSelect"><i class="fas fa-filter"></i> 주문 상태:</label>
+            <select id="statusSelect" class="filter-select" onchange="filterByStatus()">
+                <option value="">전체 상태</option>
+                <option value="결제대기" th:selected="${selectedStatus == '결제대기'}">결제대기</option>
+                <option value="결제완료" th:selected="${selectedStatus == '결제완료'}">결제완료</option>
+                <option value="배송준비중" th:selected="${selectedStatus == '배송준비중'}">배송준비중</option>
+                <option value="배송중" th:selected="${selectedStatus == '배송중'}">배송중</option>
+                <option value="배송완료" th:selected="${selectedStatus == '배송완료'}">배송완료</option>
+                <option value="취소" th:selected="${selectedStatus == '취소'}">취소</option>
+            </select>
+        </div>
+
+        <!-- 주문 개수 표시 -->
+        <div class="order-count">
+            <i class="fas fa-shopping-bag"></i>
+            총 주문: <strong th:text="${orderDetails.size()}">0</strong>건
+        </div>
+    </div>
+
+    <!-- 주문 목록 테이블 -->
+    <div class="order-list-container" th:if="${!orderDetails.isEmpty()}">
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>주문번호</th>
+                    <th>상품정보</th>
+                    <th>가게</th>
+                    <th>주문자</th>
+                    <th>수량</th>
+                    <th>금액</th>
+                    <th>주문상태</th>
+                    <th>주문일시</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="order : ${orderDetails}" th:id="'order-row-' + ${order.orderDetailId}">
+                    <td>
+                        <div class="order-id">
+                            <i class="fas fa-hashtag"></i>
+                            <span th:text="${order.orderId}"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="product-info">
+                            <img th:if="${order.productFilename != null}"
+                                 th:src="@{/upload/product/{filename}(filename=${order.productFilename})}"
+                                 alt="상품 이미지"
+                                 class="product-image"
+                                 onerror="this.src='/images/no-image.jpg'">
+                            <div class="product-details">
+                                <strong th:text="${order.productName}">상품명</strong>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="store-info">
+                            <div><strong th:text="${order.storeName}">가게명</strong></div>
+                            <div class="store-market" th:text="${order.marketName}">시장명</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="member-info">
+                            <i class="fas fa-user"></i>
+                            <span th:text="${order.memberName}">구매자명</span>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span class="quantity" th:text="${order.orderQuantity} + '개'">1개</span>
+                    </td>
+                    <td class="text-right">
+                        <strong class="price" th:text="${#numbers.formatDecimal(order.orderPrice, 0, 'COMMA', 0, 'POINT')} + '원'">10,000원</strong>
+                    </td>
+                    <td class="status-cell">
+                        <span th:if="${order.orderStatus == '결제대기'}" class="status-badge status-pending">결제대기</span>
+                        <span th:if="${order.orderStatus == '결제완료'}" class="status-badge status-paid">결제완료</span>
+                        <span th:if="${order.orderStatus == '배송준비중'}" class="status-badge status-preparing">배송준비중</span>
+                        <span th:if="${order.orderStatus == '배송중'}" class="status-badge status-shipping">배송중</span>
+                        <span th:if="${order.orderStatus == '배송완료'}" class="status-badge status-delivered">배송완료</span>
+                        <span th:if="${order.orderStatus == '취소'}" class="status-badge status-cancelled">취소</span>
+                    </td>
+                    <td>
+                        <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-detail"
+                                    th:onclick="|viewOrderDetail(${order.orderId})|">
+                                <i class="fas fa-eye"></i> 상세
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 데이터 없을 때 -->
+    <div th:if="${orderDetails.isEmpty() && !stores.isEmpty()}" class="no-data">
+        <i class="fas fa-inbox"></i>
+        <p>주문 내역이 없습니다.</p>
+    </div>
+
+    <!-- 가게 없을 때 -->
+    <div th:if="${stores.isEmpty()}" class="no-data">
+        <i class="fas fa-store-slash"></i>
+        <p>등록된 가게가 없습니다.</p>
+        <p class="no-data-sub">가게를 먼저 등록해주세요.</p>
+    </div>
+</div>
+
+<!-- 푸터 Include -->
+<div th:replace="~{common/footer}"></div>
+
+<script>
+// 가게별 필터
+function filterByStore() {
+    const storeId = document.getElementById('storeSelect').value;
+    const status = document.getElementById('statusSelect').value;
+
+    let url = '/seller/orders';
+    const params = [];
+
+    if (storeId) {
+        params.push('storeId=' + storeId);
+    }
+    if (status) {
+        params.push('status=' + encodeURIComponent(status));
+    }
+
+    if (params.length > 0) {
+        url += '?' + params.join('&');
+    }
+
+    window.location.href = url;
+}
+
+// 주문 상태별 필터
+function filterByStatus() {
+    const storeId = document.getElementById('storeSelect').value;
+    const status = document.getElementById('statusSelect').value;
+
+    let url = '/seller/orders';
+    const params = [];
+
+    if (storeId) {
+        params.push('storeId=' + storeId);
+    }
+    if (status) {
+        params.push('status=' + encodeURIComponent(status));
+    }
+
+    if (params.length > 0) {
+        url += '?' + params.join('&');
+    }
+
+    window.location.href = url;
+}
+
+// 주문 상세 보기
+function viewOrderDetail(orderId) {
+    window.location.href = '/orders/' + orderId;
+}
+</script>
+
+</html>
