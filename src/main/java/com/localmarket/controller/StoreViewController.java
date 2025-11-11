@@ -6,6 +6,7 @@ import com.localmarket.domain.Market;
 import com.localmarket.service.StoreService;
 import com.localmarket.service.ProductService;
 import com.localmarket.service.MarketService;
+import com.localmarket.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -23,10 +24,11 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class StoreViewController {
-    
+
     private final StoreService storeService;
     private final ProductService productService;
     private final MarketService marketService;
+    private final FavoriteService favoriteService;
     
     /**
      * 인기 가게 페이지
@@ -79,11 +81,15 @@ public class StoreViewController {
             @RequestParam(name = "sort", defaultValue = "name") String sort,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "12") int size,
-            Model model) {
-        
+            Model model,
+            jakarta.servlet.http.HttpSession session) {
+
         try {
-            log.info("가게 목록 페이지 요청 - search: {}, category: {}, marketId: {}, sort: {}, page: {}", 
+            log.info("가게 목록 페이지 요청 - search: {}, category: {}, marketId: {}, sort: {}, page: {}",
                     search, category, marketId, sort, page);
+
+            // 로그인한 사용자 정보 가져오기
+            Integer memberNum = (Integer) session.getAttribute("memberNum");
             
             List<Store> stores;
             
@@ -130,9 +136,17 @@ public class StoreViewController {
                 });
             }
             
+            // 로그인한 사용자의 찜 상태 설정
+            if (memberNum != null) {
+                for (Store store : stores) {
+                    boolean isFavorite = favoriteService.isFavorite(memberNum, "STORE", store.getStoreId());
+                    store.setIsFavorite(isFavorite);
+                }
+            }
+
             // 모델에 데이터 추가
             model.addAttribute("stores", stores);
-            
+
             if (search != null && !search.trim().isEmpty()) {
                 model.addAttribute("searchKeyword", search);
             }
@@ -142,16 +156,17 @@ public class StoreViewController {
             if (marketId != null) {
                 model.addAttribute("selectedMarketId", marketId);
             }
-            
+
             // 페이지네이션 (간단한 계산)
             int totalStores = stores.size();
             int totalPages = (int) Math.ceil((double) totalStores / size);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", totalPages);
             model.addAttribute("pageSize", size);
-            
+            model.addAttribute("memberNum", memberNum); // 찜 기능을 위한 memberNum 전달
+
             log.info("가게 목록 페이지 렌더링 - 총 {} 개, {} 페이지", totalStores, totalPages);
-            
+
             return "stores/store-list";
             
         } catch (Exception e) {
