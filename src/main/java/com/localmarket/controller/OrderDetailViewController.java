@@ -87,6 +87,9 @@ public class OrderDetailViewController {
 				dto.setCancelStatus(od.getCancelStatus());
 				dto.setCancelDate(od.getCancelDate());
 				dto.setCancelReason(od.getCancelReason());
+				// 상품 정보 (뷰 출력용)
+				dto.setProductName(od.getProductName());
+				dto.setProductFilename(od.getProductFilename());
 				return dto;
 			}).toList();
 			orderDto.setCartItems(orderDetailDtos);
@@ -102,4 +105,3 @@ public class OrderDetailViewController {
 		}
 	}
 }
-

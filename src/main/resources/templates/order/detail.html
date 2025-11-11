@@ -88,12 +88,8 @@
                 <h2 class="section-title">배송 정보</h2>
                 <div class="info-table">
                     <div class="info-row">
-                        <div class="info-label">받는 사람</div>
-                        <div class="info-value" th:text="${order.receiverName}">홍길동</div>
-                    </div>
-                    <div class="info-row">
                         <div class="info-label">연락처</div>
-                        <div class="info-value" th:text="${order.receiverPhone}">010-1234-5678</div>
+                        <div class="info-value" th:text="${order.deliveryPhone}">010-1234-5678</div>
                     </div>
                     <div class="info-row">
                         <div class="info-label">배송 주소</div>
@@ -101,9 +97,9 @@
                             서울시 강남구 테헤란로 123
                         </div>
                     </div>
-                    <div class="info-row" th:if="${order.deliveryRequest}">
+                    <div class="info-row" th:if="${order.requestMessage}">
                         <div class="info-label">배송 요청사항</div>
-                        <div class="info-value" th:text="${order.deliveryRequest}">문 앞에 놓아주세요</div>
+                        <div class="info-value" th:text="${order.requestMessage}">문 앞에 놓아주세요</div>
                     </div>
                 </div>
             </section>
@@ -112,17 +108,6 @@
             <section class="detail-section">
                 <h2 class="section-title">결제 정보</h2>
                 <div class="payment-summary">
-                    <div class="payment-row">
-                        <span>상품 금액</span>
-                        <span class="payment-value" th:text="${#numbers.formatInteger((order.orderTotalPrice != null ? order.orderTotalPrice : 0) - (order.orderDeliveryFee != null ? order.orderDeliveryFee : 0), 0, 'COMMA')} + '원'">
-                        </span>
-                    </div>
-                    <div class="payment-row">
-                        <span>배송비</span>
-                        <span class="payment-value" th:text="${#numbers.formatInteger(order.orderDeliveryFee != null ? order.orderDeliveryFee : 0, 0, 'COMMA')} + '원'">
-                        </span>
-                    </div>
-                    <div class="payment-divider"></div>
                     <div class="payment-row payment-total">
                         <span>총 결제 금액</span>
                         <span class="payment-value total-price" th:text="${#numbers.formatInteger(order.orderTotalPrice != null ? order.orderTotalPrice : 0, 0, 'COMMA')} + '원'">

@@ -5,6 +5,7 @@ import com.localmarket.domain.Order;
 import com.localmarket.domain.Cart;
 import com.localmarket.service.OrderService;
 import com.localmarket.service.CartService;
+import com.localmarket.service.OrderDetailService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderViewController {
-    
+
     private final OrderService orderService;
     private final CartService cartService;
+    private final OrderDetailService orderDetailService;
     
     /**
      * 주문하기 페이지 (장바구니에서 선택한 상품들)
@@ -130,17 +132,24 @@ public class OrderViewController {
             if (member == null) {
                 return "redirect:/members/login";
             }
-            
+
             // 회원의 주문 목록 조회
             List<Order> orders = orderService.getOrdersByMemberNum(member.getMemberNum());
-            
+
+            // 각 주문의 주문 상세 정보 조회
+            if (orders != null) {
+                for (Order order : orders) {
+                    order.setOrderDetails(orderDetailService.getOrderDetailsByOrderId(order.getOrderId()));
+                }
+            }
+
             log.info("=== 주문 목록 페이지 ===");
             log.info("회원번호: {}", member.getMemberNum());
             log.info("주문 수: {}", orders != null ? orders.size() : 0);
-            
+
             model.addAttribute("orders", orders);
             model.addAttribute("member", member);
-            
+
             return "order/list";
         } catch (Exception e) {
             log.error("주문 목록 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
