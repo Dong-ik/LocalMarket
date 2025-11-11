@@ -79,6 +79,7 @@ public class MemberViewController {
             session.setAttribute("member", member);
             session.setAttribute("memberNum", member.getMemberNum());
             session.setAttribute("memberId", member.getMemberId());
+            session.setAttribute("memberGrade", member.getMemberGrade());
             return "redirect:/";
         } else {
             model.addAttribute("error", "로그인에 실패했습니다.");
