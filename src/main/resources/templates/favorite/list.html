@@ -75,13 +75,13 @@
                                 <a th:href="@{/markets/{id}(id=${favorite.targetId})}"
                                    th:text="${favorite.marketName}">시장 이름</a>
                             </h3>
+                            <p class="favorite-location" th:if="${favorite.marketLocal}">
+                                <i class="fas fa-location-dot"></i>
+                                <span th:text="${favorite.marketLocal}">지역</span>
+                            </p>
                             <p class="favorite-address" th:if="${favorite.marketAddress}">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <span th:text="${favorite.marketAddress}">시장 주소</span>
-                            </p>
-                            <p class="favorite-phone" th:if="${favorite.marketPhone}">
-                                <i class="fas fa-phone"></i>
-                                <span th:text="${favorite.marketPhone}">전화번호</span>
                             </p>
                             <div class="favorite-date">
                                 <i class="fas fa-clock"></i>
@@ -127,12 +127,16 @@
                                 <a th:href="@{/stores/{id}(id=${favorite.targetId})}"
                                    th:text="${favorite.storeName}">가게 이름</a>
                             </h3>
+                            <p class="favorite-category" th:if="${favorite.storeCategory}">
+                                <i class="fas fa-tag"></i>
+                                <span th:text="${favorite.storeCategory}">카테고리</span>
+                            </p>
                             <p class="favorite-description" th:if="${favorite.storeDescription}">
                                 <span th:text="${favorite.storeDescription}">가게 설명</span>
                             </p>
-                            <p class="favorite-phone" th:if="${favorite.storePhone}">
-                                <i class="fas fa-phone"></i>
-                                <span th:text="${favorite.storePhone}">전화번호</span>
+                            <p class="favorite-location" th:if="${favorite.marketName}">
+                                <i class="fas fa-store"></i>
+                                <span th:text="${favorite.marketName}">소속 시장</span>
                             </p>
                             <div class="favorite-date">
                                 <i class="fas fa-clock"></i>

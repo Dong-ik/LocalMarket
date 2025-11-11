@@ -272,8 +272,9 @@
 }
 
 .favorite-address,
-.favorite-description,
-.favorite-phone {
+.favorite-location,
+.favorite-category,
+.favorite-description {
     font-size: 0.95rem;
     color: #666;
     margin-bottom: 8px;
@@ -282,7 +283,8 @@
 }
 
 .favorite-address i,
-.favorite-phone i {
+.favorite-location i,
+.favorite-category i {
     margin-right: 8px;
     margin-top: 3px;
     color: #e74c3c;
