@@ -25,35 +25,40 @@
             <!-- 주문 상태 -->
             <section class="detail-section status-section">
                 <div class="status-track">
-                    <div class="status-step" 
-                         th:classappend="${order.orderStatus == '주문완료' || order.orderStatus == '배송준비' || order.orderStatus == '배송중' || order.orderStatus == '배송완료'} ? 'active' : ''">
+                    <div class="status-step"
+                         th:classappend="${order.orderStatus == 'PENDING' || order.orderStatus == 'PROCESSING' || order.orderStatus == 'SHIPPED' || order.orderStatus == 'DELIVERED'} ? 'active' : ''">
                         <div class="status-icon">✓</div>
                         <div class="status-label">주문완료</div>
                     </div>
-                    <div class="status-line" 
-                         th:classappend="${order.orderStatus == '배송준비' || order.orderStatus == '배송중' || order.orderStatus == '배송완료'} ? 'active' : ''"></div>
-                    <div class="status-step" 
-                         th:classappend="${order.orderStatus == '배송준비' || order.orderStatus == '배송중' || order.orderStatus == '배송완료'} ? 'active' : ''">
+                    <div class="status-line"
+                         th:classappend="${order.orderStatus == 'PROCESSING' || order.orderStatus == 'SHIPPED' || order.orderStatus == 'DELIVERED'} ? 'active' : ''"></div>
+                    <div class="status-step"
+                         th:classappend="${order.orderStatus == 'PROCESSING' || order.orderStatus == 'SHIPPED' || order.orderStatus == 'DELIVERED'} ? 'active' : ''">
                         <div class="status-icon">📦</div>
                         <div class="status-label">배송준비</div>
                     </div>
-                    <div class="status-line" 
-                         th:classappend="${order.orderStatus == '배송중' || order.orderStatus == '배송완료'} ? 'active' : ''"></div>
-                    <div class="status-step" 
-                         th:classappend="${order.orderStatus == '배송중' || order.orderStatus == '배송완료'} ? 'active' : ''">
+                    <div class="status-line"
+                         th:classappend="${order.orderStatus == 'SHIPPED' || order.orderStatus == 'DELIVERED'} ? 'active' : ''"></div>
+                    <div class="status-step"
+                         th:classappend="${order.orderStatus == 'SHIPPED' || order.orderStatus == 'DELIVERED'} ? 'active' : ''">
                         <div class="status-icon">🚚</div>
                         <div class="status-label">배송중</div>
                     </div>
-                    <div class="status-line" 
-                         th:classappend="${order.orderStatus == '배송완료'} ? 'active' : ''"></div>
-                    <div class="status-step" 
-                         th:classappend="${order.orderStatus == '배송완료'} ? 'active' : ''">
+                    <div class="status-line"
+                         th:classappend="${order.orderStatus == 'DELIVERED'} ? 'active' : ''"></div>
+                    <div class="status-step"
+                         th:classappend="${order.orderStatus == 'DELIVERED'} ? 'active' : ''">
                         <div class="status-icon">✅</div>
                         <div class="status-label">배송완료</div>
                     </div>
                 </div>
                 <div class="current-status">
-                    현재 상태: <strong th:text="${order.orderStatus}">배송준비</strong>
+                    현재 상태: <strong th:text="${order.orderStatus == 'PENDING' ? '주문완료' :
+                                              order.orderStatus == 'PROCESSING' ? '배송준비' :
+                                              order.orderStatus == 'SHIPPED' ? '배송중' :
+                                              order.orderStatus == 'DELIVERED' ? '배송완료' :
+                                              order.orderStatus == 'CANCELLED' ? '주문취소' :
+                                              order.orderStatus}">배송준비</strong>
                 </div>
             </section>
 
@@ -124,12 +129,12 @@
                 <button type="button" class="btn-secondary" onclick="goToOrderList()">
                     주문 목록
                 </button>
-                <button type="button" class="btn-primary" onclick="goToHome()" 
-                        th:if="${order.orderStatus == '배송완료'}">
+                <button type="button" class="btn-primary" onclick="goToHome()"
+                        th:if="${order.orderStatus == 'DELIVERED'}">
                     쇼핑 계속하기
                 </button>
-                <button type="button" class="btn-danger" onclick="cancelOrder()" 
-                        th:if="${order.orderStatus == '주문완료'}">
+                <button type="button" class="btn-danger" onclick="cancelOrder()"
+                        th:if="${order.orderStatus == 'PENDING'}">
                     주문 취소
                 </button>
             </div>
