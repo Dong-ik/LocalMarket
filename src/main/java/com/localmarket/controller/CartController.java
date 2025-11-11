@@ -368,20 +368,44 @@ public class CartController {
      */
     @GetMapping("/member/{memberNum}/product/{productId}/exists")
     public ResponseEntity<Map<String, Object>> checkProductInCart(
-            @PathVariable("memberNum") Integer memberNum, 
+            @PathVariable("memberNum") Integer memberNum,
             @PathVariable("productId") Integer productId) {
         log.info("장바구니 상품 존재 확인 요청 - 회원번호: {}, 상품ID: {}", memberNum, productId);
-        
+
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
             boolean exists = cartService.isProductInCart(memberNum, productId);
-            
+
             response.put("success", true);
             response.put("exists", exists);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("장바구니 상품 존재 확인 중 오류: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "서버 오류가 발생했습니다.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    /**
+     * 장바구니 개수 조회 (헤더용)
+     * GET /api/cart/count?memberId={memberId}
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Object>> getCartCount(@RequestParam("memberId") Integer memberId) {
+        log.info("장바구니 개수 조회 요청 - 회원ID: {}", memberId);
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            int count = cartService.getCartItemCount(memberId);
+
+            response.put("success", true);
+            response.put("count", count);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("장바구니 개수 조회 중 오류: {}", e.getMessage());
             response.put("success", false);
             response.put("message", "서버 오류가 발생했습니다.");
             return ResponseEntity.internalServerError().body(response);
