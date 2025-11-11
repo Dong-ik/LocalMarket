@@ -35,8 +35,8 @@ public class OrderDetailViewController {
 			log.info("주문 상세 페이지 요청 - orderId: {}", orderId);
 
 			// 세션에서 로그인한 회원 정보 가져오기
-			Integer memberNum = (Integer) session.getAttribute("memberNum");
-			if (memberNum == null) {
+			com.localmarket.domain.Member member = (com.localmarket.domain.Member) session.getAttribute("member");
+			if (member == null) {
 				log.warn("로그인되지 않은 사용자의 주문 상세 접근 시도");
 				model.addAttribute("errorMessage", "로그인이 필요합니다.");
 				return "redirect:/members/login";
@@ -51,8 +51,8 @@ public class OrderDetailViewController {
 			}
 
 			// 본인 주문인지 확인
-			if (!memberNum.equals(orderEntity.getMemberNum())) {
-				log.warn("주문 접근 권한 없음 - orderId: {}, memberNum: {}", orderId, memberNum);
+			if (!member.getMemberNum().equals(orderEntity.getMemberNum())) {
+				log.warn("주문 접근 권한 없음 - orderId: {}, memberNum: {}", orderId, member.getMemberNum());
 				model.addAttribute("errorMessage", "접근 권한이 없습니다.");
 				return "error/error-page";
 			}
@@ -87,9 +87,14 @@ public class OrderDetailViewController {
 				dto.setCancelStatus(od.getCancelStatus());
 				dto.setCancelDate(od.getCancelDate());
 				dto.setCancelReason(od.getCancelReason());
+				// 상품 정보 (뷰 출력용)
+				dto.setProductName(od.getProductName());
+				dto.setProductFilename(od.getProductFilename());
 				return dto;
 			}).toList();
 			orderDto.setCartItems(orderDetailDtos);
+
+			log.info("OrderDto 생성 완료 - cartItems 개수: {}", orderDetailDtos.size());
 
 			model.addAttribute("order", orderDto);
 			model.addAttribute("orderDetails", orderDetailDtos);
@@ -102,4 +107,3 @@ public class OrderDetailViewController {
 		}
 	}
 }
-
