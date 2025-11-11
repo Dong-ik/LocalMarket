@@ -78,46 +78,12 @@ public class OrderViewController {
     }
     
     /**
-     * 주문 상세 페이지
-     * GET /order/{orderId}
+     * 주문 상세 페이지 리다이렉트
+     * GET /order/{orderId} -> /order/detail/{orderId}로 리다이렉트
      */
     @GetMapping("/{orderId}")
-    public String orderDetail(@PathVariable("orderId") Integer orderId, 
-                             Model model, 
-                             HttpSession session) {
-        try {
-            // 로그인 체크
-            Member member = (Member) session.getAttribute("member");
-            if (member == null) {
-                return "redirect:/members/login";
-            }
-            
-            // 주문 정보 조회
-            Order order = orderService.getOrderById(orderId);
-            
-            if (order == null) {
-                model.addAttribute("errorMessage", "주문 정보를 찾을 수 없습니다.");
-                return "error/error-page";
-            }
-            
-            // 본인의 주문인지 확인
-            if (!order.getMemberNum().equals(member.getMemberNum())) {
-                model.addAttribute("errorMessage", "접근 권한이 없습니다.");
-                return "error/error-page";
-            }
-            
-            log.info("=== 주문 상세 페이지 ===");
-            log.info("주문ID: {}", orderId);
-            log.info("회원번호: {}", member.getMemberNum());
-            
-            model.addAttribute("order", order);
-            model.addAttribute("member", member);
-            return "order/detail";
-        } catch (Exception e) {
-            log.error("주문 상세 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", "페이지를 불러오는 중 오류가 발생했습니다.");
-            return "error/error-page";
-        }
+    public String orderDetail(@PathVariable("orderId") Integer orderId) {
+        return "redirect:/order/detail/" + orderId;
     }
     
     /**
