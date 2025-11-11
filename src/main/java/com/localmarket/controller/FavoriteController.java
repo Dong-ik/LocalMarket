@@ -240,4 +240,19 @@ public class FavoriteController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    /**
+     * 관심 개수 조회 (헤더용)
+     * GET /api/favorites/count?memberId={memberId}
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Object>> getFavoriteCount(@RequestParam("memberId") Integer memberId) {
+        Map<String, Object> response = new HashMap<>();
+
+        int count = favoriteService.getFavoriteCountByMember(memberId);
+        response.put("success", true);
+        response.put("count", count);
+
+        return ResponseEntity.ok(response);
+    }
 }
