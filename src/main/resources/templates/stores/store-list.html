@@ -89,15 +89,22 @@
             <div class="store-grid" id="storeGrid">
                 <div th:each="store : ${stores}" class="store-card" 
                      th:onclick="'location.href=\'/products?storeId=' + ${store.storeId} + '\''">
-                    <div class="store-card-image" 
+                    <div class="store-card-image"
                          th:style="${store.storeFilename != null ? 'background-image: url(/images/stores/' + store.storeFilename + ')' : ''}">
-                        
+
                         <!-- 이미지 없음 표시 -->
                         <div th:if="${store.storeFilename == null}" class="no-image-text">
                             <i class="fas fa-image"></i>
                             <p>이미지 없음</p>
                         </div>
-                        
+
+                        <!-- 찜 버튼 (항상 표시) -->
+                        <button class="favorite-btn"
+                                th:onclick="'event.stopPropagation(); toggleFavorite(\'STORE\', ' + ${store.storeId} + ', this);'"
+                                th:classappend="${store.isFavorite} ? 'active' : ''">
+                            <i th:class="${store.isFavorite} ? 'fas fa-heart' : 'far fa-heart'"></i>
+                        </button>
+
                         <div class="store-badge" th:if="${store.storeCategory != null}">
                             <i class="fas fa-tag"></i> <span th:text="${store.storeCategory}">카테고리</span>
                         </div>
@@ -183,7 +190,11 @@
     <!-- 푸터 Include -->
     <div th:replace="~{common/footer}"></div>
 
-    <script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    const memberNum = /*[[${memberNum}]]*/ null;
+    /*]]>*/
+
     // 검색 기능
     function searchStores() {
         const searchInput = document.getElementById('searchInput');
@@ -231,7 +242,60 @@
         currentUrl.searchParams.set('page', page);
         window.location.href = currentUrl.toString();
     }
-    
+
+    // 찜하기 토글
+    function toggleFavorite(type, id, element) {
+        if (!memberNum) {
+            if (confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
+                window.location.href = '/members/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
+            }
+            return;
+        }
+
+        const formData = new URLSearchParams();
+        formData.append('memberNum', memberNum);
+        formData.append('targetType', type);
+        formData.append('targetId', id);
+
+        fetch('/api/favorites/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData.toString()
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답 오류');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const icon = element.querySelector('i');
+                if (data.isFavorite) {
+                    element.classList.add('active');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    element.classList.remove('active');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+                // 찜 개수 업데이트 (헤더에 표시)
+                if (typeof updateFavoriteCount === 'function') {
+                    updateFavoriteCount();
+                }
+            } else {
+                alert(data.message || '처리 중 오류가 발생했습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('찜하기 오류:', error);
+            alert('찜하기 처리 중 오류가 발생했습니다.');
+        });
+    }
+
     // 페이지 로드 시 정렬 옵션 설정
     document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
