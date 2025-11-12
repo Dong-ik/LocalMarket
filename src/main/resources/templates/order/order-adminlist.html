@@ -166,11 +166,14 @@
                     <td>
                         <div class="action-buttons">
                             <button class="btn-detail"
-                                    th:onclick="|viewOrderDetail(${order.orderId})|">
+                                    th:data-order-id="${order.orderId}"
+                                    onclick="viewOrderDetail(this.dataset.orderId)">
                                 <i class="fas fa-eye"></i> 상세
                             </button>
                             <button class="btn-status"
-                                    th:onclick="|showStatusModal(${order.orderId}, '${order.orderStatus}')|">
+                                    th:data-order-id="${order.orderId}"
+                                    th:data-order-status="${order.orderStatus}"
+                                    onclick="showStatusModal(this.dataset.orderId, this.dataset.orderStatus)">
                                 <i class="fas fa-edit"></i> 상태변경
                             </button>
                         </div>
