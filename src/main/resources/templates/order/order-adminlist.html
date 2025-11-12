@@ -45,16 +45,16 @@
 
         <!-- 주문 상태 선택 -->
         <div class="filter-group">
-            <label for="paymentStatusSelect"><i class="fas fa-credit-card"></i> 주문상태:</label>
-            <select id="paymentStatusSelect" class="filter-select" onchange="applyFilters()">
+            <label for="orderStatusSelect"><i class="fas fa-credit-card"></i> 주문상태:</label>
+            <select id="orderStatusSelect" class="filter-select" onchange="applyFilters()">
                 <option value="">전체</option>
-                <option value="PENDING" th:selected="${selectedPaymentStatus == 'PENDING'}">결제대기</option>
-                <option value="COMPLETED" th:selected="${selectedPaymentStatus == 'COMPLETED'}">결제완료</option>
-                <option value="PROCESSING" th:selected="${selectedPaymentStatus == 'PROCESSING'}">배송준비</option>
-                <option value="SHIPPED" th:selected="${selectedPaymentStatus == 'SHIPPED'}">배송중</option>
-                <option value="DELIVERED" th:selected="${selectedPaymentStatus == 'DELIVERED'}">배송완료</option>
-                <option value="CANCELLED" th:selected="${selectedPaymentStatus == 'CANCELLED'}">주문취소</option>
-                <option value="FAILED" th:selected="${selectedPaymentStatus == 'FAILED'}">결제실패</option>
+                <option value="PENDING" th:selected="${selectedOrderStatus == 'PENDING'}">결제대기</option>
+                <option value="COMPLETED" th:selected="${selectedOrderStatus == 'COMPLETED'}">결제완료</option>
+                <option value="PROCESSING" th:selected="${selectedOrderStatus == 'PROCESSING'}">배송준비</option>
+                <option value="SHIPPED" th:selected="${selectedOrderStatus == 'SHIPPED'}">배송중</option>
+                <option value="DELIVERED" th:selected="${selectedOrderStatus == 'DELIVERED'}">배송완료</option>
+                <option value="CANCELLED" th:selected="${selectedOrderStatus == 'CANCELLED'}">주문취소</option>
+                <option value="FAILED" th:selected="${selectedOrderStatus == 'FAILED'}">결제실패</option>
             </select>
         </div>
 
@@ -135,13 +135,13 @@
                         </div>
                     </td>
                     <td class="status-cell">
-                        <span th:if="${order.paymentStatus == 'PENDING'}" class="status-badge payment-pending">결제대기</span>
-                        <span th:if="${order.paymentStatus == 'COMPLETED'}" class="status-badge payment-completed">결제완료</span>
-                        <span th:if="${order.paymentStatus == 'PROCESSING'}" class="status-badge status-preparing">배송준비</span>
-                        <span th:if="${order.paymentStatus == 'SHIPPED'}" class="status-badge status-shipping">배송중</span>
-                        <span th:if="${order.paymentStatus == 'DELIVERED'}" class="status-badge status-delivered">배송완료</span>
-                        <span th:if="${order.paymentStatus == 'CANCELLED'}" class="status-badge payment-cancelled">주문취소</span>
-                        <span th:if="${order.paymentStatus == 'FAILED'}" class="status-badge payment-failed">결제실패</span>
+                        <span th:if="${order.orderStatus == 'PENDING'}" class="status-badge payment-pending">결제대기</span>
+                        <span th:if="${order.orderStatus == 'COMPLETED'}" class="status-badge payment-completed">결제완료</span>
+                        <span th:if="${order.orderStatus == 'PROCESSING'}" class="status-badge status-preparing">배송준비</span>
+                        <span th:if="${order.orderStatus == 'SHIPPED'}" class="status-badge status-shipping">배송중</span>
+                        <span th:if="${order.orderStatus == 'DELIVERED'}" class="status-badge status-delivered">배송완료</span>
+                        <span th:if="${order.orderStatus == 'CANCELLED'}" class="status-badge payment-cancelled">주문취소</span>
+                        <span th:if="${order.orderStatus == 'FAILED'}" class="status-badge payment-failed">결제실패</span>
                     </td>
                     <td>
                         <div th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd')}">2024-01-01</div>
@@ -154,7 +154,7 @@
                                     onclick="viewOrderDetail(this.dataset.orderId)">
                                 <i class="fas fa-eye"></i> 상세보기
                             </button>
-                            <div class="status-change-wrapper" th:if="${order.paymentStatus != 'CANCELLED'}">
+                            <div class="status-change-wrapper" th:if="${order.orderStatus != 'CANCELLED'}">
                                 <button class="btn-status"
                                         th:id="'status-btn-' + ${order.orderId}"
                                         th:data-order-id="${order.orderId}"
@@ -167,17 +167,17 @@
                                         onchange="changeOrderStatus(this)"
                                         style="display: none;">
                                     <option value="">선택하세요</option>
-                                    <option value="PENDING" th:selected="${order.paymentStatus == 'PENDING'}">결제대기</option>
-                                    <option value="COMPLETED" th:selected="${order.paymentStatus == 'COMPLETED'}">결제완료</option>
-                                    <option value="PROCESSING" th:selected="${order.paymentStatus == 'PROCESSING'}">배송준비</option>
-                                    <option value="SHIPPED" th:selected="${order.paymentStatus == 'SHIPPED'}">배송중</option>
-                                    <option value="DELIVERED" th:selected="${order.paymentStatus == 'DELIVERED'}">배송완료</option>
+                                    <option value="PENDING" th:selected="${order.orderStatus == 'PENDING'}">결제대기</option>
+                                    <option value="COMPLETED" th:selected="${order.orderStatus == 'COMPLETED'}">결제완료</option>
+                                    <option value="PROCESSING" th:selected="${order.orderStatus == 'PROCESSING'}">배송준비</option>
+                                    <option value="SHIPPED" th:selected="${order.orderStatus == 'SHIPPED'}">배송중</option>
+                                    <option value="DELIVERED" th:selected="${order.orderStatus == 'DELIVERED'}">배송완료</option>
                                 </select>
                             </div>
                             <button class="btn-cancel"
                                     th:data-order-id="${order.orderId}"
                                     onclick="cancelOrder(this.dataset.orderId)"
-                                    th:if="${order.paymentStatus != 'CANCELLED'}">
+                                    th:if="${order.orderStatus != 'CANCELLED'}">
                                 <i class="fas fa-times-circle"></i> 주문취소
                             </button>
                         </div>
@@ -205,14 +205,14 @@ function performSearch() {
 
 // 필터 적용
 function applyFilters() {
-    const paymentStatus = document.getElementById('paymentStatusSelect').value;
+    const orderStatus = document.getElementById('orderStatusSelect').value;
     const search = document.getElementById('searchInput').value;
 
     let url = '/order/adminlist';
     const params = [];
 
-    if (paymentStatus) {
-        params.push('paymentStatus=' + encodeURIComponent(paymentStatus));
+    if (orderStatus) {
+        params.push('orderStatus=' + encodeURIComponent(orderStatus));
     }
     if (search) {
         params.push('search=' + encodeURIComponent(search));
@@ -283,7 +283,7 @@ async function changeOrderStatus(selectElement) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ status: newStatus })
+            body: JSON.stringify({ orderStatus: newStatus })
         });
 
         if (response.ok) {

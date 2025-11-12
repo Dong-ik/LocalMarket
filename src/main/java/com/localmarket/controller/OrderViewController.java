@@ -129,7 +129,7 @@ public class OrderViewController {
      * GET /order/adminlist
      */
     @GetMapping("/adminlist")
-    public String adminOrderList(@RequestParam(value = "paymentStatus", required = false) String paymentStatus,
+    public String adminOrderList(@RequestParam(value = "orderStatus", required = false) String orderStatus,
                                  @RequestParam(value = "search", required = false) String search,
                                  Model model,
                                  HttpSession session) {
@@ -158,9 +158,9 @@ public class OrderViewController {
 
             // 필터링 적용
             if (orders != null) {
-                if (paymentStatus != null && !paymentStatus.isEmpty()) {
+                if (orderStatus != null && !orderStatus.isEmpty()) {
                     orders = orders.stream()
-                            .filter(order -> paymentStatus.equals(order.getPaymentStatus()))
+                            .filter(order -> orderStatus.equals(order.getOrderStatus()))
                             .collect(Collectors.toList());
                 }
 
@@ -178,10 +178,10 @@ public class OrderViewController {
 
             log.info("=== 관리자 주문 관리 페이지 ===");
             log.info("전체 주문 수: {}", orders != null ? orders.size() : 0);
-            log.info("필터 - 결제상태: {}, 검색어: {}", paymentStatus, search);
+            log.info("필터 - 주문상태: {}, 검색어: {}", orderStatus, search);
 
             model.addAttribute("orders", orders);
-            model.addAttribute("selectedPaymentStatus", paymentStatus);
+            model.addAttribute("selectedOrderStatus", orderStatus);
             model.addAttribute("searchKeyword", search);
 
             return "order/order-adminlist";
