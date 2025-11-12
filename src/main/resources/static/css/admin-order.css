@@ -181,54 +181,53 @@
 .order-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 1500px;
     table-layout: fixed;
 }
 
 /* 각 컬럼의 너비 설정 */
 .order-table th:nth-child(1),
 .order-table td:nth-child(1) {
-    width: 100px;  /* 주문번호 */
+    width: 8%;  /* 주문번호 */
 }
 
 .order-table th:nth-child(2),
 .order-table td:nth-child(2) {
-    width: 120px;  /* 주문자 */
+    width: 9%;  /* 주문자 */
 }
 
 .order-table th:nth-child(3),
 .order-table td:nth-child(3) {
-    width: 300px;  /* 상품정보 */
+    width: 23%;  /* 상품정보 */
 }
 
 .order-table th:nth-child(4),
 .order-table td:nth-child(4) {
-    width: 110px;  /* 주문금액 */
+    width: 10%;  /* 주문금액 */
 }
 
 .order-table th:nth-child(5),
 .order-table td:nth-child(5) {
-    width: 90px;   /* 배송비 */
+    width: 8%;   /* 배송비 */
 }
 
 .order-table th:nth-child(6),
 .order-table td:nth-child(6) {
-    width: 120px;  /* 결제방법 */
+    width: 10%;  /* 결제방법 */
 }
 
 .order-table th:nth-child(7),
 .order-table td:nth-child(7) {
-    width: 110px;  /* 주문상태 */
+    width: 10%;  /* 주문상태 */
 }
 
 .order-table th:nth-child(8),
 .order-table td:nth-child(8) {
-    width: 130px;  /* 주문일시 */
+    width: 12%;  /* 주문일시 */
 }
 
 .order-table th:nth-child(9),
 .order-table td:nth-child(9) {
-    width: 120px;  /* 관리 */
+    width: 11%;  /* 관리 */
 }
 
 .order-table thead {
@@ -237,7 +236,7 @@
 
 .order-table thead th {
     padding: 18px 15px;
-    text-align: left;
+    text-align: center;
     font-weight: 600;
     color: white;
     font-size: 0.95rem;
@@ -310,12 +309,12 @@
     margin-bottom: 8px;
 }
 
-.product-image {
-    width: 50px;
-    height: 50px;
-    min-width: 50px;
-    min-height: 50px;
-    object-fit: cover;
+.product-image-admin {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    min-height: 80px;
+    object-fit: contain;
     border-radius: 6px;
     border: 1px solid #e9ecef;
     flex-shrink: 0;
