@@ -294,26 +294,31 @@ public class ProductViewController {
             if (session.getAttribute("member") == null) {
                 return "redirect:/members/login";
             }
-            
+
+            // 회원 등급 가져오기
+            String memberGrade = (String) session.getAttribute("memberGrade");
+
             // 상품 정보 조회
             Product product = productService.getProductById(productId);
-            
+
             if (product == null) {
                 log.warn("상품을 찾을 수 없음 - productId: {}", productId);
                 model.addAttribute("errorMessage", "상품을 찾을 수 없습니다.");
                 return "error/error-page";
             }
-            
+
             // 가게 목록 조회
             List<Store> stores = storeService.getAllStores();
-            
+
             log.info("=== 상품 수정 페이지 ===");
             log.info("상품 ID: {}, 상품명: {}", productId, product.getProductName());
+            log.info("회원 등급: {}", memberGrade);
             log.info("가게 목록: {} 개", stores != null ? stores.size() : 0);
-            
+
             model.addAttribute("product", product);
             model.addAttribute("stores", stores);
-            
+            model.addAttribute("memberGrade", memberGrade);  // 회원 등급 추가
+
             return "products/product-edit";
         } catch (Exception e) {
             log.error("상품 수정 페이지 조회 중 오류 발생 - productId: {}", productId, e);
