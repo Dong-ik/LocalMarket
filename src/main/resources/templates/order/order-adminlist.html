@@ -49,6 +49,9 @@
                 <option value="">전체</option>
                 <option value="PENDING" th:selected="${selectedPaymentStatus == 'PENDING'}">결제대기</option>
                 <option value="COMPLETED" th:selected="${selectedPaymentStatus == 'COMPLETED'}">결제완료</option>
+                <option value="PROCESSING" th:selected="${selectedPaymentStatus == 'PROCESSING'}">배송준비</option>
+                <option value="SHIPPED" th:selected="${selectedPaymentStatus == 'SHIPPED'}">배송중</option>
+                <option value="DELIVERED" th:selected="${selectedPaymentStatus == 'DELIVERED'}">배송완료</option>
                 <option value="CANCELLED" th:selected="${selectedPaymentStatus == 'CANCELLED'}">결제취소</option>
                 <option value="FAILED" th:selected="${selectedPaymentStatus == 'FAILED'}">결제실패</option>
             </select>
@@ -133,6 +136,9 @@
                     <td class="status-cell">
                         <span th:if="${order.paymentStatus == 'PENDING'}" class="status-badge payment-pending">결제대기</span>
                         <span th:if="${order.paymentStatus == 'COMPLETED'}" class="status-badge payment-completed">결제완료</span>
+                        <span th:if="${order.paymentStatus == 'PROCESSING'}" class="status-badge status-preparing">배송준비</span>
+                        <span th:if="${order.paymentStatus == 'SHIPPED'}" class="status-badge status-shipping">배송중</span>
+                        <span th:if="${order.paymentStatus == 'DELIVERED'}" class="status-badge status-delivered">배송완료</span>
                         <span th:if="${order.paymentStatus == 'CANCELLED'}" class="status-badge payment-cancelled">결제취소</span>
                         <span th:if="${order.paymentStatus == 'FAILED'}" class="status-badge payment-failed">결제실패</span>
                     </td>
