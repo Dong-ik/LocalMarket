@@ -455,6 +455,11 @@
     width: 100%;
 }
 
+.status-change-wrapper {
+    position: relative;
+    width: 100%;
+}
+
 .btn-detail, .btn-status, .btn-cancel {
     padding: 8px 12px;
     border: none;
@@ -468,6 +473,24 @@
     gap: 4px;
     white-space: nowrap;
     width: 100%;
+}
+
+.status-dropdown {
+    padding: 8px 12px;
+    border: 2px solid #27ae60;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    width: 100%;
+    background: white;
+    color: #2c3e50;
+    transition: all 0.3s;
+}
+
+.status-dropdown:focus {
+    outline: none;
+    border-color: #229954;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
 }
 
 .btn-detail {
