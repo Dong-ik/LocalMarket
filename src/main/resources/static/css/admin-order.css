@@ -181,8 +181,54 @@
 .order-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 1400px;
-    table-layout: auto;
+    min-width: 1500px;
+    table-layout: fixed;
+}
+
+/* 각 컬럼의 너비 설정 */
+.order-table th:nth-child(1),
+.order-table td:nth-child(1) {
+    width: 100px;  /* 주문번호 */
+}
+
+.order-table th:nth-child(2),
+.order-table td:nth-child(2) {
+    width: 120px;  /* 주문자 */
+}
+
+.order-table th:nth-child(3),
+.order-table td:nth-child(3) {
+    width: 300px;  /* 상품정보 */
+}
+
+.order-table th:nth-child(4),
+.order-table td:nth-child(4) {
+    width: 110px;  /* 주문금액 */
+}
+
+.order-table th:nth-child(5),
+.order-table td:nth-child(5) {
+    width: 90px;   /* 배송비 */
+}
+
+.order-table th:nth-child(6),
+.order-table td:nth-child(6) {
+    width: 120px;  /* 결제방법 */
+}
+
+.order-table th:nth-child(7),
+.order-table td:nth-child(7) {
+    width: 110px;  /* 주문상태 */
+}
+
+.order-table th:nth-child(8),
+.order-table td:nth-child(8) {
+    width: 130px;  /* 주문일시 */
+}
+
+.order-table th:nth-child(9),
+.order-table td:nth-child(9) {
+    width: 120px;  /* 관리 */
 }
 
 .order-table thead {
@@ -208,10 +254,10 @@
 }
 
 .order-table tbody td {
-    padding: 15px;
+    padding: 15px 10px;
     color: #495057;
     font-size: 0.95rem;
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 /* 주문 ID */
@@ -253,21 +299,24 @@
 
 /* 주문 상품 목록 */
 .order-items {
-    max-width: 400px;
+    max-width: 350px;
+    min-width: 250px;
 }
 
 .product-info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 8px;
 }
 
 .product-image {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    min-height: 50px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 6px;
     border: 1px solid #e9ecef;
     flex-shrink: 0;
 }
@@ -280,16 +329,18 @@
 .product-details strong {
     display: block;
     color: #2c3e50;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 180px;
 }
 
 .product-details small {
     display: block;
     color: #7f8c8d;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
 }
 
 .more-items {
@@ -398,25 +449,24 @@
 /* 액션 버튼 */
 .action-buttons {
     display: flex;
-    gap: 6px;
+    gap: 5px;
     justify-content: center;
-    flex-direction: row;
-    flex-wrap: wrap;
+    align-items: center;
 }
 
 .btn-detail, .btn-status {
-    padding: 8px 16px;
+    padding: 8px 12px;
     border: none;
     border-radius: 6px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.3s;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 4px;
     white-space: nowrap;
-    min-width: 90px;
+    width: 100%;
 }
 
 .btn-detail {
