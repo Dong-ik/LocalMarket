@@ -110,11 +110,14 @@
                                 <i class="fas fa-store-alt"></i> 가게
                             </a>
                             <div class="dropdown-menu">
-                                <a th:href="@{/stores}">가게 목록</a>
-                                <a th:href="@{/stores?category=식품}">식품</a>
-                                <a th:href="@{/stores?category=의류}">의류</a>
-                                <a th:href="@{/stores?category=잡화}">잡화</a>
-                                <a th:href="@{/stores/popular}">인기 가게</a>
+                                <a th:href="@{/stores}">전체 가게</a>
+                                <a th:href="@{/stores?category=육류}">🥩 육류</a>
+                                <a th:href="@{/stores?category=수산물}">🐟 수산물</a>
+                                <a th:href="@{/stores?category=농산물}">🌾 농산물</a>
+                                <a th:href="@{/stores?category=의류}">👕 의류</a>
+                                <a th:href="@{/stores?category=잡화}">🎁 잡화</a>
+                                <a th:href="@{/stores?category=음식점}">🍽️ 음식점</a>
+                                <a th:href="@{/stores?category=기타}">📦 기타</a>
                             </div>
                         </li>
                         <li class="nav-item">
@@ -122,10 +125,14 @@
                                 <i class="fas fa-shopping-bag"></i> 상품
                             </a>
                             <div class="dropdown-menu">
-                                <a th:href="@{/products}">상품 목록</a>
-                                <a th:href="@{/products?category=신선식품}">신선식품</a>
-                                <a th:href="@{/products?category=가공식품}">가공식품</a>
-                                <a th:href="@{/products?category=의류잡화}">의류잡화</a>
+                                <a th:href="@{/products}">전체 상품</a>
+                                <a th:href="@{/products?storeCategory=육류}">🥩 육류</a>
+                                <a th:href="@{/products?storeCategory=수산물}">🐟 수산물</a>
+                                <a th:href="@{/products?storeCategory=농산물}">🌾 농산물</a>
+                                <a th:href="@{/products?storeCategory=의류}">👕 의류</a>
+                                <a th:href="@{/products?storeCategory=잡화}">🎁 잡화</a>
+                                <a th:href="@{/products?storeCategory=음식점}">🍽️ 음식점</a>
+                                <a th:href="@{/products?storeCategory=기타}">📦 기타</a>
                             </div>
                         </li>
                         <li class="nav-item">
@@ -145,7 +152,7 @@
                             <div class="dropdown-menu">
                                 <a th:href="@{/seller/products}">상품 관리</a>
                                 <a th:href="@{/seller/orders}">주문 관리</a>
-                                <a th:href="@{/seller/store}">가게 관리</a>
+                                <a th:href="@{/seller/stores}">가게 관리</a>
                                 <a th:href="@{/seller/statistics}">판매 통계</a>
                             </div>
                         </li>
