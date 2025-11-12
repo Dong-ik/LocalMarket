@@ -66,6 +66,7 @@ public class SellerStoreViewController {
             // 모델에 데이터 추가
             model.addAttribute("stores", stores);
             model.addAttribute("totalCount", stores.size());
+            model.addAttribute("memberGrade", memberGrade);
 
             if (stores.isEmpty()) {
                 model.addAttribute("message", "등록된 가게가 없습니다.");

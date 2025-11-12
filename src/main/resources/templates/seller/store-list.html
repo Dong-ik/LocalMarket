@@ -35,7 +35,7 @@
             <i class="fas fa-shop"></i>
             전체 가게: <strong th:text="${totalCount}"></strong>개
         </div>
-        <a href="/stores/register" class="btn-register">
+        <a th:if="${memberGrade == 'ADMIN'}" href="/stores/register" class="btn-register">
             <i class="fas fa-plus-circle"></i> 가게 등록
         </a>
     </div>
@@ -123,8 +123,8 @@
     <div th:if="${stores.isEmpty()}" class="no-data">
         <i class="fas fa-inbox"></i>
         <p>등록된 가게가 없습니다.</p>
-        <p class="no-data-sub">가게를 등록해주세요.</p>
-        <a href="/stores/register" class="btn-register-large">
+        <p th:if="${memberGrade == 'ADMIN'}" class="no-data-sub">가게를 등록해주세요.</p>
+        <a th:if="${memberGrade == 'ADMIN'}" href="/stores/register" class="btn-register-large">
             <i class="fas fa-plus-circle"></i> 가게 등록하기
         </a>
     </div>
