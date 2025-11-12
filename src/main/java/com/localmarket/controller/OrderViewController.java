@@ -123,4 +123,80 @@ public class OrderViewController {
             return "error/error-page";
         }
     }
+
+    /**
+     * 관리자 주문/결제 관리 페이지
+     * GET /order/adminlist
+     */
+    @GetMapping("/adminlist")
+    public String adminOrderList(@RequestParam(value = "orderStatus", required = false) String orderStatus,
+                                 @RequestParam(value = "paymentStatus", required = false) String paymentStatus,
+                                 @RequestParam(value = "search", required = false) String search,
+                                 Model model,
+                                 HttpSession session) {
+        try {
+            // 로그인 및 권한 체크
+            Member loginMember = (Member) session.getAttribute("member");
+            if (loginMember == null) {
+                return "redirect:/members/login";
+            }
+
+            // 관리자 권한 체크
+            if (!"ADMIN".equals(loginMember.getMemberGrade())) {
+                model.addAttribute("errorMessage", "관리자만 접근할 수 있습니다.");
+                return "error/error-page";
+            }
+
+            // 모든 주문 조회
+            List<Order> orders = orderService.getAllOrders();
+
+            // 각 주문의 주문 상세 정보 조회
+            if (orders != null) {
+                for (Order order : orders) {
+                    order.setOrderDetails(orderDetailService.getOrderDetailsByOrderId(order.getOrderId()));
+                }
+            }
+
+            // 필터링 적용
+            if (orders != null) {
+                if (orderStatus != null && !orderStatus.isEmpty()) {
+                    orders = orders.stream()
+                            .filter(order -> orderStatus.equals(order.getOrderStatus()))
+                            .collect(Collectors.toList());
+                }
+
+                if (paymentStatus != null && !paymentStatus.isEmpty()) {
+                    orders = orders.stream()
+                            .filter(order -> paymentStatus.equals(order.getPaymentStatus()))
+                            .collect(Collectors.toList());
+                }
+
+                if (search != null && !search.isEmpty()) {
+                    String searchLower = search.toLowerCase();
+                    orders = orders.stream()
+                            .filter(order ->
+                                String.valueOf(order.getOrderId()).contains(searchLower) ||
+                                (order.getMemberName() != null && order.getMemberName().toLowerCase().contains(searchLower)) ||
+                                (order.getTransactionId() != null && order.getTransactionId().toLowerCase().contains(searchLower))
+                            )
+                            .collect(Collectors.toList());
+                }
+            }
+
+            log.info("=== 관리자 주문 관리 페이지 ===");
+            log.info("전체 주문 수: {}", orders != null ? orders.size() : 0);
+            log.info("필터 - 주문상태: {}, 결제상태: {}, 검색어: {}", orderStatus, paymentStatus, search);
+
+            model.addAttribute("orders", orders);
+            model.addAttribute("selectedOrderStatus", orderStatus);
+            model.addAttribute("selectedPaymentStatus", paymentStatus);
+            model.addAttribute("searchKeyword", search);
+
+            return "order/order-adminlist";
+        } catch (Exception e) {
+            log.error("관리자 주문 관리 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "페이지를 불러오는 중 오류가 발생했습니다.");
+            return "error/error-page";
+        }
+    }
 }
