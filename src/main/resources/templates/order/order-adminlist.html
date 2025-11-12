@@ -42,9 +42,9 @@
             </button>
         </div>
 
-        <!-- 결제 상태 선택 -->
+        <!-- 주문 상태 선택 -->
         <div class="filter-group">
-            <label for="paymentStatusSelect"><i class="fas fa-credit-card"></i> 결제상태:</label>
+            <label for="paymentStatusSelect"><i class="fas fa-credit-card"></i> 주문상태:</label>
             <select id="paymentStatusSelect" class="filter-select" onchange="applyFilters()">
                 <option value="">전체</option>
                 <option value="PENDING" th:selected="${selectedPaymentStatus == 'PENDING'}">결제대기</option>
@@ -72,7 +72,7 @@
                     <th>주문금액</th>
                     <th>배송비</th>
                     <th>결제방법</th>
-                    <th>결제상태</th>
+                    <th>주문상태</th>
                     <th>주문일시</th>
                     <th>관리</th>
                 </tr>
