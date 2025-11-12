@@ -15,6 +15,7 @@
     <div class="form-container">
         <form id="editForm" onsubmit="updateStore(event)">
             <input type="hidden" id="storeId" th:value="${store.storeId}">
+            <input type="hidden" id="memberGrade" th:value="${memberGrade}">
             
             <!-- 가게 이미지 업로드 -->
             <div class="form-group">
@@ -115,7 +116,9 @@
             </div>
             
             <div class="form-actions">
-                <button type="button" onclick="location.href='/stores/adminlist'" class="btn btn-secondary">
+                <button type="button"
+                        th:onclick="'location.href=\'' + ${memberGrade == 'SELLER' ? '/seller/stores' : '/stores/adminlist'} + '\''"
+                        class="btn btn-secondary">
                     <i class="fas fa-times"></i> 취소
                 </button>
                 <button type="submit" class="btn btn-primary">
@@ -311,7 +314,8 @@
     .then(data => {
         if (data.success) {
             alert(data.message);
-            window.location.href = '/stores/adminlist';
+            const memberGrade = document.getElementById('memberGrade').value;
+            window.location.href = memberGrade === 'SELLER' ? '/seller/stores' : '/stores/adminlist';
         } else {
             alert(data.message || '가게 정보 수정에 실패했습니다.');
         }

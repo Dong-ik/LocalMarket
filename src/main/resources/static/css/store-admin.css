@@ -179,20 +179,78 @@
     font-size: 0.95rem;
 }
 
+/* 알림 메시지 */
+.alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+
+.alert i {
+    font-size: 1.2rem;
+}
+
+.alert-info {
+    background: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #90caf9;
+}
+
+.alert-danger {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+/* 데이터 없음 */
 .no-data {
     text-align: center;
-    padding: 80px 20px;
-    color: #95a5a6;
+    padding: 60px 20px;
+    color: #999;
 }
 
 .no-data i {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    opacity: 0.5;
+    font-size: 48px;
+    margin-bottom: 15px;
+    display: block;
+    color: #ddd;
 }
 
 .no-data p {
-    font-size: 1.2rem;
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.no-data-sub {
+    font-size: 14px;
+    color: #bbb;
+    margin-top: 5px;
+}
+
+.btn-register-large {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.btn-register-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
 }
 
 /* ========================================

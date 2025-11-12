@@ -292,34 +292,39 @@ public class StoreViewController {
             if (session.getAttribute("member") == null) {
                 return "redirect:/members/login";
             }
-            
+
+            // 회원 등급 가져오기
+            String memberGrade = (String) session.getAttribute("memberGrade");
+
             // 가게 정보 조회
             Store store = storeService.getStoreById(storeId);
-            
+
             if (store == null) {
                 log.warn("가게를 찾을 수 없음 - storeId: {}", storeId);
                 model.addAttribute("errorMessage", "가게를 찾을 수 없습니다.");
                 return "error/error-page";
             }
-            
+
             // 시장 목록 조회
             List<Market> markets = marketService.getAllMarkets();
-            
+
             // 판매자(SELLER) 회원 목록 조회
             List<com.localmarket.domain.Member> sellers = storeService.getSellerMembers();
-            
+
             log.info("=== 가게 수정 페이지 ===");
             log.info("가게 ID: {}, 가게명: {}", storeId, store.getStoreName());
             log.info("카테고리: {}", store.getStoreCategory());
-            log.info("판매자번호: {}, 판매자명: {}, 판매자ID: {}", 
+            log.info("판매자번호: {}, 판매자명: {}, 판매자ID: {}",
                     store.getMemberNum(), store.getMemberName(), store.getMemberId());
+            log.info("회원 등급: {}", memberGrade);
             log.info("시장 목록: {} 개", markets != null ? markets.size() : 0);
             log.info("판매자 목록: {} 개", sellers != null ? sellers.size() : 0);
-            
+
             model.addAttribute("store", store);
             model.addAttribute("markets", markets);
             model.addAttribute("sellers", sellers);
-            
+            model.addAttribute("memberGrade", memberGrade);  // 회원 등급 추가
+
             return "stores/store-edit";
         } catch (Exception e) {
             log.error("가게 수정 페이지 조회 중 오류 발생 - storeId: {}", storeId, e);

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 헤더 Include -->
+<div th:replace="~{common/header}"></div>
+
+<link rel="stylesheet" th:href="@{/css/store-admin.css}">
+
+<div class="container" style="margin-top: 100px; margin-bottom: 60px;">
+    <div class="page-header">
+        <h1><i class="fas fa-store"></i> 내 가게 관리</h1>
+        <p class="subtitle">판매자님의 가게를 조회하고 관리할 수 있습니다</p>
+    </div>
+
+    <!-- 메시지 표시 -->
+    <div th:if="${message}" class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <span th:text="${message}"></span>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- 검색 영역 -->
+    <div class="search-section" th:if="${!stores.isEmpty()}">
+        <div class="search-box">
+            <input type="text" id="searchKeyword" placeholder="가게명, 카테고리, 시장명으로 검색하세요..." onkeyup="searchStores()">
+            <button onclick="searchStores()" class="btn-search">
+                <i class="fas fa-search"></i> 검색
+            </button>
+        </div>
+        <div class="member-count">
+            <i class="fas fa-shop"></i>
+            전체 가게: <strong th:text="${totalCount}"></strong>개
+        </div>
+        <a href="/stores/register" class="btn-register">
+            <i class="fas fa-plus-circle"></i> 가게 등록
+        </a>
+    </div>
+
+    <!-- 카테고리별 필터 버튼 -->
+    <div class="filter-section" th:if="${!stores.isEmpty()}">
+        <button class="filter-btn active" onclick="filterByCategory('ALL')">
+            <i class="fas fa-globe"></i> 전체
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('음식점')">
+            <i class="fas fa-utensils"></i> 음식점
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('카페')">
+            <i class="fas fa-coffee"></i> 카페
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('의류')">
+            <i class="fas fa-tshirt"></i> 의류
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('식품')">
+            <i class="fas fa-carrot"></i> 식품
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('생활용품')">
+            <i class="fas fa-couch"></i> 생활용품
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('전자제품')">
+            <i class="fas fa-tv"></i> 전자제품
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('화장품')">
+            <i class="fas fa-spray-can"></i> 화장품
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('서점')">
+            <i class="fas fa-book"></i> 서점
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('꽃집')">
+            <i class="fas fa-seedling"></i> 꽃집
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('약국')">
+            <i class="fas fa-pills"></i> 약국
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('스포츠')">
+            <i class="fas fa-dumbbell"></i> 스포츠
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('반려동물')">
+            <i class="fas fa-paw"></i> 반려동물
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('문구')">
+            <i class="fas fa-pen"></i> 문구
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('액세서리')">
+            <i class="fas fa-gem"></i> 액세서리
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('잡화')">
+            <i class="fas fa-shopping-bag"></i> 잡화
+        </button>
+        <button class="filter-btn" onclick="filterByCategory('기타')">
+            <i class="fas fa-ellipsis-h"></i> 기타
+        </button>
+    </div>
+
+    <!-- 가게 목록 테이블 -->
+    <div class="table-container" th:if="${!stores.isEmpty()}">
+        <table class="member-table" id="storeTable">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">번호</th>
+                    <th style="width: 200px;">가게명</th>
+                    <th style="width: 120px;">카테고리</th>
+                    <th style="width: 200px;">시장명</th>
+                    <th style="width: 100px;">지역</th>
+                    <th style="width: 120px;">등록일</th>
+                    <th style="width: 180px;">관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="store, iterStat : ${stores}"
+                    th:id="'store-row-' + ${store.storeId}"
+                    th:attr="data-category=${store.storeCategory}">
+                    <td th:text="${iterStat.count}">1</td>
+                    <td>
+                        <a th:href="@{/stores/{storeId}(storeId=${store.storeId})}"
+                           class="store-name-link"
+                           th:text="${store.storeName}">
+                            가게명
+                        </a>
+                    </td>
+                    <td>
+                        <span class="category-badge" th:text="${store.storeCategory}">카테고리</span>
+                    </td>
+                    <td th:text="${store.marketName}">시장명</td>
+                    <td th:text="${store.marketLocal != null ? store.marketLocal : '-'}">지역</td>
+                    <td th:text="${#temporals.format(store.createdDate, 'yyyy-MM-dd')}">2024-01-01</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit"
+                                    th:attr="data-store-id=${store.storeId}"
+                                    onclick="editStore(this.getAttribute('data-store-id'))">
+                                <i class="fas fa-edit"></i> 수정
+                            </button>
+                            <button class="btn-delete"
+                                    th:attr="data-store-id=${store.storeId},data-store-name=${store.storeName}"
+                                    onclick="deleteStore(this.getAttribute('data-store-id'), this.getAttribute('data-store-name'))">
+                                <i class="fas fa-trash"></i> 삭제
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 데이터 없을 때 -->
+    <div th:if="${stores.isEmpty()}" class="no-data">
+        <i class="fas fa-inbox"></i>
+        <p>등록된 가게가 없습니다.</p>
+        <p class="no-data-sub">가게를 등록해주세요.</p>
+        <a href="/stores/register" class="btn-register-large">
+            <i class="fas fa-plus-circle"></i> 가게 등록하기
+        </a>
+    </div>
+</div>
+
+<!-- 푸터 Include -->
+<div th:replace="~{common/footer}"></div>
+
+<script>
+// 검색 기능
+function searchStores() {
+    const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+    const rows = document.querySelectorAll('.member-table tbody tr');
+
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+
+        if (text.includes(keyword)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    updateTotalCount();
+}
+
+// 엔터키로 검색
+const searchInput = document.getElementById('searchKeyword');
+if (searchInput) {
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchStores();
+        }
+    });
+}
+
+// 카테고리별 필터링
+function filterByCategory(category) {
+    const rows = document.querySelectorAll('.member-table tbody tr');
+    const buttons = document.querySelectorAll('.filter-btn');
+
+    // 버튼 활성화 상태 변경
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.closest('.filter-btn').classList.add('active');
+
+    rows.forEach(row => {
+        const storeCategory = row.getAttribute('data-category');
+
+        if (category === 'ALL' || storeCategory === category) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    updateTotalCount();
+}
+
+// 가게 수정
+function editStore(storeId) {
+    window.location.href = `/stores/${storeId}/edit`;
+}
+
+// 가게 삭제
+function deleteStore(storeId, storeName) {
+    if (!confirm(`'${storeName}' 가게를 정말 삭제하시겠습니까?\n\n삭제된 가게 정보는 복구할 수 없습니다.`)) {
+        return;
+    }
+
+    fetch(`/api/store/${storeId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            // 해당 행 제거
+            const row = document.getElementById(`store-row-${storeId}`);
+            if (row) {
+                row.style.transition = 'opacity 0.3s';
+                row.style.opacity = '0';
+                setTimeout(() => {
+                    row.remove();
+                    updateTotalCount();
+                }, 300);
+            }
+        } else {
+            alert(data.message || '가게 삭제에 실패했습니다.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('가게 삭제 중 오류가 발생했습니다.');
+    });
+}
+
+// 가게 수 업데이트
+function updateTotalCount() {
+    const visibleRows = document.querySelectorAll('.member-table tbody tr:not([style*="display: none"])');
+    const countElement = document.querySelector('.member-count strong');
+    if (countElement) {
+        countElement.textContent = visibleRows.length;
+    }
+}
+</script>
+
+</body>
+</html>
