@@ -13,6 +13,7 @@ public class Product {
     private String productFilename;     // 상품 이미지 파일명
     private Integer storeId;            // 상점 ID (FK)
     private String storeName;           // 상점명 (조인용)
+    private String storeCategory;       // 가게 카테고리 (조인용)
     private LocalDateTime createdDate;  // 생성일시
     private LocalDateTime updatedDate;  // 수정일시
 }

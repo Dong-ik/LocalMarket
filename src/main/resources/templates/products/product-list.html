@@ -26,13 +26,28 @@
             <div class="search-filter-container">
                 <!-- 검색 바 -->
                 <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="상품 이름을 검색하세요" 
+                    <input type="text" id="searchInput" placeholder="상품 이름을 검색하세요"
                            th:value="${searchKeyword}">
                     <button class="search-btn" onclick="searchProducts()">
                         <i class="fas fa-search"></i> 검색
                     </button>
                 </div>
-                
+
+                <!-- 가게 카테고리 필터 -->
+                <div class="filter-section">
+                    <div class="filter-label">가게 카테고리:</div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" onclick="filterByStoreCategory('')">전체</button>
+                        <button class="filter-btn" onclick="filterByStoreCategory('육류')">육류</button>
+                        <button class="filter-btn" onclick="filterByStoreCategory('수산물')">수산물</button>
+                        <button class="filter-btn" onclick="filterByStoreCategory('농산물')">농산물</button>
+                        <button class="filter-btn" onclick="filterByStoreCategory('의류')">의류</button>
+                        <button class="filter-btn" onclick="filterByStoreCategory('잡화')">잡화</button>
+                        <button class="filter-btn" onclick="filterByStoreCategory('음식점')">음식점</button>
+                        <button class="filter-btn" onclick="filterByStoreCategory('기타')">기타</button>
+                    </div>
+                </div>
+
                 <!-- 가격 범위 필터 -->
                 <div class="filter-section">
                     <div class="filter-label">가격대:</div>
@@ -210,7 +225,21 @@
             searchProducts();
         }
     });
-    
+
+    // 가게 카테고리별 필터링
+    function filterByStoreCategory(category) {
+        const currentUrl = new URL(window.location.href);
+
+        if (category) {
+            currentUrl.searchParams.set('storeCategory', category);
+        } else {
+            currentUrl.searchParams.delete('storeCategory');
+        }
+
+        currentUrl.searchParams.delete('page'); // 필터 변경 시 첫 페이지로
+        window.location.href = currentUrl.toString();
+    }
+
     // 가격대별 필터링
     function filterByPrice(minPrice, maxPrice) {
         const currentUrl = new URL(window.location.href);
@@ -250,19 +279,31 @@
         const urlParams = new URLSearchParams(window.location.search);
         const sortValue = urlParams.get('sort') || 'name';
         document.getElementById('sortSelect').value = sortValue;
-        
+
+        // 가게 카테고리 필터 버튼 활성화 상태 설정
+        const storeCategory = urlParams.get('storeCategory');
+        const categoryButtons = document.querySelectorAll('.filter-section:nth-of-type(2) .filter-btn');
+
+        categoryButtons.forEach(btn => {
+            const onclick = btn.getAttribute('onclick');
+            if (storeCategory && onclick && onclick.includes(`'${storeCategory}'`)) {
+                categoryButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            } else if (!storeCategory && onclick && onclick.includes("''")) {
+                btn.classList.add('active');
+            }
+        });
+
         // 가격 필터 버튼 활성화 상태 설정
         const minPrice = urlParams.get('minPrice');
         const maxPrice = urlParams.get('maxPrice');
-        
+        const priceButtons = document.querySelectorAll('.filter-section:nth-of-type(3) .filter-btn');
+
         if (minPrice || maxPrice) {
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // 해당하는 버튼 찾아서 활성화
-            filterButtons.forEach(btn => {
+            priceButtons.forEach(btn => {
                 const onclick = btn.getAttribute('onclick');
                 if (onclick && onclick.includes(`${minPrice}`) && onclick.includes(`${maxPrice}`)) {
+                    priceButtons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                 }
             });
