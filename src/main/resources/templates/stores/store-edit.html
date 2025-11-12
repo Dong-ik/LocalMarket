@@ -60,19 +60,20 @@
                 <select id="storeCategory" required>
                     <option value="">카테고리를 선택하세요</option>
                     <option value="음식점" th:selected="${store.storeCategory == '음식점'}">🍽️ 음식점</option>
+                    <option value="카페" th:selected="${store.storeCategory == '카페'}">☕ 카페</option>
                     <option value="의류" th:selected="${store.storeCategory == '의류'}">👕 의류</option>
                     <option value="식품" th:selected="${store.storeCategory == '식품'}">🍎 식품</option>
                     <option value="생활용품" th:selected="${store.storeCategory == '생활용품'}">🧺 생활용품</option>
                     <option value="전자제품" th:selected="${store.storeCategory == '전자제품'}">📱 전자제품</option>
-                    <option value="카페" th:selected="${store.storeCategory == '카페'}">☕ 카페</option>
-                    <option value="반려동물" th:selected="${store.storeCategory == '반려동물'}">🐕 반려동물</option>
-                    <option value="스포츠" th:selected="${store.storeCategory == '스포츠'}">⚽ 스포츠</option>
+                    <option value="화장품" th:selected="${store.storeCategory == '화장품'}">💄 화장품</option>
+                    <option value="서점" th:selected="${store.storeCategory == '서점'}">📚 서점</option>
                     <option value="꽃집" th:selected="${store.storeCategory == '꽃집'}">🌸 꽃집</option>
+                    <option value="약국" th:selected="${store.storeCategory == '약국'}">💊 약국</option>
+                    <option value="스포츠" th:selected="${store.storeCategory == '스포츠'}">⚽ 스포츠</option>
+                    <option value="반려동물" th:selected="${store.storeCategory == '반려동물'}">🐕 반려동물</option>
                     <option value="문구" th:selected="${store.storeCategory == '문구'}">✏️ 문구</option>
-                    <option value="야채서리" th:selected="${store.storeCategory == '야채서리'}">🥬 야채서리</option>
                     <option value="액세서리" th:selected="${store.storeCategory == '액세서리'}">💍 액세서리</option>
                     <option value="잡화" th:selected="${store.storeCategory == '잡화'}">🎁 잡화</option>
-                    <option value="장화" th:selected="${store.storeCategory == '장화'}">👢 장화</option>
                     <option value="기타" th:selected="${store.storeCategory == '기타'}">📦 기타</option>
                 </select>
             </div>
