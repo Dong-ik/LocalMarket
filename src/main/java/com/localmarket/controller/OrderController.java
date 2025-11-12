@@ -67,7 +67,7 @@ public class OrderController {
      * 주문 조회 (ID별)
      */
     @GetMapping("/{orderId}")
-    public ResponseEntity<Map<String, Object>> getOrderById(@PathVariable Integer orderId) {
+    public ResponseEntity<Map<String, Object>> getOrderById(@PathVariable("orderId") Integer orderId) {
         log.info("=== 주문 조회 API 호출 - ID: {} ===", orderId);
         
         Map<String, Object> response = new HashMap<>();
@@ -98,7 +98,7 @@ public class OrderController {
      * 회원별 주문 목록 조회
      */
     @GetMapping("/member/{memberNum}")
-    public ResponseEntity<Map<String, Object>> getOrdersByMemberNum(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> getOrdersByMemberNum(@PathVariable("memberNum") Integer memberNum) {
         log.info("=== 회원별 주문 목록 조회 API 호출 - 회원번호: {} ===", memberNum);
         
         Map<String, Object> response = new HashMap<>();
@@ -178,7 +178,7 @@ public class OrderController {
      */
     @PutMapping("/{orderId}/status")
     public ResponseEntity<Map<String, Object>> updateOrderStatus(
-            @PathVariable Integer orderId,
+            @PathVariable("orderId") Integer orderId,
             @RequestBody Map<String, String> statusData) {
         log.info("=== 주문 상태 수정 API 호출 - ID: {} ===", orderId);
         
@@ -212,7 +212,7 @@ public class OrderController {
      */
     @PutMapping("/{orderId}/payment")
     public ResponseEntity<Map<String, Object>> updatePaymentInfo(
-            @PathVariable Integer orderId,
+            @PathVariable("orderId") Integer orderId,
             @RequestBody Map<String, String> paymentData) {
         log.info("=== 결제 정보 수정 API 호출 - ID: {} ===", orderId);
         
@@ -249,7 +249,7 @@ public class OrderController {
      */
     @PutMapping("/{orderId}/delivery")
     public ResponseEntity<Map<String, Object>> updateDeliveryInfo(
-            @PathVariable Integer orderId,
+            @PathVariable("orderId") Integer orderId,
             @RequestBody Map<String, String> deliveryData) {
         log.info("=== 배송지 정보 수정 API 호출 - ID: {} ===", orderId);
         
@@ -285,7 +285,7 @@ public class OrderController {
      * 주문 취소
      */
     @PutMapping("/{orderId}/cancel")
-    public ResponseEntity<Map<String, Object>> cancelOrder(@PathVariable Integer orderId) {
+    public ResponseEntity<Map<String, Object>> cancelOrder(@PathVariable("orderId") Integer orderId) {
         log.info("=== 주문 취소 API 호출 - ID: {} ===", orderId);
         
         Map<String, Object> response = new HashMap<>();
@@ -316,7 +316,7 @@ public class OrderController {
      * 주문 삭제 (관리자용)
      */
     @DeleteMapping("/{orderId}")
-    public ResponseEntity<Map<String, Object>> deleteOrder(@PathVariable Integer orderId) {
+    public ResponseEntity<Map<String, Object>> deleteOrder(@PathVariable("orderId") Integer orderId) {
         log.info("=== 주문 삭제 API 호출 - ID: {} ===", orderId);
         
         Map<String, Object> response = new HashMap<>();
@@ -401,7 +401,7 @@ public class OrderController {
      * 결제 완료된 주문 조회
      */
     @GetMapping("/completed/{memberNum}")
-    public ResponseEntity<Map<String, Object>> getCompletedOrders(@PathVariable Integer memberNum) {
+    public ResponseEntity<Map<String, Object>> getCompletedOrders(@PathVariable("memberNum") Integer memberNum) {
         log.info("=== 결제 완료 주문 조회 API 호출 - 회원번호: {} ===", memberNum);
         
         Map<String, Object> response = new HashMap<>();
