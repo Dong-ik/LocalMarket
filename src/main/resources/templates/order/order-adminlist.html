@@ -2,6 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>주문/결제 관리 - LocalMarket</title>
     <link rel="stylesheet" th:href="@{/css/admin-order.css}">
 </head>
@@ -108,7 +109,7 @@
                                     <img th:if="${detail.productImage != null}"
                                          th:src="${detail.productImage}"
                                          alt="상품 이미지"
-                                         class="product-image"
+                                         class="product-image-admin"
                                          onerror="this.src='/images/no-image.jpg'">
                                     <div class="product-details">
                                         <strong th:text="${detail.productName}">상품명</strong>

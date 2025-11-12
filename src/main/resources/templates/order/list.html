@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>주문 목록 - LocalMarket</title>
-    <link rel="stylesheet" th:href="@{/css/localmarket.css}">
     <link rel="stylesheet" th:href="@{/css/order-list.css}">
 </head>
 <body>
@@ -39,7 +38,7 @@
                     <div class="order-products">
                         <div class="product-item" th:each="detail, iterStat : ${order.orderDetails}"
                              th:if="${iterStat.index < 2}">
-                            <div class="product-image">
+                            <div class="product-image-list">
                                 <img th:if="${detail.productFilename != null}"
                                      th:src="@{'/images/products/' + ${detail.productFilename}}"
                                      th:alt="${detail.productName}"

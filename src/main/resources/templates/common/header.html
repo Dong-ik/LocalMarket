@@ -6,10 +6,12 @@
     <title>LocalMarket - 전통시장 쇼핑몰</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏪%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 
     <!-- CSS 파일 -->
-    <link rel="stylesheet" th:href="@{/css/localmarket.css}">
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
 
     <!-- 폰트 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -166,7 +168,7 @@
                                 <a th:href="@{/markets/adminlist}">시장 관리</a>
                                 <a th:href="@{/stores/adminlist}">가게 관리</a>
                                 <a th:href="@{/products/adminlist}">상품 관리</a>
-                                <a th:href="@{/admin/orders}">주문 관리</a>
+                                <a th:href="@{/order/adminlist}">주문/결제 관리</a>
                             </div>
                         </li>
                     </ul>

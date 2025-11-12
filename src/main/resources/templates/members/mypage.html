@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>마이페이지 - LocalMarket</title>
-    <link rel="stylesheet" th:href="@{/css/localmarket.css}">
     <link rel="stylesheet" th:href="@{/css/mypage.css}">
 </head>
 <body>
 <div th:replace="~{common/header}"></div>
-<div class="container mypage-container">
+<div class="mypage-container container">
     <h2>마이페이지</h2>
     <div th:if="${session.member != null}">
         <div class="mypage-info">
@@ -49,7 +48,6 @@
                     <li><a th:href="@{/stores/adminlist}">가게 관리</a></li>
                     <li><a th:href="@{/products/adminlist}">상품 관리</a></li>
                     <li><a th:href="@{/order/adminlist}">주문/결제 관리</a></li>
-                    <li><a th:href="@{/boards/adminlist}">게시글/리뷰 관리</a></li>
                 </ul>
             </div>
         </div>
