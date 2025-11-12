@@ -117,7 +117,8 @@
             
             <div class="form-actions">
                 <button type="button"
-                        th:onclick="'location.href=\'' + ${memberGrade == 'SELLER' ? '/seller/stores' : '/stores/adminlist'} + '\''"
+                        th:data-return-url="${memberGrade == 'SELLER' ? '/seller/stores' : '/stores/adminlist'}"
+                        onclick="location.href=this.getAttribute('data-return-url')"
                         class="btn btn-secondary">
                     <i class="fas fa-times"></i> 취소
                 </button>
