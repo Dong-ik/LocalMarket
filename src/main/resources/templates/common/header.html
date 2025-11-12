@@ -117,7 +117,7 @@
                                 <a th:href="@{/stores?category=의류}">👕 의류</a>
                                 <a th:href="@{/stores?category=잡화}">🎁 잡화</a>
                                 <a th:href="@{/stores?category=음식점}">🍽️ 음식점</a>
-                                <a th:href="@{/stores?category=기타}">📦 기타</a>
+                              <a th:href="@{/stores?category=기타}">📦 기타</a>
                             </div>
                         </li>
                         <li class="nav-item">
@@ -146,14 +146,13 @@
                             </div>
                         </li>
                         <li class="nav-item" th:if="${session.member != null and session.member.memberGrade == 'SELLER'}">
-                            <a th:href="@{/seller}" class="nav-link">
+                            <a th:href="@{/members/mypage}" class="nav-link">
                                 <i class="fas fa-user-tie"></i> 판매자
                             </a>
                             <div class="dropdown-menu">
-                                <a th:href="@{/seller/products}">상품 관리</a>
                                 <a th:href="@{/seller/orders}">주문 관리</a>
-                                <a th:href="@{/seller/stores}">가게 관리</a>
-                                <a th:href="@{/seller/statistics}">판매 통계</a>
+                                <a th:href="@{/seller/products}">상품 관리</a>
+                                <a th:href="@{/seller/stores}">내 가게 관리</a>
                             </div>
                         </li>
                         <li class="nav-item" th:if="${session.member != null and session.member.memberGrade == 'ADMIN'}">
