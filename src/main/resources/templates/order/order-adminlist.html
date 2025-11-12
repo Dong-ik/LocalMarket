@@ -44,26 +44,15 @@
 
         <!-- 주문 상태 선택 -->
         <div class="filter-group">
-            <label for="orderStatusSelect"><i class="fas fa-truck"></i> 주문상태:</label>
-            <select id="orderStatusSelect" class="filter-select" onchange="applyFilters()">
-                <option value="">전체</option>
-                <option value="결제대기" th:selected="${selectedOrderStatus == '결제대기'}">결제대기</option>
-                <option value="결제완료" th:selected="${selectedOrderStatus == '결제완료'}">결제완료</option>
-                <option value="배송준비중" th:selected="${selectedOrderStatus == '배송준비중'}">배송준비중</option>
-                <option value="배송중" th:selected="${selectedOrderStatus == '배송중'}">배송중</option>
-                <option value="배송완료" th:selected="${selectedOrderStatus == '배송완료'}">배송완료</option>
-                <option value="취소" th:selected="${selectedOrderStatus == '취소'}">취소</option>
-            </select>
-        </div>
-
-        <!-- 결제 상태 선택 -->
-        <div class="filter-group">
-            <label for="paymentStatusSelect"><i class="fas fa-credit-card"></i> 결제상태:</label>
+            <label for="paymentStatusSelect"><i class="fas fa-credit-card"></i> 주문상태:</label>
             <select id="paymentStatusSelect" class="filter-select" onchange="applyFilters()">
                 <option value="">전체</option>
                 <option value="PENDING" th:selected="${selectedPaymentStatus == 'PENDING'}">결제대기</option>
                 <option value="COMPLETED" th:selected="${selectedPaymentStatus == 'COMPLETED'}">결제완료</option>
-                <option value="CANCELLED" th:selected="${selectedPaymentStatus == 'CANCELLED'}">결제취소</option>
+                <option value="PROCESSING" th:selected="${selectedPaymentStatus == 'PROCESSING'}">배송준비</option>
+                <option value="SHIPPED" th:selected="${selectedPaymentStatus == 'SHIPPED'}">배송중</option>
+                <option value="DELIVERED" th:selected="${selectedPaymentStatus == 'DELIVERED'}">배송완료</option>
+                <option value="CANCELLED" th:selected="${selectedPaymentStatus == 'CANCELLED'}">주문취소</option>
                 <option value="FAILED" th:selected="${selectedPaymentStatus == 'FAILED'}">결제실패</option>
             </select>
         </div>
@@ -86,7 +75,6 @@
                     <th>주문금액</th>
                     <th>배송비</th>
                     <th>결제방법</th>
-                    <th>결제상태</th>
                     <th>주문상태</th>
                     <th>주문일시</th>
                     <th>관리</th>
@@ -148,16 +136,11 @@
                     <td class="status-cell">
                         <span th:if="${order.paymentStatus == 'PENDING'}" class="status-badge payment-pending">결제대기</span>
                         <span th:if="${order.paymentStatus == 'COMPLETED'}" class="status-badge payment-completed">결제완료</span>
-                        <span th:if="${order.paymentStatus == 'CANCELLED'}" class="status-badge payment-cancelled">결제취소</span>
+                        <span th:if="${order.paymentStatus == 'PROCESSING'}" class="status-badge status-preparing">배송준비</span>
+                        <span th:if="${order.paymentStatus == 'SHIPPED'}" class="status-badge status-shipping">배송중</span>
+                        <span th:if="${order.paymentStatus == 'DELIVERED'}" class="status-badge status-delivered">배송완료</span>
+                        <span th:if="${order.paymentStatus == 'CANCELLED'}" class="status-badge payment-cancelled">주문취소</span>
                         <span th:if="${order.paymentStatus == 'FAILED'}" class="status-badge payment-failed">결제실패</span>
-                    </td>
-                    <td class="status-cell">
-                        <span th:if="${order.orderStatus == '결제대기'}" class="status-badge status-pending">결제대기</span>
-                        <span th:if="${order.orderStatus == '결제완료'}" class="status-badge status-paid">결제완료</span>
-                        <span th:if="${order.orderStatus == '배송준비중'}" class="status-badge status-preparing">배송준비중</span>
-                        <span th:if="${order.orderStatus == '배송중'}" class="status-badge status-shipping">배송중</span>
-                        <span th:if="${order.orderStatus == '배송완료'}" class="status-badge status-delivered">배송완료</span>
-                        <span th:if="${order.orderStatus == '취소'}" class="status-badge status-cancelled">취소</span>
                     </td>
                     <td>
                         <div th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd')}">2024-01-01</div>
@@ -168,13 +151,7 @@
                             <button class="btn-detail"
                                     th:data-order-id="${order.orderId}"
                                     onclick="viewOrderDetail(this.dataset.orderId)">
-                                <i class="fas fa-eye"></i> 상세
-                            </button>
-                            <button class="btn-status"
-                                    th:data-order-id="${order.orderId}"
-                                    th:data-order-status="${order.orderStatus}"
-                                    onclick="showStatusModal(this.dataset.orderId, this.dataset.orderStatus)">
-                                <i class="fas fa-edit"></i> 상태변경
+                                <i class="fas fa-eye"></i> 상세보기
                             </button>
                         </div>
                     </td>
@@ -190,57 +167,23 @@
     </div>
 </div>
 
-<!-- 주문 상태 변경 모달 -->
-<div id="statusModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2><i class="fas fa-edit"></i> 주문 상태 변경</h2>
-            <span class="close" onclick="closeStatusModal()">&times;</span>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label for="newOrderStatus">새로운 주문 상태:</label>
-                <select id="newOrderStatus" class="modal-select">
-                    <option value="결제대기">결제대기</option>
-                    <option value="결제완료">결제완료</option>
-                    <option value="배송준비중">배송준비중</option>
-                    <option value="배송중">배송중</option>
-                    <option value="배송완료">배송완료</option>
-                    <option value="취소">취소</option>
-                </select>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick="closeStatusModal()">취소</button>
-            <button class="btn-confirm" onclick="updateOrderStatus()">변경</button>
-        </div>
-    </div>
-</div>
-
 <!-- 푸터 Include -->
 <div th:replace="~{common/footer}"></div>
 
 <script>
-let selectedOrderId = null;
-
 // 검색 수행
 function performSearch() {
-    const searchValue = document.getElementById('searchInput').value;
     applyFilters();
 }
 
 // 필터 적용
 function applyFilters() {
-    const orderStatus = document.getElementById('orderStatusSelect').value;
     const paymentStatus = document.getElementById('paymentStatusSelect').value;
     const search = document.getElementById('searchInput').value;
 
     let url = '/order/adminlist';
     const params = [];
 
-    if (orderStatus) {
-        params.push('orderStatus=' + encodeURIComponent(orderStatus));
-    }
     if (paymentStatus) {
         params.push('paymentStatus=' + encodeURIComponent(paymentStatus));
     }
@@ -258,55 +201,6 @@ function applyFilters() {
 // 주문 상세 보기
 function viewOrderDetail(orderId) {
     window.location.href = '/order/detail/' + orderId;
-}
-
-// 상태 변경 모달 표시
-function showStatusModal(orderId, currentStatus) {
-    selectedOrderId = orderId;
-    document.getElementById('newOrderStatus').value = currentStatus;
-    document.getElementById('statusModal').style.display = 'block';
-}
-
-// 모달 닫기
-function closeStatusModal() {
-    document.getElementById('statusModal').style.display = 'none';
-    selectedOrderId = null;
-}
-
-// 주문 상태 업데이트
-function updateOrderStatus() {
-    if (!selectedOrderId) return;
-
-    const newStatus = document.getElementById('newOrderStatus').value;
-
-    fetch(`/api/order/${selectedOrderId}/status?status=${encodeURIComponent(newStatus)}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (response.ok) {
-            alert('주문 상태가 변경되었습니다.');
-            location.reload();
-        } else {
-            alert('주문 상태 변경에 실패했습니다.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('오류가 발생했습니다.');
-    });
-
-    closeStatusModal();
-}
-
-// 모달 외부 클릭 시 닫기
-window.onclick = function(event) {
-    const modal = document.getElementById('statusModal');
-    if (event.target === modal) {
-        closeStatusModal();
-    }
 }
 
 // 엔터 키로 검색
