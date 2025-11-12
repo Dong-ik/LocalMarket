@@ -41,7 +41,7 @@
                             onclick="filterByCategory('')">전체</button>
                         <button class="filter-btn" th:classappend="${selectedCategory == '육류'} ? 'active' : ''" onclick="filterByCategory('육류')">육류</button>
                         <button class="filter-btn" th:classappend="${selectedCategory == '수산물'} ? 'active' : ''" onclick="filterByCategory('수산물')">수산물</button>
-                        <button class="filter-btn" th:classappend="${selectedCategory == '농수산물'} ? 'active' : ''" onclick="filterByCategory('농수산물')">농수산물</button>
+                        <button class="filter-btn" th:classappend="${selectedCategory == '농산물'} ? 'active' : ''" onclick="filterByCategory('농산물')">농산물</button>
                         <button class="filter-btn" th:classappend="${selectedCategory == '의류'} ? 'active' : ''" onclick="filterByCategory('의류')">의류</button>
                         <button class="filter-btn" th:classappend="${selectedCategory == '잡화'} ? 'active' : ''" onclick="filterByCategory('잡화')">잡화</button>
                         <button class="filter-btn" th:classappend="${selectedCategory == '음식점'} ? 'active' : ''" onclick="filterByCategory('음식점')">음식점</button>
