@@ -402,7 +402,7 @@
     flex-direction: column;
 }
 
-.btn-detail, .btn-status {
+.btn-detail, .btn-status, .btn-cancel {
     padding: 8px 12px;
     border: none;
     border-radius: 6px;
@@ -427,12 +427,22 @@
 }
 
 .btn-status {
-    background: #95a5a6;
+    background: #27ae60;
     color: white;
 }
 
 .btn-status:hover {
-    background: #7f8c8d;
+    background: #229954;
+    transform: translateY(-2px);
+}
+
+.btn-cancel {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #c0392b;
     transform: translateY(-2px);
 }
 

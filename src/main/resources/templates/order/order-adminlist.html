@@ -153,6 +153,19 @@
                                     onclick="viewOrderDetail(this.dataset.orderId)">
                                 <i class="fas fa-eye"></i> 상세보기
                             </button>
+                            <button class="btn-status"
+                                    th:data-order-id="${order.orderId}"
+                                    th:data-current-status="${order.paymentStatus}"
+                                    onclick="changeOrderStatus(this.dataset.orderId, this.dataset.currentStatus)"
+                                    th:if="${order.paymentStatus != 'CANCELLED'}">
+                                <i class="fas fa-exchange-alt"></i> 상태변경
+                            </button>
+                            <button class="btn-cancel"
+                                    th:data-order-id="${order.orderId}"
+                                    onclick="cancelOrder(this.dataset.orderId)"
+                                    th:if="${order.paymentStatus != 'CANCELLED'}">
+                                <i class="fas fa-times-circle"></i> 주문취소
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -201,6 +214,104 @@ function applyFilters() {
 // 주문 상세 보기
 function viewOrderDetail(orderId) {
     window.location.href = '/order/detail/' + orderId;
+}
+
+// 주문 상태 변경
+async function changeOrderStatus(orderId, currentStatus) {
+    // 상태 선택 모달 생성
+    const statuses = [
+        { value: 'PENDING', label: '결제대기' },
+        { value: 'COMPLETED', label: '결제완료' },
+        { value: 'PROCESSING', label: '배송준비' },
+        { value: 'SHIPPED', label: '배송중' },
+        { value: 'DELIVERED', label: '배송완료' }
+    ];
+
+    let optionsHtml = '';
+    statuses.forEach(status => {
+        const selected = status.value === currentStatus ? 'selected' : '';
+        optionsHtml += `<option value="${status.value}" ${selected}>${status.label}</option>`;
+    });
+
+    const newStatus = prompt(
+        `주문 ${orderId}의 상태를 변경하시겠습니까?\n\n현재 상태: ${getStatusLabel(currentStatus)}\n\n변경할 상태를 입력하세요:\n` +
+        `1: 결제대기(PENDING)\n2: 결제완료(COMPLETED)\n3: 배송준비(PROCESSING)\n4: 배송중(SHIPPED)\n5: 배송완료(DELIVERED)\n\n숫자를 입력하세요:`
+    );
+
+    if (!newStatus) return;
+
+    const statusMap = {
+        '1': 'PENDING',
+        '2': 'COMPLETED',
+        '3': 'PROCESSING',
+        '4': 'SHIPPED',
+        '5': 'DELIVERED'
+    };
+
+    const selectedStatus = statusMap[newStatus];
+    if (!selectedStatus) {
+        alert('올바른 번호를 입력해주세요.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/order/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: selectedStatus })
+        });
+
+        if (response.ok) {
+            alert('주문 상태가 변경되었습니다.');
+            location.reload();
+        } else {
+            const error = await response.text();
+            alert('상태 변경 실패: ' + error);
+        }
+    } catch (error) {
+        console.error('상태 변경 중 오류:', error);
+        alert('상태 변경 중 오류가 발생했습니다.');
+    }
+}
+
+// 주문 취소
+async function cancelOrder(orderId) {
+    if (!confirm(`주문 ${orderId}를 취소하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/order/${orderId}/cancel`, {
+            method: 'PUT'
+        });
+
+        if (response.ok) {
+            alert('주문이 취소되었습니다.');
+            location.reload();
+        } else {
+            const error = await response.text();
+            alert('주문 취소 실패: ' + error);
+        }
+    } catch (error) {
+        console.error('주문 취소 중 오류:', error);
+        alert('주문 취소 중 오류가 발생했습니다.');
+    }
+}
+
+// 상태 레이블 가져오기
+function getStatusLabel(status) {
+    const labels = {
+        'PENDING': '결제대기',
+        'COMPLETED': '결제완료',
+        'PROCESSING': '배송준비',
+        'SHIPPED': '배송중',
+        'DELIVERED': '배송완료',
+        'CANCELLED': '주문취소',
+        'FAILED': '결제실패'
+    };
+    return labels[status] || status;
 }
 
 // 엔터 키로 검색
