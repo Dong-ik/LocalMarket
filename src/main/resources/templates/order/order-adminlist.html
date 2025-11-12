@@ -154,13 +154,26 @@
                                     onclick="viewOrderDetail(this.dataset.orderId)">
                                 <i class="fas fa-eye"></i> 상세보기
                             </button>
-                            <button class="btn-status"
-                                    th:data-order-id="${order.orderId}"
-                                    th:data-current-status="${order.paymentStatus}"
-                                    onclick="changeOrderStatus(this.dataset.orderId, this.dataset.currentStatus)"
-                                    th:if="${order.paymentStatus != 'CANCELLED'}">
-                                <i class="fas fa-exchange-alt"></i> 상태변경
-                            </button>
+                            <div class="status-change-wrapper" th:if="${order.paymentStatus != 'CANCELLED'}">
+                                <button class="btn-status"
+                                        th:id="'status-btn-' + ${order.orderId}"
+                                        th:data-order-id="${order.orderId}"
+                                        onclick="toggleStatusDropdown(this)">
+                                    <i class="fas fa-exchange-alt"></i> 상태변경
+                                </button>
+                                <select class="status-dropdown"
+                                        th:id="'status-select-' + ${order.orderId}"
+                                        th:data-order-id="${order.orderId}"
+                                        onchange="changeOrderStatus(this)"
+                                        style="display: none;">
+                                    <option value="">선택하세요</option>
+                                    <option value="PENDING" th:selected="${order.paymentStatus == 'PENDING'}">결제대기</option>
+                                    <option value="COMPLETED" th:selected="${order.paymentStatus == 'COMPLETED'}">결제완료</option>
+                                    <option value="PROCESSING" th:selected="${order.paymentStatus == 'PROCESSING'}">배송준비</option>
+                                    <option value="SHIPPED" th:selected="${order.paymentStatus == 'SHIPPED'}">배송중</option>
+                                    <option value="DELIVERED" th:selected="${order.paymentStatus == 'DELIVERED'}">배송완료</option>
+                                </select>
+                            </div>
                             <button class="btn-cancel"
                                     th:data-order-id="${order.orderId}"
                                     onclick="cancelOrder(this.dataset.orderId)"
@@ -217,41 +230,50 @@ function viewOrderDetail(orderId) {
     window.location.href = '/order/detail/' + orderId;
 }
 
-// 주문 상태 변경
-async function changeOrderStatus(orderId, currentStatus) {
-    // 상태 선택 모달 생성
-    const statuses = [
-        { value: 'PENDING', label: '결제대기' },
-        { value: 'COMPLETED', label: '결제완료' },
-        { value: 'PROCESSING', label: '배송준비' },
-        { value: 'SHIPPED', label: '배송중' },
-        { value: 'DELIVERED', label: '배송완료' }
-    ];
+// 상태 드롭다운 토글
+function toggleStatusDropdown(button) {
+    const orderId = button.dataset.orderId;
+    const selectElement = document.getElementById('status-select-' + orderId);
+    const btnElement = document.getElementById('status-btn-' + orderId);
 
-    let optionsHtml = '';
-    statuses.forEach(status => {
-        const selected = status.value === currentStatus ? 'selected' : '';
-        optionsHtml += `<option value="${status.value}" ${selected}>${status.label}</option>`;
+    // 다른 드롭다운들 모두 숨기기
+    document.querySelectorAll('.status-dropdown').forEach(select => {
+        if (select.id !== 'status-select-' + orderId) {
+            select.style.display = 'none';
+        }
+    });
+    document.querySelectorAll('.btn-status').forEach(btn => {
+        if (btn.id !== 'status-btn-' + orderId) {
+            btn.style.display = '';
+        }
     });
 
-    const newStatus = prompt(
-        `주문 ${orderId}의 상태를 변경하시겠습니까?\n\n현재 상태: ${getStatusLabel(currentStatus)}\n\n변경할 상태를 입력하세요:\n` +
-        `1: 결제대기(PENDING)\n2: 결제완료(COMPLETED)\n3: 배송준비(PROCESSING)\n4: 배송중(SHIPPED)\n5: 배송완료(DELIVERED)\n\n숫자를 입력하세요:`
-    );
+    // 현재 버튼과 드롭다운 토글
+    if (selectElement.style.display === 'none') {
+        selectElement.style.display = '';
+        btnElement.style.display = 'none';
+        selectElement.focus();
+    } else {
+        selectElement.style.display = 'none';
+        btnElement.style.display = '';
+    }
+}
 
-    if (!newStatus) return;
+// 주문 상태 변경
+async function changeOrderStatus(selectElement) {
+    const orderId = selectElement.dataset.orderId;
+    const newStatus = selectElement.value;
 
-    const statusMap = {
-        '1': 'PENDING',
-        '2': 'COMPLETED',
-        '3': 'PROCESSING',
-        '4': 'SHIPPED',
-        '5': 'DELIVERED'
-    };
+    if (!newStatus || newStatus === '') {
+        selectElement.style.display = 'none';
+        document.getElementById('status-btn-' + orderId).style.display = '';
+        return;
+    }
 
-    const selectedStatus = statusMap[newStatus];
-    if (!selectedStatus) {
-        alert('올바른 번호를 입력해주세요.');
+    if (!confirm(`주문 ${orderId}의 상태를 ${getStatusLabel(newStatus)}(으)로 변경하시겠습니까?`)) {
+        selectElement.value = '';
+        selectElement.style.display = 'none';
+        document.getElementById('status-btn-' + orderId).style.display = '';
         return;
     }
 
@@ -261,7 +283,7 @@ async function changeOrderStatus(orderId, currentStatus) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ status: selectedStatus })
+            body: JSON.stringify({ status: newStatus })
         });
 
         if (response.ok) {
@@ -270,10 +292,16 @@ async function changeOrderStatus(orderId, currentStatus) {
         } else {
             const error = await response.text();
             alert('상태 변경 실패: ' + error);
+            selectElement.value = '';
+            selectElement.style.display = 'none';
+            document.getElementById('status-btn-' + orderId).style.display = '';
         }
     } catch (error) {
         console.error('상태 변경 중 오류:', error);
         alert('상태 변경 중 오류가 발생했습니다.');
+        selectElement.value = '';
+        selectElement.style.display = 'none';
+        document.getElementById('status-btn-' + orderId).style.display = '';
     }
 }
 
