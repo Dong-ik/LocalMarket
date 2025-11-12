@@ -52,7 +52,7 @@
                 <option value="PROCESSING" th:selected="${selectedPaymentStatus == 'PROCESSING'}">배송준비</option>
                 <option value="SHIPPED" th:selected="${selectedPaymentStatus == 'SHIPPED'}">배송중</option>
                 <option value="DELIVERED" th:selected="${selectedPaymentStatus == 'DELIVERED'}">배송완료</option>
-                <option value="CANCELLED" th:selected="${selectedPaymentStatus == 'CANCELLED'}">결제취소</option>
+                <option value="CANCELLED" th:selected="${selectedPaymentStatus == 'CANCELLED'}">주문취소</option>
                 <option value="FAILED" th:selected="${selectedPaymentStatus == 'FAILED'}">결제실패</option>
             </select>
         </div>
@@ -139,7 +139,7 @@
                         <span th:if="${order.paymentStatus == 'PROCESSING'}" class="status-badge status-preparing">배송준비</span>
                         <span th:if="${order.paymentStatus == 'SHIPPED'}" class="status-badge status-shipping">배송중</span>
                         <span th:if="${order.paymentStatus == 'DELIVERED'}" class="status-badge status-delivered">배송완료</span>
-                        <span th:if="${order.paymentStatus == 'CANCELLED'}" class="status-badge payment-cancelled">결제취소</span>
+                        <span th:if="${order.paymentStatus == 'CANCELLED'}" class="status-badge payment-cancelled">주문취소</span>
                         <span th:if="${order.paymentStatus == 'FAILED'}" class="status-badge payment-failed">결제실패</span>
                     </td>
                     <td>
