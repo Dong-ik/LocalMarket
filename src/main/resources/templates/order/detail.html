@@ -134,7 +134,7 @@
                     쇼핑 계속하기
                 </button>
                 <button type="button" class="btn-danger" onclick="cancelOrder()"
-                        th:if="${order.orderStatus == 'PENDING'}">
+                        th:if="${order.orderStatus == 'PENDING' and !isAdmin}">
                     주문 취소
                 </button>
             </div>
