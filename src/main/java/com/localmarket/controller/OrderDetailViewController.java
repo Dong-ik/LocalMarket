@@ -105,6 +105,7 @@ public class OrderDetailViewController {
 
 			model.addAttribute("order", orderDto);
 			model.addAttribute("orderDetails", orderDetailDtos);
+			model.addAttribute("isAdmin", isAdmin);
 			return "order/detail";
 
 		} catch (Exception e) {
