@@ -73,19 +73,20 @@ public class ProductViewController {
     public String productList(
             @RequestParam(name = "search", required = false) String search,
             @RequestParam(name = "storeId", required = false) Integer storeId,
+            @RequestParam(name = "storeCategory", required = false) String storeCategory,
             @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
             @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
             @RequestParam(name = "sort", defaultValue = "name") String sort,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "12") int size,
             Model model) {
-        
+
         try {
-            log.info("상품 목록 페이지 요청 - search: {}, storeId: {}, sort: {}, page: {}", 
-                    search, storeId, sort, page);
-            
+            log.info("상품 목록 페이지 요청 - search: {}, storeId: {}, storeCategory: {}, sort: {}, page: {}",
+                    search, storeId, storeCategory, sort, page);
+
             List<Product> products;
-            
+
             // 1. 가게별 필터링
             if (storeId != null) {
                 products = productService.getProductsByStoreId(storeId);
@@ -105,6 +106,14 @@ public class ProductViewController {
             else {
                 products = productService.getAllProducts();
                 log.info("전체 상품 조회: {} 개", products.size());
+            }
+
+            // 가게 카테고리로 필터링
+            if (storeCategory != null && !storeCategory.trim().isEmpty()) {
+                products = products.stream()
+                        .filter(p -> storeCategory.equals(p.getStoreCategory()))
+                        .collect(java.util.stream.Collectors.toList());
+                log.info("가게 카테고리 필터링: {} - {} 개", storeCategory, products.size());
             }
             
             // 재고 있는 상품만 필터링 (주석 처리 - 테스트용)
@@ -165,6 +174,9 @@ public class ProductViewController {
             }
             if (storeId != null) {
                 model.addAttribute("selectedStoreId", storeId);
+            }
+            if (storeCategory != null && !storeCategory.trim().isEmpty()) {
+                model.addAttribute("selectedStoreCategory", storeCategory);
             }
             if (minPrice != null) {
                 model.addAttribute("minPrice", minPrice);
