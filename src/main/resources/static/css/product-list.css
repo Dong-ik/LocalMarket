@@ -220,7 +220,7 @@
 /* 상품 그리드 */
 .product-grid-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 260px));
+    grid-template-columns: repeat(auto-fit, minmax(270px, 270px));
     gap: 25px;
     margin-bottom: 50px;
 }
