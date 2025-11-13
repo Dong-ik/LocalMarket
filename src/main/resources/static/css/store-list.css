@@ -223,7 +223,6 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 350px));
     gap: 30px;
     margin-bottom: 50px;
-    justify-content: center;
 }
 
 /* 가게 카드 */
