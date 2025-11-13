@@ -15,7 +15,7 @@
     <!-- 검색 영역 -->
     <div class="search-section">
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="가게명, 카테고리, 시장명으로 검색하세요..." onkeyup="searchProducts()">
+            <input type="text" id="searchInput" placeholder="가게명, 카테고리, 시장명으로 검색하세요..." onkeypress="handleSearchKeyPress(event)">
             <button onclick="searchProducts()" class="btn-search">
                 <i class="fas fa-search"></i> 검색
             </button>
@@ -80,6 +80,13 @@
 <div th:replace="~{common/footer}"></div>
 
 <script>
+// 검색 입력 필드에서 엔터키 입력 처리
+function handleSearchKeyPress(event) {
+    if (event.key === 'Enter') {
+        searchProducts();
+    }
+}
+
 // 상품 검색 (서버 사이드)
 function searchProducts() {
     const input = document.getElementById('searchInput');
