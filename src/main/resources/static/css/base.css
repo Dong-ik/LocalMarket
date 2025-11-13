@@ -252,7 +252,7 @@ main {
 
 .stat-item {
     text-align: center;
-    padding: 30px;
+    padding: 10px 30px 10px 30px;
     background: white;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
