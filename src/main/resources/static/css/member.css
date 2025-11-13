@@ -325,6 +325,101 @@
     opacity: 0.7;
 }
 
+/* 파일 업로드 섹션 */
+.file-upload-section {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.upload-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.upload-item {
+    background: white;
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.upload-item:hover {
+    border-color: #667eea;
+    background: #f3f4f6;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #374151;
+}
+
+.upload-label i {
+    font-size: 2rem;
+    color: #667eea;
+}
+
+.upload-label span {
+    font-size: 0.95rem;
+}
+
+.btn-file-upload {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.btn-file-upload.csv {
+    background: #6366f1;
+    color: white;
+}
+
+.btn-file-upload.csv:hover {
+    background: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-file-upload.json {
+    background: #f97316;
+    color: white;
+}
+
+.btn-file-upload.json:hover {
+    background: #ea580c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.file-info {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    min-height: 20px;
+    color: #6b7280;
+}
+
 .member-count {
     font-size: 1.1rem;
     color: #495057;

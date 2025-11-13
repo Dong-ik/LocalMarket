@@ -28,7 +28,36 @@
             <i class="fas fa-cloud-download-alt"></i> 공공데이터 가져오기
         </button>
     </div>
-    
+
+    <!-- 파일 업로드 영역 -->
+    <div class="file-upload-section">
+        <div class="upload-container">
+            <div class="upload-item">
+                <label for="csvFile" class="upload-label">
+                    <i class="fas fa-file-csv"></i>
+                    <span>CSV 파일 업로드</span>
+                </label>
+                <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                <button onclick="uploadCSVFile()" class="btn-file-upload csv" title="CSV 파일에서 시장 정보 가져오기">
+                    <i class="fas fa-upload"></i> CSV 업로드
+                </button>
+                <span class="file-info" id="csvFileInfo"></span>
+            </div>
+
+            <div class="upload-item">
+                <label for="jsonFile" class="upload-label">
+                    <i class="fas fa-file-code"></i>
+                    <span>JSON 파일 업로드</span>
+                </label>
+                <input type="file" id="jsonFile" accept=".json" style="display: none;">
+                <button onclick="uploadJSONFile()" class="btn-file-upload json" title="JSON 파일에서 시장 정보 가져오기">
+                    <i class="fas fa-upload"></i> JSON 업로드
+                </button>
+                <span class="file-info" id="jsonFileInfo"></span>
+            </div>
+        </div>
+    </div>
+
     <!-- 지역별 필터 버튼 -->
     <div class="filter-section">
         <button class="filter-btn active" onclick="filterByLocation('ALL')">
@@ -296,6 +325,110 @@ function importMarketsFromAPI() {
         button.disabled = false;
         button.innerHTML = originalText;
         alert('데이터 가져오기 중 오류가 발생했습니다.\n' + error.message);
+    });
+}
+
+// CSV 파일 선택 클릭
+function uploadCSVFile() {
+    document.getElementById('csvFile').click();
+}
+
+// CSV 파일 업로드
+document.getElementById('csvFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.csv')) {
+        alert('CSV 파일만 선택 가능합니다.');
+        return;
+    }
+
+    if (!confirm(`'${file.name}' 파일로부터 시장 정보를 가져오시겠습니까?`)) {
+        e.target.value = '';
+        return;
+    }
+
+    uploadFileToServer(file, 'csv');
+});
+
+// JSON 파일 선택 클릭
+function uploadJSONFile() {
+    document.getElementById('jsonFile').click();
+}
+
+// JSON 파일 업로드
+document.getElementById('jsonFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.json')) {
+        alert('JSON 파일만 선택 가능합니다.');
+        return;
+    }
+
+    if (!confirm(`'${file.name}' 파일로부터 시장 정보를 가져오시겠습니까?`)) {
+        e.target.value = '';
+        return;
+    }
+
+    uploadFileToServer(file, 'json');
+});
+
+// 파일 서버에 업로드
+function uploadFileToServer(file, fileType) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const endpoint = fileType === 'csv' ? '/api/market/import-from-csv' : '/api/market/import-from-json';
+    const fileInput = fileType === 'csv' ? document.getElementById('csvFile') : document.getElementById('jsonFile');
+    const fileInfo = fileType === 'csv' ? document.getElementById('csvFileInfo') : document.getElementById('jsonFileInfo');
+    const fileInputId = fileType === 'csv' ? 'csvFile' : 'jsonFile';
+
+    // 로딩 상태 표시
+    fileInfo.textContent = '업로드 중...';
+
+    fetch(endpoint, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        fileInput.value = '';
+
+        if (data.success) {
+            const message = `${fileType.toUpperCase()} 파일로부터 시장 정보를 가져왔습니다.\n\n추가된 시장: ${data.addedCount || 0}개\n중복된 시장: ${data.duplicateCount || 0}개`;
+            alert(message);
+            fileInfo.textContent = '✓ 업로드 완료';
+            fileInfo.style.color = '#10b981';
+
+            // 페이지 새로고침
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        } else {
+            const errorMsg = `${fileType.toUpperCase()} 파일 업로드 실패\n\n${data.message || '알 수 없는 오류가 발생했습니다.'}`;
+            alert(errorMsg);
+            fileInfo.textContent = '✗ 업로드 실패';
+            fileInfo.style.color = '#ef4444';
+        }
+
+        // 2초 후 상태 메시지 제거
+        setTimeout(() => {
+            fileInfo.textContent = '';
+            fileInfo.style.color = '';
+        }, 2000);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        fileInput.value = '';
+        fileInfo.textContent = '✗ 업로드 중 오류 발생';
+        fileInfo.style.color = '#ef4444';
+        alert(`${fileType.toUpperCase()} 파일 업로드 중 오류가 발생했습니다.\n` + error.message);
+
+        setTimeout(() => {
+            fileInfo.textContent = '';
+            fileInfo.style.color = '';
+        }, 2000);
     });
 }
 </script>
