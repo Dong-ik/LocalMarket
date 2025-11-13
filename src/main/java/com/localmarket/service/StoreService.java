@@ -107,4 +107,9 @@ public interface StoreService {
      * Domain을 DTO로 변환
      */
     StoreDto convertToStoreDto(Store store);
+
+    /**
+     * 인기 가게 목록 조회 (찜 횟수 기준)
+     */
+    List<Store> getPopularStores();
 }

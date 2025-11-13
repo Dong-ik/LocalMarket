@@ -119,6 +119,11 @@ public interface StoreMapper {
      * 시장별 페이징 가게 목록 조회
      */
     List<Store> selectStoresByMarketIdWithPaging(@Param("marketId") Integer marketId,
-                                               @Param("offset") int offset, 
+                                               @Param("offset") int offset,
                                                @Param("limit") int limit);
+
+    /**
+     * 인기 가게 목록 조회 (찜 횟수 기준)
+     */
+    List<Store> selectPopularStores();
 }

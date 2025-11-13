@@ -355,4 +355,17 @@ public class StoreServiceImpl implements StoreService {
             return List.of();
         }
     }
+
+    /**
+     * 인기 가게 목록 조회 (찜 횟수 기준)
+     */
+    @Override
+    public List<Store> getPopularStores() {
+        try {
+            return storeMapper.selectPopularStores();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

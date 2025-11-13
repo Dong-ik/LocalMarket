@@ -38,29 +38,21 @@ public class StoreViewController {
     public String popularStores(Model model) {
         try {
             log.info("인기 가게 페이지 요청");
-            
-            // 최신순 상위 5개 가게 조회 (임시로 최신순 사용)
-            List<Store> allStores = storeService.getAllStores();
-            
-            // 최신순 정렬
-            allStores.sort((s1, s2) -> {
-                if (s1.getCreatedDate() == null && s2.getCreatedDate() == null) return 0;
-                if (s1.getCreatedDate() == null) return 1;
-                if (s2.getCreatedDate() == null) return -1;
-                return s2.getCreatedDate().compareTo(s1.getCreatedDate());
-            });
-            
-            // 상위 5개만 선택
-            List<Store> popularStores = allStores.size() > 5 
-                ? allStores.subList(0, 5) 
-                : allStores;
-            
+
+            // 찜 횟수 기준 인기 가게 조회
+            List<Store> popularStores = storeService.getPopularStores();
+
+            if (popularStores == null || popularStores.isEmpty()) {
+                log.info("인기 가게가 없습니다.");
+                popularStores = List.of();
+            }
+
             model.addAttribute("popularStores", popularStores);
-            
+
             log.info("인기 가게 {} 개 조회 완료", popularStores.size());
-            
+
             return "stores/popular";
-            
+
         } catch (Exception e) {
             log.error("인기 가게 조회 중 오류 발생", e);
             model.addAttribute("errorMessage", "인기 가게 정보를 불러오는 중 오류가 발생했습니다.");

@@ -27,6 +27,9 @@
                 <p class="store-seller" th:if="${store.memberName != null}">
                     <i class="fas fa-user"></i> <span th:text="${store.memberName}"></span>
                 </p>
+                <div class="popular-store-favorite">
+                    <i class="fas fa-heart"></i> <span th:text="${store.favoriteCount != null ? store.favoriteCount : 0}"></span>명 찜
+                </div>
                 <a th:href="@{'/stores/' + ${store.storeId}}" class="popular-store-detail-btn">
                     <i class="fas fa-shopping-cart"></i> 상품보기
                 </a>

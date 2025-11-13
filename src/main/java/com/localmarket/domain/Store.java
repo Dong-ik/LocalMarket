@@ -27,4 +27,5 @@ public class Store {
     private String memberName;         // 판매자명
     private String memberId;           // 판매자ID
     private Boolean isFavorite;        // 찜 여부 (조인시 사용)
+    private Integer favoriteCount;     // 찜 횟수
 }
