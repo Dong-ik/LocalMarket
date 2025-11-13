@@ -220,9 +220,10 @@
 /* 가게 그리드 */
 .store-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 350px));
     gap: 30px;
     margin-bottom: 50px;
+    justify-content: center;
 }
 
 /* 가게 카드 */

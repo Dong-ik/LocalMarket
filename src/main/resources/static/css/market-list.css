@@ -225,8 +225,9 @@
 /* 시장 그리드 - localmarket.css의 card-grid 스타일 사용 */
 .market-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 350px));
     gap: 30px;
+    justify-content: center;
     margin-bottom: 50px;
 }
 

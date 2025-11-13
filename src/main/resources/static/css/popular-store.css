@@ -67,6 +67,13 @@
     gap: 5px;
 }
 
+.popular-store-favorite {
+    color: #e74c3c;
+    font-weight: 500;
+    margin-top: 6px;
+    font-size: 0.9rem;
+}
+
 .popular-store-info p i {
     color: #f39c12;
     width: 14px;
