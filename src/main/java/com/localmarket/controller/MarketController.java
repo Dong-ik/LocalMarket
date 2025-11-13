@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -273,10 +274,14 @@ public class MarketController {
      */
     private List<MarketDto> parseCsvFile(MultipartFile file) throws Exception {
         List<MarketDto> marketDtoList = new ArrayList<>();
-        
+
+        // 파일 인코딩 자동 감지
+        Charset charset = detectCharset(file);
+        log.info("CSV 파일 인코딩: {}", charset.name());
+
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
-            
+                new InputStreamReader(file.getInputStream(), charset))) {
+
             String line;
             boolean isFirstLine = true;
             
@@ -372,7 +377,46 @@ public class MarketController {
         log.info("JSON 파일에서 {}개의 시장 데이터 파싱 완료", marketDtoList.size());
         return marketDtoList;
     }
-    
+
+    /**
+     * CSV 파일 인코딩 자동 감지
+     */
+    private Charset detectCharset(MultipartFile file) throws Exception {
+        byte[] bytes = file.getBytes();
+
+        // BOM 체크 (UTF-8 BOM)
+        if (bytes.length >= 3 && bytes[0] == (byte) 0xEF && bytes[1] == (byte) 0xBB && bytes[2] == (byte) 0xBF) {
+            log.debug("UTF-8 BOM 감지");
+            return StandardCharsets.UTF_8;
+        }
+
+        // 첫 번째 라인에서 한글 감지 시도
+        try {
+            String testLineUTF8 = new String(bytes, StandardCharsets.UTF_8);
+            if (testLineUTF8.contains("시") || testLineUTF8.contains("장") || testLineUTF8.contains("명")) {
+                log.debug("UTF-8로 정상 감지");
+                return StandardCharsets.UTF_8;
+            }
+        } catch (Exception e) {
+            log.debug("UTF-8 디코딩 실패, EUC-KR 시도");
+        }
+
+        // EUC-KR 시도
+        try {
+            String testLineEuckr = new String(bytes, Charset.forName("EUC-KR"));
+            if (testLineEuckr.contains("시") || testLineEuckr.contains("장") || testLineEuckr.contains("명")) {
+                log.debug("EUC-KR로 정상 감지");
+                return Charset.forName("EUC-KR");
+            }
+        } catch (Exception e) {
+            log.debug("EUC-KR 디코딩 실패");
+        }
+
+        // 기본값: UTF-8
+        log.debug("기본 인코딩 UTF-8 사용");
+        return StandardCharsets.UTF_8;
+    }
+
     /**
      * CSV 값 정리 (따옴표 제거 등)
      */
