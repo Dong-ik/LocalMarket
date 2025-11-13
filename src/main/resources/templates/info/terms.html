@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이용약관 - LocalMarket</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/info-page.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <th:block th:include="common/header :: header"></th:block>
+
+    <main class="container" style="margin-top: 100px; margin-bottom: 60px;">
+        <div class="page-header">
+            <h1><i class="fas fa-file-contract"></i> 이용약관</h1>
+            <p class="subtitle">최종 수정일: 2025년 1월</p>
+        </div>
+
+        <div class="info-sections">
+            <section class="info-section">
+                <h2>제1조 총칙</h2>
+                <div class="info-content">
+                    <p>본 약관은 LocalMarket이 제공하는 온라인 서비스(이하 "서비스")를 이용함에 있어 회사와 회원 간의 권리, 의무 및 책임사항을 규정합니다.</p>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2>제2조 정의</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li><strong>서비스:</strong> LocalMarket이 제공하는 온라인 쇼핑 및 관련 서비스</li>
+                        <li><strong>회원:</strong> 본 약관에 동의하여 가입한 이용자</li>
+                        <li><strong>상품:</strong> 판매자가 등록하여 판매하는 모든 물품</li>
+                        <li><strong>판매자:</strong> 상품을 판매하기 위해 가입한 회원</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2>제3조 약관의 효력 및 변경</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>본 약관은 서비스 이용에 동의한 모든 회원에게 적용됩니다</li>
+                        <li>회사는 필요시 약관을 변경할 수 있습니다</li>
+                        <li>변경된 약관은 공지 후 7일 뒤에 적용됩니다</li>
+                        <li>회원이 변경된 약관에 동의하지 않을 경우 회원 탈퇴 가능합니다</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2>제4조 회원 가입 및 의무</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>회원은 정확하고 최신의 정보를 제공해야 합니다</li>
+                        <li>회원은 자신의 계정 정보를 보호할 책임이 있습니다</li>
+                        <li>회원은 자신의 계정으로 발생한 모든 행위에 책임을 집니다</li>
+                        <li>회원은 타인의 개인정보를 무단으로 사용할 수 없습니다</li>
+                        <li>회원은 법령 및 본 약관을 준수해야 합니다</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2>제5조 서비스 제공 및 제한</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>회사는 24시간 서비스를 제공하기 위해 노력합니다</li>
+                        <li>회사는 필요시 서비스를 일시 중단할 수 있습니다</li>
+                        <li>회사는 관리, 보수, 점검을 위해 미리 공지하고 서비스를 중지할 수 있습니다</li>
+                        <li>긴급상황 발생 시 예고 없이 서비스를 중단할 수 있습니다</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2>제6조 상품 구매 및 결제</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>회원은 상품의 정보를 확인하고 구매 여부를 결정합니다</li>
+                        <li>구매 후 취소는 배송 전에만 가능합니다</li>
+                        <li>결제는 정해진 방법을 통해서만 가능합니다</li>
+                        <li>회원은 결제 관련 분쟁에 대해 결제사와 협의합니다</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2>제7조 반품 및 환불</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>상품 수령 후 7일 이내에 반품 신청 가능합니다</li>
+                        <li>상품이 미개봉 상태여야 합니다</li>
+                        <li>배송료는 고객이 부담합니다 (상품 하자 제외)</li>
+                        <li>환금은 반품 수령 후 3-5일 소요됩니다</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2>제8조 금지 행위</h2>
+                <div class="info-content">
+                    <ul class="info-list" style="color: #dc3545;">
+                        <li>불법적인 행위 또는 타인의 권리를 침해하는 행위</li>
+                        <li>개인정보를 무단으로 수집하거나 공개하는 행위</li>
+                        <li>상품 리뷰 조작 또는 거짓 정보 게시</li>
+                        <li>스팸 메시지 또는 광고성 내용 게시</li>
+                        <li>서비스 과부하를 유발하는 행위</li>
+                        <li>해킹 또는 보안 프로그램 배포</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2>제9조 책임 제한</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>회사는 사용자 과실로 인한 손해에 대해 책임을 지지 않습니다</li>
+                        <li>회사는 비가역적 손해에 대해 책임을 제한할 수 있습니다</li>
+                        <li>천재지변 등 불가항력으로 인한 손해는 책임을 지지 않습니다</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2>제10조 분쟁 해결</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>본 약관에 관한 분쟁은 한국 법률에 따릅니다</li>
+                        <li>분쟁 발생 시 협의를 통해 해결합니다</li>
+                        <li>협의 실패 시 관할 법원에 소송을 제기할 수 있습니다</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <th:block th:include="common/footer :: footer"></th:block>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>

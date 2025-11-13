@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회사 소개 - LocalMarket</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/info-page.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <th:block th:include="common/header :: header"></th:block>
+
+    <main class="container" style="margin-top: 100px; margin-bottom: 60px;">
+        <div class="page-header">
+            <h1><i class="fas fa-building"></i> 회사 소개</h1>
+            <p class="subtitle">LocalMarket은 전통시장의 미래를 만들어갑니다</p>
+        </div>
+
+        <div class="info-sections">
+            <section class="info-section">
+                <h2><i class="fas fa-lightbulb"></i> 우리의 미션</h2>
+                <div class="info-content">
+                    <p>
+                        LocalMarket은 전통시장의 활성화와 소상공인의 경쟁력 강화를 위해 설립된 온라인 플랫폼입니다.
+                        디지털 기술을 통해 전통시장과 소비자를 직접 연결하여, 지역 경제 활성화에 기여하고 있습니다.
+                    </p>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-users"></i> 회사 정보</h2>
+                <div class="info-content">
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">회사명</td>
+                            <td>로컬마켓 주식회사</td>
+                        </tr>
+                        <tr>
+                            <td class="label">대표</td>
+                            <td>홍길동</td>
+                        </tr>
+                        <tr>
+                            <td class="label">설립일</td>
+                            <td>2024년 1월</td>
+                        </tr>
+                        <tr>
+                            <td class="label">사업자등록번호</td>
+                            <td>000-00-00000</td>
+                        </tr>
+                        <tr>
+                            <td class="label">통신판매업신고</td>
+                            <td>2024-부산-0000</td>
+                        </tr>
+                        <tr>
+                            <td class="label">본사</td>
+                            <td>부산광역시 부산진구</td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-handshake"></i> 우리의 가치</h2>
+                <div class="info-content">
+                    <div class="values-grid">
+                        <div class="value-item">
+                            <i class="fas fa-heart"></i>
+                            <h4>신뢰</h4>
+                            <p>고객과 판매자의 신뢰를 최우선으로 생각합니다</p>
+                        </div>
+                        <div class="value-item">
+                            <i class="fas fa-rocket"></i>
+                            <h4>혁신</h4>
+                            <p>지속적인 기술 혁신으로 더 나은 서비스를 제공합니다</p>
+                        </div>
+                        <div class="value-item">
+                            <i class="fas fa-tree"></i>
+                            <h4>지속성</h4>
+                            <p>지역 경제의 지속 가능한 발전을 추구합니다</p>
+                        </div>
+                        <div class="value-item">
+                            <i class="fas fa-smile"></i>
+                            <h4>고객만족</h4>
+                            <p>최고 수준의 고객 만족 서비스를 제공합니다</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-chart-line"></i> 주요 성과</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>✓ 전국 전통시장 200개 이상 파트너쉽</li>
+                        <li>✓ 판매자 회원 5,000명 이상</li>
+                        <li>✓ 누적 거래액 100억원 이상</li>
+                        <li>✓ 월간 활성 사용자 50만명</li>
+                        <li>✓ 고객 만족도 4.8/5.0</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <th:block th:include="common/footer :: footer"></th:block>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .value-item {
+            text-align: center;
+            padding: 30px;
+            background: #f9fafb;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .value-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .value-item i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .value-item h4 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .value-item p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교환/환불 - LocalMarket</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/info-page.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <th:block th:include="common/header :: header"></th:block>
+
+    <main class="container" style="margin-top: 100px; margin-bottom: 60px;">
+        <div class="page-header">
+            <h1><i class="fas fa-sync-alt"></i> 교환/환불</h1>
+            <p class="subtitle">안전하고 편리한 교환/환불 서비스</p>
+        </div>
+
+        <div class="info-sections">
+            <section class="info-section">
+                <h2><i class="fas fa-undo"></i> 반품 기준</h2>
+                <div class="info-content">
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">반품 기한</td>
+                            <td>상품 수령 후 7일 이내</td>
+                        </tr>
+                        <tr>
+                            <td class="label">반품 상태</td>
+                            <td>미개봉 상태, 배송 중 손상 없음</td>
+                        </tr>
+                        <tr>
+                            <td class="label">반품 배송료</td>
+                            <td>고객 부담 (단, 상품 하자는 무료)</td>
+                        </tr>
+                        <tr>
+                            <td class="label">환금 기간</td>
+                            <td>반품 수령 후 3-5일</td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-check"></i> 반품 가능 기준</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>✓ 상품 수령 후 7일 이내</li>
+                        <li>✓ 상품이 미개봉 상태</li>
+                        <li>✓ 배송 중 손상이 없는 경우</li>
+                        <li>✓ 상품 품질 관련 문제</li>
+                        <li>✓ 주문과 다른 상품 수령</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-times"></i> 반품 불가 기준</h2>
+                <div class="info-content">
+                    <ul class="info-list" style="color: #dc3545;">
+                        <li>✗ 상품 수령 후 7일 초과</li>
+                        <li>✗ 개봉되었거나 손상된 상품</li>
+                        <li>✗ 사용 흔적이 있는 경우</li>
+                        <li>✗ 고객의 실수로 인한 손상</li>
+                        <li>✗ 식품 등 위생상 이유로 반품 불가</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-arrows-alt"></i> 교환 절차</h2>
+                <div class="info-content">
+                    <div class="process-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>교환 신청</h4>
+                                <p>마이페이지에서 교환 신청</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>승인 확인</h4>
+                                <p>운영팀 확인 및 승인</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>반품 배송</h4>
+                                <p>기존 상품 반품</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>신규 배송</h4>
+                                <p>새 상품 배송</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-money-bill"></i> 환불 정책</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>반품 상품 수령 후 3-5일 이내 환금</li>
+                        <li>결제 수단별 환금 기간은 상이할 수 있습니다</li>
+                        <li>신용카드: 5-7일, 계좌이체: 1-2일</li>
+                        <li>환금 시 배송료는 공제될 수 있습니다</li>
+                        <li>환금 문의는 고객 지원팀에 연락주세요</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-exclamation-triangle"></i> 주의사항</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>반품 신청 후 지정된 기한 내 상품을 반송하지 않으면 교환이 취소될 수 있습니다</li>
+                        <li>배송료가 발생한 경우, 반품 배송료는 고객이 부담합니다</li>
+                        <li>상품 하자로 인한 반품은 배송료가 무료입니다</li>
+                        <li>개인정보 보호를 위해 반품 상품은 폐기될 수 있습니다</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <th:block th:include="common/footer :: footer"></th:block>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>

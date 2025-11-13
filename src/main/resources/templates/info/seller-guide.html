@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>판매자 가이드 - LocalMarket</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/info-page.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <th:block th:include="common/header :: header"></th:block>
+
+    <main class="container" style="margin-top: 100px; margin-bottom: 60px;">
+        <div class="page-header">
+            <h1><i class="fas fa-store"></i> 판매자 가이드</h1>
+            <p class="subtitle">LocalMarket에서 판매자로 성공하는 방법</p>
+        </div>
+
+        <div class="info-sections">
+            <section class="info-section">
+                <h2><i class="fas fa-user-plus"></i> 판매자 회원 가입</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>회원 가입 시 판매자 옵션 선택</li>
+                        <li>사업자등록증 및 신분증 인증</li>
+                        <li>추가 정보 입력 (사업장 주소, 상호명 등)</li>
+                        <li>운영팀 검토 후 판매자 승인</li>
+                        <li>판매자 페이지 활성화</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-plus-circle"></i> 상품 등록</h2>
+                <div class="info-content">
+                    <div class="process-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>기본 정보 입력</h4>
+                                <p>상품명, 카테고리, 가격 등</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>상세 설명 작성</h4>
+                                <p>상품 설명, 성분, 사용법 등</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>이미지 등록</h4>
+                                <p>대표 이미지 및 상세 이미지</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>검수 및 승인</h4>
+                                <p>운영팀 검토 후 판매 시작</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-image"></i> 상품 이미지 가이드</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li><strong>파일 형식:</strong> JPG, PNG (권장: PNG)</li>
+                        <li><strong>해상도:</strong> 최소 800x800px 이상</li>
+                        <li><strong>파일 크기:</strong> 5MB 이하</li>
+                        <li><strong>배경:</strong> 흰색 배경 권장</li>
+                        <li><strong>대표 이미지:</strong> 상품을 명확하게 보여주는 이미지</li>
+                        <li><strong>상세 이미지:</strong> 최대 10개까지 등록 가능</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-rules"></i> 금지 항목</h2>
+                <div class="info-content">
+                    <ul class="info-list" style="color: #dc3545;">
+                        <li>위조품 및 불법 제품</li>
+                        <li>과장된 표현 및 거짓 광고</li>
+                        <li>성인 및 폭력성 콘텐츠</li>
+                        <li>개인정보 노출</li>
+                        <li>외부 사이트 링크</li>
+                        <li>개별 연락처 정보 표시</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-won-sign"></i> 판매 및 수수료</h2>
+                <div class="info-content">
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">판매 수수료</td>
+                            <td>매출액의 5-10% (상품 카테고리별)</td>
+                        </tr>
+                        <tr>
+                            <td class="label">결제 수수료</td>
+                            <td>2-3% (결제 수단별)</td>
+                        </tr>
+                        <tr>
+                            <td class="label">정산 주기</td>
+                            <td>월 1회 (매달 말일)</td>
+                        </tr>
+                        <tr>
+                            <td class="label">정산 방법</td>
+                            <td>등록 계좌로 자동 이체</td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-star"></i> 판매자 등급 시스템</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li><strong>신규:</strong> 가입 후 3개월 미만</li>
+                        <li><strong>일반:</strong> 판매 실적 및 평점 기반</li>
+                        <li><strong>프리미엄:</strong> 고정 수수료 5% 감면</li>
+                        <li><strong>골드:</strong> 고정 수수료 10% 감면 + 마케팅 지원</li>
+                        <li>등급은 월별로 평가 및 조정됩니다</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="fas fa-phone-alt"></i> 판매자 지원</h2>
+                <div class="info-content">
+                    <ul class="info-list">
+                        <li>판매자 전용 고객센터: 1588-9999</li>
+                        <li>이메일: seller@localmarket.co.kr</li>
+                        <li>운영 시간: 평일 09:00 ~ 18:00</li>
+                        <li>정기 교육 및 워크숍 제공</li>
+                        <li>온라인 판매자 커뮤니티</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <th:block th:include="common/footer :: footer"></th:block>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>
