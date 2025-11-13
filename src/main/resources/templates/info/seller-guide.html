@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <th:block th:include="common/header :: header"></th:block>
+    <div th:replace="~{common/header}"></div>
 
     <main class="container" style="margin-top: 100px; margin-bottom: 60px;">
         <div class="page-header">
@@ -23,7 +23,7 @@
                 <h2><i class="fas fa-user-plus"></i> 판매자 회원 가입</h2>
                 <div class="info-content">
                     <ul class="info-list">
-                        <li>회원 가입 시 판매자 옵션 선택</li>
+                        <li>회원 가입 후 관리자에게 별도의 문의</li>
                         <li>사업자등록증 및 신분증 인증</li>
                         <li>추가 정보 입력 (사업장 주소, 상호명 등)</li>
                         <li>운영팀 검토 후 판매자 승인</li>
@@ -148,7 +148,7 @@
         </div>
     </main>
 
-    <th:block th:include="common/footer :: footer"></th:block>
+    <div th:replace="~{common/footer}"></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
