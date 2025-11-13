@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product != null ? product.productName : '상품 상세'}">상품 상세</title>
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" th:href="@{/css/product-detail.css}">
+</head>
+<body>
+    <!-- 헤더 Include -->
+    <div th:replace="~{common/header}"></div>
+
+    <!-- 페이지 타이틀 섹션 -->
+    <section class="page-title-section">
+        <div class="container">
+            <h1 class="page-title">상품 상세</h1>
+            <p class="page-subtitle">전통시장의 신선한 상품을 자세히 살펴보세요</p>
+        </div>
+    </section>
+
+    <!-- 상품 상세 섹션 -->
+    <section class="product-detail-section">
+        <div class="container">
+            <!-- 오류 메시지 -->
+            <div class="error-message" th:if="${product == null}">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>상품 정보를 불러올 수 없습니다.</p>
+                <a th:href="@{/products}" class="btn-primary">상품 목록으로 돌아가기</a>
+            </div>
+
+            <!-- 상품 정보 -->
+            <div th:if="${product != null}" class="product-detail-container">
+                <!-- 왼쪽: 상품 이미지 -->
+                <div class="product-image-section">
+                    <div class="product-image-wrapper">
+                        <img th:if="${product.productFilename != null}"
+                             th:src="@{/images/products/} + ${product.productFilename}"
+                             alt="상품 이미지" class="product-image-productdetail">
+                        <div th:if="${product.productFilename == null}" class="no-image">
+                            <i class="fas fa-image"></i>
+                            <p>이미지 없음</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 오른쪽: 상품 정보 -->
+                <div class="product-info-section">
+                    <!-- 상품 기본 정보 -->
+                    <div class="product-basic-info">
+                        <h1 class="product-name" th:text="${product.productName}">상품명</h1>
+
+                        <!-- 가격 정보 -->
+                        <div class="product-price-info">
+                            <div class="price-row">
+                                <span class="price-label">판매가</span>
+                                <span class="price-amount" th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA')}">0</span>
+                                <span class="price-unit">원</span>
+                            </div>
+                        </div>
+
+                        <!-- 재고 정보 -->
+                        <div class="product-stock-info">
+                            <span class="stock-label">재고</span>
+                            <span class="stock-value"
+                                  th:classappend="${product.productAmount == null || product.productAmount == 0} ? 'out-of-stock' : (${product.productAmount <= 10 && product.productAmount > 0} ? 'low-stock' : 'in-stock')"
+                                  th:if="${product.productAmount != null && product.productAmount > 0}">
+                                <i class="fas fa-check-circle"></i>
+                                <span th:text="${product.productAmount} + '개 보유 중'"></span>
+                            </span>
+                            <span class="stock-value out-of-stock" th:if="${product.productAmount == null || product.productAmount == 0}">
+                                <i class="fas fa-times-circle"></i>
+                                <span>현재 품절</span>
+                            </span>
+                        </div>
+
+                        <!-- 배송 정보 -->
+                        <div class="product-shipping-info">
+                            <div class="shipping-item">
+                                <i class="fas fa-truck"></i>
+                                <span>무료배송</span>
+                            </div>
+                            <div class="shipping-item">
+                                <i class="fas fa-undo"></i>
+                                <span>반품 가능</span>
+                            </div>
+                            <div class="shipping-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>안전거래</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 상품 구매 정보 -->
+                    <div class="product-purchase-section">
+                        <!-- 수량 선택 -->
+                        <div class="quantity-selector">
+                            <label for="quantity">수량</label>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" id="decreaseQty" onclick="decreaseQuantity()">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" id="quantity" value="1" min="1" max="999">
+                                <button class="quantity-btn" id="increaseQty" onclick="increaseQuantity()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 총 가격 -->
+                        <div class="total-price-info">
+                            <span class="total-label">총 가격</span>
+                            <div class="total-price">
+                                <span id="totalPrice" class="total-amount" th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA')}">0</span>
+                                <span class="total-unit">원</span>
+                            </div>
+                        </div>
+
+                        <!-- 구매 버튼 -->
+                        <div class="product-action-buttons" th:if="${product.productAmount != null && product.productAmount > 0}">
+                            <button class="btn-add-cart" id="addCartBtn" onclick="addToCart()">
+                                <i class="fas fa-shopping-cart"></i> 장바구니 추가
+                            </button>
+                            <button class="btn-buy-now" id="buyNowBtn" onclick="buyNow()">
+                                <i class="fas fa-credit-card"></i> 바로 구매
+                            </button>
+                        </div>
+
+                        <!-- 품절 텍스트 -->
+                        <div class="soldout-text" th:if="${product.productAmount == null || product.productAmount == 0}">
+                            <i class="fas fa-ban"></i> 품절
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상품 상세 정보 탭 -->
+            <div th:if="${product != null}" class="product-detail-tabs">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="switchTab('description')">
+                        <i class="fas fa-info-circle"></i> 상품 정보
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('reviews')">
+                        <i class="fas fa-comments"></i> 리뷰
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('qna')">
+                        <i class="fas fa-question-circle"></i> Q&A
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('shipping')">
+                        <i class="fas fa-box"></i> 배송 정보
+                    </button>
+                </div>
+
+                <!-- 상품 정보 탭 -->
+                <div id="description" class="tab-content active">
+                    <div class="tab-inner">
+                        <h3>상품 정보</h3>
+                        <table class="product-info-table">
+                            <tr>
+                                <th>상품명</th>
+                                <td th:text="${product.productName}">상품명</td>
+                            </tr>
+                            <tr>
+                                <th>판매가</th>
+                                <td>
+                                    <span th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA')}">0</span>원
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>재고</th>
+                                <td th:text="${product.productAmount != null ? product.productAmount + '개' : '품절'}">0개</td>
+                            </tr>
+                            <tr th:if="${product.storeName != null}">
+                                <th>판매점</th>
+                                <td th:text="${product.storeName}">판매점</td>
+                            </tr>
+                            <tr>
+                                <th>상품 등록일</th>
+                                <td th:text="${#temporals.format(product.createdDate, 'yyyy년 MM월 dd일')}">2024년 01월 01일</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 리뷰 탭 -->
+                <div id="reviews" class="tab-content">
+                    <div class="tab-inner">
+                        <h3>상품 리뷰</h3>
+                        <div class="no-data">
+                            <i class="fas fa-comment-slash"></i>
+                            <p>아직 등록된 리뷰가 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q&A 탭 -->
+                <div id="qna" class="tab-content">
+                    <div class="tab-inner">
+                        <h3>상품 Q&A</h3>
+                        <div class="no-data">
+                            <i class="fas fa-question-circle"></i>
+                            <p>아직 등록된 Q&A가 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 배송 정보 탭 -->
+                <div id="shipping" class="tab-content">
+                    <div class="tab-inner">
+                        <h3>배송 정보</h3>
+                        <div class="shipping-details">
+                            <div class="shipping-item-detail">
+                                <h4><i class="fas fa-check-circle"></i> 배송 안내</h4>
+                                <p>전국 무료배송</p>
+                                <p>주문 후 2-3일 이내 배송됩니다.</p>
+                            </div>
+                            <div class="shipping-item-detail">
+                                <h4><i class="fas fa-undo"></i> 반품 안내</h4>
+                                <p>7일 이내 반품 가능합니다.</p>
+                                <p>상품 상태에 따라 반품이 제한될 수 있습니다.</p>
+                            </div>
+                            <div class="shipping-item-detail">
+                                <h4><i class="fas fa-phone-alt"></i> 고객 지원</h4>
+                                <p>문의: 02-1234-5678</p>
+                                <p>운영 시간: 월-금 09:00-18:00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 관련 상품 섹션 -->
+            <div class="related-products-section">
+                <h2>관련 상품</h2>
+                <div class="related-products-grid">
+                    <div class="empty-related">
+                        <i class="fas fa-inbox"></i>
+                        <p>관련 상품이 없습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 Include -->
+    <div th:replace="~{common/footer}"></div>
+
+    <script th:inline="javascript">
+    // 제품 정보
+    const productId = /*[[${product != null ? product.productId : 0}]]*/ 0;
+    const productPrice = /*[[${product != null ? product.productPrice : 0}]]*/ 0;
+    const productAmount = /*[[${product != null && product.productAmount != null ? product.productAmount : 0}]]*/ 0;
+
+    // 수량 증가
+    function increaseQuantity() {
+        const quantityInput = document.getElementById('quantity');
+        if (quantityInput.value < 999) {
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+            updateTotalPrice();
+        }
+    }
+
+    // 수량 감소
+    function decreaseQuantity() {
+        const quantityInput = document.getElementById('quantity');
+        if (quantityInput.value > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+            updateTotalPrice();
+        }
+    }
+
+    // 총 가격 계산
+    function updateTotalPrice() {
+        const quantity = parseInt(document.getElementById('quantity').value) || 1;
+        const totalPrice = productPrice * quantity;
+        document.getElementById('totalPrice').textContent =
+            new Intl.NumberFormat('ko-KR').format(totalPrice);
+    }
+
+    // 수량 입력 시 이벤트
+    document.getElementById('quantity').addEventListener('change', function() {
+        if (this.value < 1) {
+            this.value = 1;
+        } else if (this.value > 999) {
+            this.value = 999;
+        }
+        updateTotalPrice();
+    });
+
+    // 장바구니 추가
+    function addToCart() {
+        const quantity = parseInt(document.getElementById('quantity').value) || 1;
+
+        if (quantity > productAmount) {
+            alert('재고를 초과할 수 없습니다.');
+            return;
+        }
+
+        fetch('/api/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productId: productId,
+                cartAmount: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (confirm('장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?')) {
+                    window.location.href = '/cart';
+                }
+            } else {
+                alert(data.message || '장바구니 추가 중 오류가 발생했습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('장바구니 추가 오류:', error);
+            alert('장바구니 추가 중 오류가 발생했습니다.');
+        });
+    }
+
+    // 바로 구매
+    function buyNow() {
+        const quantity = parseInt(document.getElementById('quantity').value) || 1;
+
+        if (quantity > productAmount) {
+            alert('재고를 초과할 수 없습니다.');
+            return;
+        }
+
+        // 바로 구매 구현
+        alert('바로 구매 기능은 준비 중입니다.');
+        // window.location.href = `/order/checkout?productId=${productId}&quantity=${quantity}`;
+    }
+
+    // 탭 전환
+    function switchTab(tabName) {
+        // 모든 탭 숨기기
+        const tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        // 모든 탭 버튼 비활성화
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(btn => btn.classList.remove('active'));
+
+        // 선택된 탭 보이기
+        const selectedTab = document.getElementById(tabName);
+        if (selectedTab) {
+            selectedTab.classList.add('active');
+        }
+
+        // 선택된 탭 버튼 활성화
+        event.target.classList.add('active');
+    }
+
+    // 페이지 로드 시
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTotalPrice();
+    });
+    </script>
+</body>
+</html>

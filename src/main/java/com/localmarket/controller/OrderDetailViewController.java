@@ -50,19 +50,20 @@ public class OrderDetailViewController {
 				return "error/error-page";
 			}
 
-			// 본인 주문이거나 관리자인지 확인
+			// 본인 주문이거나 관리자 또는 판매자인지 확인
 			String memberGrade = member.getMemberGrade();
 			boolean isAdmin = "ADMIN".equals(memberGrade);
+			boolean isSeller = "SELLER".equals(memberGrade);
 			boolean isOwnOrder = member.getMemberNum().equals(orderEntity.getMemberNum());
 
-			if (!isOwnOrder && !isAdmin) {
+			if (!isOwnOrder && !isAdmin && !isSeller) {
 				log.warn("주문 접근 권한 없음 - orderId: {}, memberNum: {}, memberGrade: {}",
 						orderId, member.getMemberNum(), memberGrade);
 				model.addAttribute("errorMessage", "접근 권한이 없습니다.");
 				return "error/error-page";
 			}
 
-			log.info("주문 상세 접근 허용 - orderId: {}, isAdmin: {}, isOwnOrder: {}", orderId, isAdmin, isOwnOrder);
+			log.info("주문 상세 접근 허용 - orderId: {}, isAdmin: {}, isSeller: {}, isOwnOrder: {}", orderId, isAdmin, isSeller, isOwnOrder);
 
 			// 주문 상세(상품) 목록 조회 (OrderDetail 반환)
 			List<com.localmarket.domain.OrderDetail> orderDetails = orderDetailService.getOrderDetailsByOrderId(orderId);
@@ -106,6 +107,7 @@ public class OrderDetailViewController {
 			model.addAttribute("order", orderDto);
 			model.addAttribute("orderDetails", orderDetailDtos);
 			model.addAttribute("isAdmin", isAdmin);
+			model.addAttribute("isSeller", isSeller);
 			return "order/detail";
 
 		} catch (Exception e) {

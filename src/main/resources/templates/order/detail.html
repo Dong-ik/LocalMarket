@@ -66,7 +66,7 @@
                 <h2 class="section-title">주문 상품</h2>
                 <div class="order-products">
                     <div class="product-item" th:each="detail : ${order.cartItems}">
-                        <div class="product-image">
+                        <div class="product-image-orderdetail">
                             <img th:if="${detail.productFilename != null}"
                                  th:src="@{'/images/products/' + ${detail.productFilename}}"
                                  th:alt="${detail.productName}">
@@ -133,7 +133,7 @@
                     쇼핑 계속하기
                 </button>
                 <button type="button" class="btn-danger" onclick="cancelOrder()"
-                        th:if="${order.orderStatus == 'PENDING' and !isAdmin}">
+                        th:if="${order.orderStatus == 'PENDING' and !isAdmin and !isSeller}">
                     주문 취소
                 </button>
             </div>
@@ -147,12 +147,15 @@
         const orderId = /*[[${order.orderId}]]*/ 0;
         const orderStatus = /*[[${order.orderStatus}]]*/ '';
         const isAdmin = /*[[${isAdmin}]]*/ false;
+        const isSeller = /*[[${isSeller}]]*/ false;
 
         // 주문 목록으로 이동
         function goToOrderList() {
             // 관리자면 주문/결제 관리 페이지로, 일반 사용자면 주문 목록으로
             if (isAdmin) {
                 window.location.href = '/order/adminlist';
+            } else if (isSeller) {
+                window.location.href = '/seller/orders';
             } else {
                 window.location.href = '/order/list';
             }

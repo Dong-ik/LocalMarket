@@ -154,9 +154,9 @@
                                 <i class="fas fa-user-tie"></i> 판매자
                             </a>
                             <div class="dropdown-menu">
-                                <a th:href="@{/seller/orders}">주문 관리</a>
-                                <a th:href="@{/seller/products}">상품 관리</a>
-                                <a th:href="@{/seller/stores}">내 가게 관리</a>
+                                <a th:href="@{/seller/orders}">내 가게 주문내역</a>
+                                <a th:href="@{/seller/products}">내 상품 관리</a>
+                                <a th:href="@{/seller/stores}">내 가게 정보변경</a>
                             </div>
                         </li>
                         <li class="nav-item" th:if="${session.member != null and session.member.memberGrade == 'ADMIN'}">

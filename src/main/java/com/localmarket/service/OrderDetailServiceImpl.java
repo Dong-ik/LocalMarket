@@ -15,24 +15,51 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OrderDetailServiceImpl implements OrderDetailService {
-    
+
     private final OrderDetailMapper orderDetailMapper;
+    private final ProductService productService;
     
     @Override
     @Transactional
     public int createOrderDetail(OrderDetailDto orderDetailDto) {
         log.info("=== 주문 상세 등록 시작 ===");
         log.info("주문 상세 정보: {}", orderDetailDto);
-        
+
         // 기본 취소 상태 설정
         if (orderDetailDto.getCancelStatus() == null) {
             orderDetailDto.setCancelStatus("NONE");
         }
-        
+
         int result = orderDetailMapper.insertOrderDetail(orderDetailDto);
         log.info("주문 상세 등록 결과: {}", result > 0 ? "성공" : "실패");
+
+        // 주문 성공 시 상품 재고 감소
+        if (result > 0 && orderDetailDto.getProductId() != null && orderDetailDto.getOrderQuantity() != null) {
+            try {
+                Integer productId = orderDetailDto.getProductId();
+                Integer orderQuantity = orderDetailDto.getOrderQuantity();
+
+                log.info("상품 재고 감소 시작 - 상품ID: {}, 주문수량: {}", productId, orderQuantity);
+
+                // 현재 재고 조회
+                Integer currentAmount = productService.getProductById(productId).getProductAmount();
+
+                if (currentAmount != null && currentAmount >= orderQuantity) {
+                    // 재고 감소 (현재 재고 - 주문수량)
+                    Integer newAmount = currentAmount - orderQuantity;
+                    boolean stockUpdateSuccess = productService.updateProductAmount(productId, newAmount);
+                    log.info("상품 재고 감소 결과: {} (이전: {}, 감소량: {}, 현재: {})",
+                             stockUpdateSuccess ? "성공" : "실패", currentAmount, orderQuantity, newAmount);
+                } else {
+                    log.warn("재고 부족 - 상품ID: {}, 현재 재고: {}, 주문수량: {}", productId, currentAmount, orderQuantity);
+                }
+            } catch (Exception e) {
+                log.error("상품 재고 감소 중 오류 발생: {}", e.getMessage(), e);
+            }
+        }
+
         log.info("=== 주문 상세 등록 완료 ===");
-        
+
         return result;
     }
     

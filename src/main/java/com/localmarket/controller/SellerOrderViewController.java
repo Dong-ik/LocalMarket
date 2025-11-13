@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 판매자용 주문 관리 뷰 컨트롤러
@@ -62,6 +63,7 @@ public class SellerOrderViewController {
 
             // 판매자의 가게 목록 조회
             List<Store> stores = storeService.getStoresByMemberNum(memberNum);
+            log.info("판매자 가게 목록 조회 결과 - memberNum: {}, 가게 수: {}", memberNum, stores != null ? stores.size() : 0);
 
             if (stores == null || stores.isEmpty()) {
                 log.info("판매자가 등록한 가게가 없습니다 - memberNum: {}", memberNum);
@@ -101,7 +103,7 @@ public class SellerOrderViewController {
             if (status != null && !status.trim().isEmpty()) {
                 orderDetails = orderDetails.stream()
                         .filter(od -> status.equals(od.getOrderStatus()))
-                        .toList();
+                        .collect(Collectors.toList());
                 log.info("주문 상태 필터 적용 - status: {}, 필터링 후 주문 수: {}", status, orderDetails.size());
             }
 
