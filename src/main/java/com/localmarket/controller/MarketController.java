@@ -191,16 +191,19 @@ public class MarketController {
             
             // DB에 저장
             boolean success = marketService.insertMultipleMarketsFromApi(marketDtoList);
-            
+
             if (success) {
                 response.put("success", true);
                 response.put("message", "CSV 파일의 시장 데이터가 성공적으로 저장되었습니다.");
                 response.put("filename", filename);
                 response.put("totalRows", marketDtoList.size());
-                response.put("savedCount", marketDtoList.size());
+                response.put("addedCount", marketDtoList.size());
+                response.put("duplicateCount", 0);
             } else {
                 response.put("success", false);
                 response.put("message", "데이터 저장에 실패했습니다.");
+                response.put("addedCount", 0);
+                response.put("duplicateCount", 0);
             }
             
             return ResponseEntity.ok(response);
@@ -247,16 +250,19 @@ public class MarketController {
             
             // DB에 저장
             boolean success = marketService.insertMultipleMarketsFromApi(marketDtoList);
-            
+
             if (success) {
                 response.put("success", true);
                 response.put("message", "JSON 파일의 시장 데이터가 성공적으로 저장되었습니다.");
                 response.put("filename", filename);
                 response.put("totalRows", marketDtoList.size());
-                response.put("savedCount", marketDtoList.size());
+                response.put("addedCount", marketDtoList.size());
+                response.put("duplicateCount", 0);
             } else {
                 response.put("success", false);
                 response.put("message", "데이터 저장에 실패했습니다.");
+                response.put("addedCount", 0);
+                response.put("duplicateCount", 0);
             }
             
             return ResponseEntity.ok(response);
