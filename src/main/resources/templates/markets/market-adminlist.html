@@ -24,6 +24,9 @@
             <i class="fas fa-shopping-bag"></i>
             전체 시장: <strong th:text="${totalCount}"></strong>개
         </div>
+        <button onclick="importMarketsFromAPI()" class="btn-import" title="공공데이터 API에서 시장 정보 가져오기">
+            <i class="fas fa-cloud-download-alt"></i> 공공데이터 가져오기
+        </button>
     </div>
     
     <!-- 지역별 필터 버튼 -->
@@ -248,6 +251,52 @@ function updateTotalCount() {
     if (countElement) {
         countElement.textContent = visibleRows.length;
     }
+}
+
+// 공공데이터 API에서 시장 정보 가져오기
+function importMarketsFromAPI() {
+    const button = event.target.closest('.btn-import');
+    const originalText = button.innerHTML;
+
+    if (!confirm('공공데이터 API에서 시장 정보를 가져오시겠습니까?\n\n처리 중에는 페이지가 잠시 비활성화됩니다.')) {
+        return;
+    }
+
+    // 버튼 비활성화 및 로딩 상태 표시
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 데이터 가져오는 중...';
+
+    fetch('/api/market/import-from-api', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            page: 1,
+            perPage: 100
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        button.disabled = false;
+        button.innerHTML = originalText;
+
+        if (data.success) {
+            alert(`공공데이터 API에서 시장 정보를 가져왔습니다.\n\n추가된 시장: ${data.addedCount || 0}개\n중복된 시장: ${data.duplicateCount || 0}개`);
+            // 페이지 새로고침
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        } else {
+            alert(`데이터 가져오기 실패\n\n${data.message || '알 수 없는 오류가 발생했습니다.'}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.disabled = false;
+        button.innerHTML = originalText;
+        alert('데이터 가져오기 중 오류가 발생했습니다.\n' + error.message);
+    });
 }
 </script>
 
