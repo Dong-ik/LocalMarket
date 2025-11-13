@@ -103,8 +103,8 @@
             </div>
             
             <!-- 상품 목록 그리드 -->
-            <div class="product-grid" id="productGrid">
-                <div th:each="product : ${products}" class="product-card" 
+            <div class="product-grid-list" id="productGrid">
+                <div th:each="product : ${products}" class="product-card-list" 
                      th:onclick="'location.href=\'/products/' + ${product.productId} + '\''">
                     <div class="product-card-image" 
                          th:style="${product.productFilename != null ? 'background-image: url(/images/products/' + product.productFilename + ')' : ''}">
