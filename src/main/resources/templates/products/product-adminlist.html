@@ -80,23 +80,17 @@
 <div th:replace="~{common/footer}"></div>
 
 <script>
-// 상품 검색
+// 상품 검색 (서버 사이드)
 function searchProducts() {
     const input = document.getElementById('searchInput');
-    const filter = input.value.toLowerCase();
-    const table = document.getElementById('productTable');
-    const tr = table.getElementsByTagName('tr');
-    
-    for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName('td')[2]; // 상품명 컬럼
-        if (td) {
-            const txtValue = td.textContent || td.innerText;
-            if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                tr[i].style.display = '';
-            } else {
-                tr[i].style.display = 'none';
-            }
-        }
+    const searchKeyword = input.value.trim();
+
+    if (searchKeyword === '') {
+        // 검색어가 없으면 전체 상품 페이지로 이동
+        window.location.href = '/products/adminlist';
+    } else {
+        // 검색어가 있으면 search 파라미터와 함께 요청
+        window.location.href = '/products/adminlist?search=' + encodeURIComponent(searchKeyword);
     }
 }
 

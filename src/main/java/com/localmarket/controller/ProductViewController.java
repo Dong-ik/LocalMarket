@@ -242,23 +242,31 @@ public class ProductViewController {
      * GET /products/adminlist
      */
     @GetMapping("/adminlist")
-    public String adminProductList(Model model, jakarta.servlet.http.HttpSession session) {
+    public String adminProductList(
+            @RequestParam(name = "search", required = false) String search,
+            Model model, jakarta.servlet.http.HttpSession session) {
         try {
             // 관리자 권한 체크
             if (session.getAttribute("member") == null) {
                 return "redirect:/members/login";
             }
-            
-            log.info("=== 상품 관리 페이지 ===");
-            
-            // 모든 상품 조회
-            List<Product> products = productService.getAllProducts();
-            
-            log.info("전체 상품: {} 개", products != null ? products.size() : 0);
-            
+
+            log.info("=== 상품 관리 페이지 === (검색: {})", search != null ? search : "없음");
+
+            // 상품 조회 (검색어가 있으면 검색, 없으면 전체 조회)
+            List<Product> products;
+            if (search != null && !search.trim().isEmpty()) {
+                products = productService.searchProductsByName(search.trim());
+                log.info("검색 결과: {} 개", products != null ? products.size() : 0);
+            } else {
+                products = productService.getAllProducts();
+                log.info("전체 상품: {} 개", products != null ? products.size() : 0);
+            }
+
             model.addAttribute("products", products);
             model.addAttribute("totalCount", products != null ? products.size() : 0);
-            
+            model.addAttribute("searchKeyword", search);
+
             return "products/product-adminlist";
         } catch (Exception e) {
             log.error("상품 관리 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
