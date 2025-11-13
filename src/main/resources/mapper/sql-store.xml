@@ -353,7 +353,7 @@
         FROM store s
         LEFT JOIN market m ON s.market_id = m.market_id
         LEFT JOIN member mem ON s.member_num = mem.member_num
-        LEFT JOIN favorite f ON s.store_id = f.store_id AND f.favorite_type = 'STORE'
+        LEFT JOIN favorite f ON s.store_id = f.target_id AND f.target_type = 'STORE'
         GROUP BY s.store_id
         ORDER BY favorite_count DESC
         LIMIT 12
