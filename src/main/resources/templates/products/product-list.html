@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>상품 둘러보기</title>
     <!-- CSS 연결 -->
+    <link rel="stylesheet" th:href="@{/css/base-list.css}">
     <link rel="stylesheet" th:href="@{/css/product-list.css}">
 </head>
 <body>
@@ -311,7 +312,7 @@
         }
         
         // 카드 호버 효과
-        const cards = document.querySelectorAll('.product-card');
+        const cards = document.querySelectorAll('.product-card-list');
         cards.forEach(card => {
             card.addEventListener('mouseenter', function() {
                 this.style.transform = 'translateY(-8px)';
