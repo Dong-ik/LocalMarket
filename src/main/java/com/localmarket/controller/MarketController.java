@@ -292,21 +292,31 @@ public class MarketController {
                 
                 try {
                     MarketDto marketDto = new MarketDto();
-                    
-                    // CSV 컬럼에 따라 매핑 (실제 CSV 구조에 맞게 조정 필요)
-                    if (values.length > 0) marketDto.setMarketName(cleanCsvValue(values[0]));
-                    if (values.length > 1) marketDto.setMarketLocal(cleanCsvValue(values[1]));
-                    if (values.length > 2) marketDto.setMarketAddress(cleanCsvValue(values[2]));
-                    if (values.length > 3) marketDto.setMarketIntroduce(cleanCsvValue(values[3]));
-                    if (values.length > 4) marketDto.setMarketURL(cleanCsvValue(values[4]));
-                    
+
+                    // CSV 컬럼에 따라 매핑 (공공데이터 포털 시장정보 CSV 구조)
+                    // 컬럼 순서: 시장코드 | 시장명 | 시장유형 | 지번주소 | 도로명주소 | 시도 | 시군구 | 아래이트
+
+                    // B: 시장명 (index 1)
+                    if (values.length > 1) marketDto.setMarketName(cleanCsvValue(values[1]));
+
+                    // F: 시도 (index 5) - 지역
+                    if (values.length > 5) marketDto.setMarketLocal(cleanCsvValue(values[5]));
+
+                    // E: 도로명주소 우선, D: 지번주소 (index 4, 3) - 주소
+                    String roadAddress = values.length > 4 ? cleanCsvValue(values[4]) : "";
+                    String jibunAddress = values.length > 3 ? cleanCsvValue(values[3]) : "";
+                    String address = !roadAddress.isEmpty() ? roadAddress : jibunAddress;
+                    if (!address.isEmpty()) {
+                        marketDto.setMarketAddress(address);
+                    }
+
                     marketDto.setCreatedDate(LocalDateTime.now());
-                    
+
                     if (isValidMarketData(marketDto)) {
                         marketDtoList.add(marketDto);
                         log.debug("CSV 시장 데이터 변환 완료: {}", marketDto.getMarketName());
                     }
-                    
+
                 } catch (Exception e) {
                     log.warn("CSV 행 파싱 실패: {} - {}", line, e.getMessage());
                 }
