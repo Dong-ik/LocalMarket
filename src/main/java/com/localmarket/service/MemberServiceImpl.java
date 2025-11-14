@@ -6,10 +6,10 @@ import com.localmarket.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,49 +21,38 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
 
-    @Autowired(required = false)
+    @Autowired
+    @Qualifier("passwordEncoder")
     private Object passwordEncoder;
-
-    // BCryptPasswordEncoder를 리플렉션으로 사용
-    private Object getPasswordEncoder() {
-        if (passwordEncoder == null) {
-            try {
-                Class<?> bcryptClass = Class.forName("org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder");
-                passwordEncoder = bcryptClass.getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
-                log.error("BCryptPasswordEncoder 초기화 실패", e);
-                return null;
-            }
-        }
-        return passwordEncoder;
-    }
 
     // 비밀번호 암호화 헬퍼 메서드
     private String encodePassword(String rawPassword) {
         try {
-            Object encoder = getPasswordEncoder();
-            if (encoder != null) {
-                Method encodeMethod = encoder.getClass().getMethod("encode", CharSequence.class);
-                return (String) encodeMethod.invoke(encoder, rawPassword);
+            if (passwordEncoder != null) {
+                // 리플렉션을 이용한 encode 메서드 호출
+                java.lang.reflect.Method encodeMethod = passwordEncoder.getClass()
+                    .getMethod("encode", CharSequence.class);
+                return (String) encodeMethod.invoke(passwordEncoder, rawPassword);
             }
         } catch (Exception e) {
             log.error("비밀번호 암호화 실패", e);
         }
-        return rawPassword; // 실패 시 원본 반환 (임시)
+        return rawPassword; // 실패 시 원본 반환
     }
 
     // 비밀번호 검증 헬퍼 메서드
     private boolean matchPassword(String rawPassword, String encodedPassword) {
         try {
-            Object encoder = getPasswordEncoder();
-            if (encoder != null) {
-                Method matchesMethod = encoder.getClass().getMethod("matches", CharSequence.class, String.class);
-                return (Boolean) matchesMethod.invoke(encoder, rawPassword, encodedPassword);
+            if (passwordEncoder != null && encodedPassword != null) {
+                // 리플렉션을 이용한 matches 메서드 호출
+                java.lang.reflect.Method matchesMethod = passwordEncoder.getClass()
+                    .getMethod("matches", CharSequence.class, String.class);
+                return (Boolean) matchesMethod.invoke(passwordEncoder, rawPassword, encodedPassword);
             }
         } catch (Exception e) {
             log.error("비밀번호 검증 실패", e);
         }
-        return rawPassword.equals(encodedPassword); // 실패 시 평문 비교 (임시)
+        return rawPassword.equals(encodedPassword); // 실패 시 평문 비교
     }
     
     @Override
