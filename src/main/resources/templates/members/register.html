@@ -6,26 +6,6 @@
     <title>회원가입 | LocalMarket</title>
     <link rel="stylesheet" th:href="@{/css/base.css}">
     <link rel="stylesheet" th:href="@{/css/member.css}">
-    <style>
-        .duplicate-message {
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-            font-weight: 500;
-        }
-        .duplicate-message.error {
-            color: #dc3545;
-            display: block;
-        }
-        .duplicate-message.success {
-            color: #10b981;
-            display: block;
-        }
-        .duplicate-message.checking {
-            color: #667eea;
-            display: block;
-        }
-    </style>
 </head>
 <body>
     <main class="container member-form-container">
@@ -136,11 +116,11 @@
                 const messageEl = document.getElementById('memberIdMessage');
 
                 if (result.exists) {
-                    messageEl.textContent = '중복입니다';
+                    messageEl.textContent = '아이디가 중복되었습니다. 다시 입력해주세요.';
                     messageEl.className = 'duplicate-message error';
                     duplicateCheckStatus.memberId = false;
                 } else {
-                    messageEl.textContent = '사용가능합니다';
+                    messageEl.textContent = '사용가능한 아이디입니다.';
                     messageEl.className = 'duplicate-message success';
                     duplicateCheckStatus.memberId = true;
                 }
@@ -166,11 +146,11 @@
                 const messageEl = document.getElementById('phoneMessage');
 
                 if (result.exists) {
-                    messageEl.textContent = '중복입니다';
+                    messageEl.textContent = '전화번호가 중복되었습니다. 다시 입력해주세요.';
                     messageEl.className = 'duplicate-message error';
                     duplicateCheckStatus.phone = false;
                 } else {
-                    messageEl.textContent = '사용가능합니다';
+                    messageEl.textContent = '사용가능한 전화번호입니다.';
                     messageEl.className = 'duplicate-message success';
                     duplicateCheckStatus.phone = true;
                 }
@@ -196,11 +176,11 @@
                 const messageEl = document.getElementById('emailMessage');
 
                 if (result.exists) {
-                    messageEl.textContent = '중복입니다';
+                    messageEl.textContent = '이메일이 중복되었습니다. 다시 입력해주세요.';
                     messageEl.className = 'duplicate-message error';
                     duplicateCheckStatus.email = false;
                 } else {
-                    messageEl.textContent = '사용가능합니다';
+                    messageEl.textContent = '사용가능한 이메일입니다.';
                     messageEl.className = 'duplicate-message success';
                     duplicateCheckStatus.email = true;
                 }

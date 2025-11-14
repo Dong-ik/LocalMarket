@@ -11,7 +11,7 @@ header {
 
 .header-top {
     background-color: #1a252f;
-    padding: 8px 0;
+    padding: 4px 0;
     font-size: 14px;
     color : #bdc3c7;
 }
@@ -43,7 +43,7 @@ header {
 }
 
 .header-main {
-    padding: 15px 0;
+    padding: 10px 0;
 }
 
 .header-content {
@@ -169,7 +169,7 @@ header {
 
 .nav-link {
     display: block;
-    padding: 15px 20px;
+    padding: 12px 20px;
     color: white;
     text-decoration: none;
     transition: all 0.3s;

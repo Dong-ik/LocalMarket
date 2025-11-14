@@ -870,6 +870,27 @@
     transform: none;
 }
 
+.duplicate-message {
+    font-size: 13px;
+    display: none;
+    font-weight: 500;
+}
+
+.duplicate-message.error {
+    color: #dc3545;
+    display: block;
+}
+
+.duplicate-message.success {
+    color: #10b981;
+    display: block;
+}
+
+.duplicate-message.checking {
+    color: #667eea;
+    display: block;
+}
+
 /* 반응형 */
 @media (max-width: 768px) {
     .search-section {
@@ -897,4 +918,5 @@
     .form-container {
         padding: 20px;
     }
+    
 }
