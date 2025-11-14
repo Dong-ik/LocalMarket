@@ -20,7 +20,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -502,8 +501,9 @@ public class BoardController {
                 uploadDirFile.mkdirs();
             }
 
-            // 고유한 파일명 생성 (UUID + 원본 확장자)
-            String savedFilename = UUID.randomUUID().toString() + "." + fileExtension;
+            // 고유한 파일명 생성 (board_temp_{timestamp}.확장자)
+            // 임시 파일명으로 저장 후 나중에 boardId로 변경될 수 있음
+            String savedFilename = "board_temp_" + System.currentTimeMillis() + "." + fileExtension;
             Path filePath = Paths.get(uploadDir, savedFilename);
 
             // 파일 저장
