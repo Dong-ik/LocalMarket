@@ -70,14 +70,14 @@
                             <strong th:text="${#numbers.formatInteger(order.orderTotalPrice, 0, 'COMMA')} + '원'"></strong>
                         </div>
                         <div class="order-actions">
-                            <button class="btn-detail" th:onclick="'viewOrderDetail(' + ${order.orderId} + ')'">
-                                상세보기
-                            </button>
                             <button th:if="${order.orderStatus == 'DELIVERED'}" class="btn-return" th:data-order-id="${order.orderId}" onclick="updateOrderStatus(this, 'RETURN')">
                                 반품신청
                             </button>
                             <button th:if="${order.orderStatus == 'DELIVERED'}" class="btn-swap" th:data-order-id="${order.orderId}" onclick="updateOrderStatus(this, 'SWAP')">
                                 교환신청
+                            </button>
+                            <button class="btn-detail" th:onclick="'viewOrderDetail(' + ${order.orderId} + ')'">
+                                상세보기
                             </button>
                         </div>
                     </div>
