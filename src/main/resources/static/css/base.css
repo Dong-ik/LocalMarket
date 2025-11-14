@@ -89,18 +89,6 @@ main {
     line-height: 1.6;
 }
 
-.hero-content .btn-primary {
-    font-size: 1.1rem;
-    padding: 15px 40px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-}
-
-.hero-content .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.3);
-}
-
 .btn-primary {
     background: #e74c3c;
     color: white;
