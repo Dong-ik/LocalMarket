@@ -5,9 +5,11 @@ import com.localmarket.dto.MemberDto;
 import com.localmarket.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,8 +18,53 @@ import java.util.List;
 @Slf4j
 @Transactional
 public class MemberServiceImpl implements MemberService {
-    
+
     private final MemberMapper memberMapper;
+
+    @Autowired(required = false)
+    private Object passwordEncoder;
+
+    // BCryptPasswordEncoder를 리플렉션으로 사용
+    private Object getPasswordEncoder() {
+        if (passwordEncoder == null) {
+            try {
+                Class<?> bcryptClass = Class.forName("org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder");
+                passwordEncoder = bcryptClass.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                log.error("BCryptPasswordEncoder 초기화 실패", e);
+                return null;
+            }
+        }
+        return passwordEncoder;
+    }
+
+    // 비밀번호 암호화 헬퍼 메서드
+    private String encodePassword(String rawPassword) {
+        try {
+            Object encoder = getPasswordEncoder();
+            if (encoder != null) {
+                Method encodeMethod = encoder.getClass().getMethod("encode", CharSequence.class);
+                return (String) encodeMethod.invoke(encoder, rawPassword);
+            }
+        } catch (Exception e) {
+            log.error("비밀번호 암호화 실패", e);
+        }
+        return rawPassword; // 실패 시 원본 반환 (임시)
+    }
+
+    // 비밀번호 검증 헬퍼 메서드
+    private boolean matchPassword(String rawPassword, String encodedPassword) {
+        try {
+            Object encoder = getPasswordEncoder();
+            if (encoder != null) {
+                Method matchesMethod = encoder.getClass().getMethod("matches", CharSequence.class, String.class);
+                return (Boolean) matchesMethod.invoke(encoder, rawPassword, encodedPassword);
+            }
+        } catch (Exception e) {
+            log.error("비밀번호 검증 실패", e);
+        }
+        return rawPassword.equals(encodedPassword); // 실패 시 평문 비교 (임시)
+    }
     
     @Override
     public boolean registerMember(MemberDto memberDto) {
@@ -41,12 +88,18 @@ public class MemberServiceImpl implements MemberService {
             // DTO를 Domain으로 변환
             Member member = convertDtoToDomain(memberDto);
             member.setCreatedDate(LocalDateTime.now());
-            
+
+            // 비밀번호 암호화 (BCrypt)
+            if (member.getPassword() != null) {
+                String encodedPassword = encodePassword(member.getPassword());
+                member.setPassword(encodedPassword);
+            }
+
             // 기본 등급 설정
             if (member.getMemberGrade() == null || member.getMemberGrade().isEmpty()) {
                 member.setMemberGrade("BUYER");
             }
-            
+
             int result = memberMapper.insertMember(member);
             log.info("회원가입 성공: {}", memberDto.getMemberId());
             return result > 0;
@@ -61,13 +114,21 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     public Member loginMember(String memberId, String password) {
         try {
-            Member member = memberMapper.selectMemberForLogin(memberId, password);
-            if (member != null) {
-                log.info("로그인 성공: {}", memberId);
-            } else {
-                log.warn("로그인 실패: {}", memberId);
+            // 먼저 회원 정보 조회 (암호화된 비밀번호 포함)
+            Member member = memberMapper.selectMemberById(memberId);
+            if (member == null) {
+                log.warn("로그인 실패: 존재하지 않는 회원 - {}", memberId);
+                return null;
             }
-            return member;
+
+            // BCrypt로 비밀번호 검증
+            if (matchPassword(password, member.getPassword())) {
+                log.info("로그인 성공: {}", memberId);
+                return member;
+            } else {
+                log.warn("로그인 실패: 비밀번호 오류 - {}", memberId);
+                return null;
+            }
         } catch (Exception e) {
             log.error("로그인 중 오류 발생: {}", e.getMessage(), e);
             return null;

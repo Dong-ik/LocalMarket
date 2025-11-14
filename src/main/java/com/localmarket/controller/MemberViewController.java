@@ -84,6 +84,8 @@ public class MemberViewController {
         // 비밀번호 일치 여부 확인
         Member member = memberService.loginMember(memberId, password);
         if (member != null) {
+            // 세션에 저장하기 전에 비밀번호 필드 제거 (보안)
+            member.setPassword(null);
             session.setAttribute("member", member);
             session.setAttribute("memberNum", member.getMemberNum());
             session.setAttribute("memberId", member.getMemberId());
