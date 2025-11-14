@@ -50,7 +50,6 @@ Thumbs.db
 /build/
 
 ### Uploaded Files ###
-src/main/static/images/boards/
 src/main/static/images/products/
 src/main/static/images/markets/
 src/main/static/images/stores/
