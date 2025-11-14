@@ -15,6 +15,7 @@
         <div class="order-filter">
             <button class="filter-btn active" onclick="filterOrders('all')">전체</button>
             <button class="filter-btn" onclick="filterOrders('PENDING')">주문완료</button>
+            <button class="filter-btn" onclick="filterOrders('COMPLETED')">결제완료</button>
             <button class="filter-btn" onclick="filterOrders('PROCESSING')">배송준비</button>
             <button class="filter-btn" onclick="filterOrders('SHIPPED')">배송중</button>
             <button class="filter-btn" onclick="filterOrders('DELIVERED')">배송완료</button>
@@ -28,6 +29,7 @@
                     <div class="order-date" th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></div>
                     <div class="order-status" th:classappend="${order.orderStatus}">
                         <span th:text="${order.orderStatus == 'PENDING' ? '주문완료' :
+                                        order.orderStatus == 'COMPLETED' ? '결제완료' :
                                         order.orderStatus == 'PROCESSING' ? '배송준비' :
                                         order.orderStatus == 'SHIPPED' ? '배송중' :
                                         order.orderStatus == 'DELIVERED' ? '배송완료' :
