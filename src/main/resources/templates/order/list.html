@@ -73,10 +73,10 @@
                             <button class="btn-detail" th:onclick="'viewOrderDetail(' + ${order.orderId} + ')'">
                                 상세보기
                             </button>
-                            <button th:if="${order.orderStatus == 'DELIVERED'}" class="btn-return" th:onclick="'updateOrderStatus(' + ${order.orderId} + ', \"RETURN\")'">
+                            <button th:if="${order.orderStatus == 'DELIVERED'}" class="btn-return" th:data-order-id="${order.orderId}" onclick="updateOrderStatus(this, 'RETURN')">
                                 반품신청
                             </button>
-                            <button th:if="${order.orderStatus == 'DELIVERED'}" class="btn-swap" th:onclick="'updateOrderStatus(' + ${order.orderId} + ', \"SWAP\")'">
+                            <button th:if="${order.orderStatus == 'DELIVERED'}" class="btn-swap" th:data-order-id="${order.orderId}" onclick="updateOrderStatus(this, 'SWAP')">
                                 교환신청
                             </button>
                         </div>
@@ -109,7 +109,8 @@
         }
 
         // 주문 상태 업데이트
-        function updateOrderStatus(orderId, newStatus) {
+        function updateOrderStatus(button, newStatus) {
+            const orderId = button.getAttribute('data-order-id');
             const statusName = newStatus === 'RETURN' ? '반품' : '교환';
             if (!confirm(orderId + ' 주문을 ' + statusName + '신청 하시겠습니까?')) {
                 return;
