@@ -496,7 +496,7 @@ public class BoardController {
             }
 
             // 저장 경로 생성
-            String uploadDir = "src/main/resources/static/images/boards";
+            String uploadDir = "src/main/static/images/boards";
             File uploadDirFile = new File(uploadDir);
             if (!uploadDirFile.exists()) {
                 uploadDirFile.mkdirs();
