@@ -18,6 +18,8 @@
             <button class="filter-btn" onclick="filterOrders('PROCESSING')">배송준비</button>
             <button class="filter-btn" onclick="filterOrders('SHIPPED')">배송중</button>
             <button class="filter-btn" onclick="filterOrders('DELIVERED')">배송완료</button>
+            <button class="filter-btn" onclick="filterOrders('RETURN')">반품신청</button>
+            <button class="filter-btn" onclick="filterOrders('SWAP')">교환신청</button>
         </div>
         
         <div class="order-list" th:if="${orders != null and !orders.isEmpty()}">
@@ -30,6 +32,8 @@
                                         order.orderStatus == 'SHIPPED' ? '배송중' :
                                         order.orderStatus == 'DELIVERED' ? '배송완료' :
                                         order.orderStatus == 'CANCELLED' ? '주문취소' :
+                                        order.orderStatus == 'RETURN' ? '반품신청' :
+                                        order.orderStatus == 'SWAP' ? '교환신청' :
                                         order.orderStatus}">배송준비</span>
                     </div>
                 </div>
@@ -69,6 +73,12 @@
                             <button class="btn-detail" th:onclick="'viewOrderDetail(' + ${order.orderId} + ')'">
                                 상세보기
                             </button>
+                            <button th:if="${order.orderStatus == 'DELIVERED'}" class="btn-return" th:onclick="'updateOrderStatus(' + ${order.orderId} + ', \"RETURN\")'">
+                                반품신청
+                            </button>
+                            <button th:if="${order.orderStatus == 'DELIVERED'}" class="btn-swap" th:onclick="'updateOrderStatus(' + ${order.orderId} + ', \"SWAP\")'">
+                                교환신청
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -92,12 +102,40 @@
         function viewOrderDetail(orderId) {
             window.location.href = '/order/' + orderId;
         }
-        
+
         // 상품 목록으로 이동
         function goToProducts() {
             window.location.href = '/products';
         }
-        
+
+        // 주문 상태 업데이트
+        function updateOrderStatus(orderId, newStatus) {
+            const statusName = newStatus === 'RETURN' ? '반품' : '교환';
+            if (!confirm(orderId + ' 주문을 ' + statusName + '신청 하시겠습니까?')) {
+                return;
+            }
+
+            fetch('/order/' + orderId + '/status', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ orderStatus: newStatus })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert(statusName + '신청이 완료되었습니다.');
+                    location.reload();
+                } else {
+                    alert(statusName + '신청 처리 중 오류가 발생했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(statusName + '신청 처리 중 오류가 발생했습니다.');
+            });
+        }
+
         // 주문 상태별 필터링
         function filterOrders(status) {
             // 버튼 활성화 상태 변경
@@ -105,7 +143,7 @@
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            
+
             // 주문 카드 필터링
             const orderCards = document.querySelectorAll('.order-card');
             orderCards.forEach(card => {

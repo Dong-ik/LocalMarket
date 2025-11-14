@@ -15,6 +15,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
+import java.util.HashMap;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -189,6 +194,59 @@ public class OrderViewController {
             log.error("관리자 주문 관리 페이지 조회 중 오류 발생: {}", e.getMessage(), e);
             model.addAttribute("errorMessage", "페이지를 불러오는 중 오류가 발생했습니다.");
             return "error/error-page";
+        }
+    }
+
+    /**
+     * 주문 상태 업데이트 (반품/교환 신청)
+     * PUT /order/{orderId}/status
+     */
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<Map<String, Object>> updateOrderStatus(
+            @PathVariable Integer orderId,
+            @RequestBody Map<String, String> statusData,
+            HttpSession session) {
+
+        log.info("=== 주문 상태 업데이트 - orderId: {}, newStatus: {} ===", orderId, statusData.get("orderStatus"));
+
+        Map<String, Object> response = new HashMap<>();
+        String orderStatus = statusData.get("orderStatus");
+
+        try {
+            // 로그인 체크
+            Member member = (Member) session.getAttribute("member");
+            if (member == null) {
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다.");
+                return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).body(response);
+            }
+
+            // 주문 소유자 확인
+            Order order = orderService.getOrderById(orderId);
+            if (order == null || !order.getMemberNum().equals(member.getMemberNum())) {
+                response.put("success", false);
+                response.put("message", "해당 주문에 대한 접근 권한이 없습니다.");
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).body(response);
+            }
+
+            int result = orderService.updateOrderStatus(orderId, orderStatus);
+
+            if (result > 0) {
+                response.put("success", true);
+                response.put("message", "주문 상태가 성공적으로 업데이트되었습니다.");
+                log.info("주문 상태 업데이트 성공 - orderId: {}, newStatus: {}", orderId, orderStatus);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "주문 상태 업데이트에 실패했습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+        } catch (Exception e) {
+            log.error("주문 상태 업데이트 중 오류 발생: ", e);
+            response.put("success", false);
+            response.put("message", "주문 상태 업데이트 중 오류가 발생했습니다.");
+            return ResponseEntity.internalServerError().body(response);
         }
     }
 }

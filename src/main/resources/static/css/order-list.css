@@ -104,6 +104,16 @@
     color: #6a1b9a;
 }
 
+.order-status.RETURN {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.order-status.SWAP {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
 .order-body {
     padding: 20px;
 }
@@ -214,6 +224,38 @@
 
 .btn-detail:hover {
     background-color: #219653;
+}
+
+.btn-return {
+    padding: 10px 20px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-return:hover {
+    background-color: #c0392b;
+}
+
+.btn-swap {
+    padding: 10px 20px;
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-swap:hover {
+    background-color: #d68910;
 }
 
 /* 빈 상태 */
