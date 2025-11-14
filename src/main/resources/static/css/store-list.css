@@ -1,6 +1,15 @@
 /* ==================== 가게 목록 페이지 전용 스타일 ==================== */
 /* market-list.css 스타일을 기반으로 작성되었습니다 */
 
+/* ==================== 페이지별 색상 변수 ==================== */
+:root {
+    --primary-color: #f39c12;
+    --primary-hover: #d68910;
+    --primary-light: #fef5e7;
+    --accent-color: #e67e22;
+    --accent-hover: #d35400;
+}
+
 /* ==================== 페이지 타이틀 섹션 ==================== */
 .page-title-section {
     background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
@@ -41,13 +50,13 @@
 
 .search-bar input:focus {
     outline: none;
-    border-color: #f39c12;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
 }
 
 .search-btn {
     padding: 15px 35px;
-    background: #e67e22;
+    background: var(--accent-color);
     color: white;
     border: none;
     border-radius: 25px;
@@ -59,7 +68,7 @@
 }
 
 .search-btn:hover {
-    background: #d35400;
+    background: var(--accent-hover);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
@@ -101,15 +110,15 @@
 }
 
 .filter-btn:hover {
-    border-color: #f39c12;
-    color: #f39c12;
-    background: #fef5e7;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-light);
 }
 
 .filter-btn.active {
-    background: #f39c12;
+    background: var(--primary-color);
     color: white;
-    border-color: #f39c12;
+    border-color: var(--primary-color);
 }
 
 /* 정렬 섹션 */
@@ -139,17 +148,17 @@
 
 .sort-section select:focus {
     outline: none;
-    border-color: #f39c12;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
 }
 
 /* 검색 결과 정보 */
 .search-result-info {
     padding: 20px;
-    background: #fef5e7;
+    background: var(--primary-light);
     border-radius: 10px;
     margin-top: 20px;
-    border-left: 4px solid #f39c12;
+    border-left: 4px solid var(--primary-color);
 }
 
 .search-result-info p {
@@ -159,7 +168,7 @@
 }
 
 .search-result-info strong {
-    color: #f39c12;
+    color: var(--primary-color);
     font-weight: 700;
 }
 
@@ -175,7 +184,7 @@
     text-align: center;
     padding: 60px 0;
     font-size: 1.5rem;
-    color: #f39c12;
+    color: var(--primary-color);
 }
 
 .loading-spinner i {
@@ -283,11 +292,11 @@
 }
 
 .favorite-btn.active {
-    color: #e74c3c;
+    color: var(--primary-color);
 }
 
 .favorite-btn.active:hover {
-    color: #c0392b;
+    color: var(--primary-hover);
 }
 
 /* 가게 배지 */
@@ -295,7 +304,7 @@
     position: absolute;
     top: 15px;
     left: 15px;
-    background: #f39c12;
+    background: var(--primary-color);
     color: white;
     padding: 6px 15px;
     border-radius: 15px;
@@ -340,7 +349,7 @@
 }
 
 .info-item i {
-    color: #f39c12;
+    color: var(--primary-color);
     width: 16px;
 }
 
@@ -367,7 +376,7 @@
 }
 
 .stat-item i {
-    color: #f39c12;
+    color: var(--primary-color);
 }
 
 .store-actions {
@@ -377,8 +386,8 @@
 
 .btn-link {
     padding: 8px 16px;
-    background: #fef5e7;
-    color: #f39c12;
+    background: var(--primary-light);
+    color: var(--primary-color);
     border: none;
     border-radius: 8px;
     text-decoration: none;
@@ -392,7 +401,7 @@
 }
 
 .btn-link:hover {
-    background: #f39c12;
+    background: var(--primary-color);
     color: white;
 }
 
@@ -449,9 +458,9 @@
 }
 
 .pagination-btn:hover:not(:disabled) {
-    border-color: #f39c12;
-    color: #f39c12;
-    background: #fef5e7;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-light);
 }
 
 .pagination-btn:disabled {
@@ -482,15 +491,15 @@
 }
 
 .pagination-number:hover {
-    border-color: #f39c12;
-    color: #f39c12;
-    background: #fef5e7;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-light);
 }
 
 .pagination-number.active {
-    background: #f39c12;
+    background: var(--primary-color);
     color: white;
-    border-color: #f39c12;
+    border-color: var(--primary-color);
 }
 
 /* ==================== 반응형 디자인 ==================== */

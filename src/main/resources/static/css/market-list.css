@@ -1,6 +1,15 @@
 /* ==================== 시장 목록 페이지 전용 스타일 ==================== */
 /* localmarket.css의 스타일을 기반으로 작성되었습니다 */
 
+/* ==================== 페이지별 색상 변수 ==================== */
+:root {
+    --primary-color: #3498db;
+    --primary-hover: #2980b9;
+    --primary-light: #ecf8ff;
+    --accent-color: #e74c3c;
+    --accent-hover: #c0392b;
+}
+
 /* ==================== 페이지 타이틀 섹션 ==================== */
 .page-title-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -41,13 +50,13 @@
 
 .search-bar input:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 .search-btn {
     padding: 15px 35px;
-    background: #e74c3c;
+    background: var(--accent-color);
     color: white;
     border: none;
     border-radius: 25px;
@@ -59,7 +68,7 @@
 }
 
 .search-btn:hover {
-    background: #c0392b;
+    background: var(--accent-hover);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
@@ -106,15 +115,15 @@
 }
 
 .filter-btn:hover {
-    border-color: #3498db;
-    color: #3498db;
-    background: #ecf8ff;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-light);
 }
 
 .filter-btn.active {
-    background: #3498db;
+    background: var(--primary-color);
     color: white;
-    border-color: #3498db;
+    border-color: var(--primary-color);
 }
 
 /* 정렬 섹션 */
@@ -144,17 +153,17 @@
 
 .sort-section select:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 /* 검색 결과 정보 */
 .search-result-info {
     padding: 20px;
-    background: #ecf8ff;
+    background: var(--primary-light);
     border-radius: 10px;
     margin-top: 20px;
-    border-left: 4px solid #3498db;
+    border-left: 4px solid var(--primary-color);
 }
 
 .search-result-info p {
@@ -164,7 +173,7 @@
 }
 
 .search-result-info strong {
-    color: #3498db;
+    color: var(--primary-color);
     font-weight: 700;
 }
 
@@ -180,7 +189,7 @@
     text-align: center;
     padding: 60px 0;
     font-size: 1.5rem;
-    color: #3498db;
+    color: var(--primary-color);
 }
 
 .loading-spinner i {
@@ -288,11 +297,11 @@
 }
 
 .favorite-btn.active {
-    color: #e74c3c;
+    color: var(--accent-color);
 }
 
 .favorite-btn.active:hover {
-    color: #c0392b;
+    color: var(--accent-hover);
 }
 
 /* 시장 배지 - localmarket.css의 card-badge 스타일 사용 */
@@ -300,7 +309,7 @@
     position: absolute;
     top: 15px;
     left: 15px;
-    background: #e74c3c;
+    background: var(--accent-color);
     color: white;
     padding: 6px 15px;
     border-radius: 15px;
@@ -354,7 +363,7 @@
 }
 
 .info-item i {
-    color: #3498db;
+    color: var(--primary-color);
     width: 16px;
 }
 
@@ -381,7 +390,7 @@
 }
 
 .stat-item i {
-    color: #3498db;
+    color: var(--primary-color);
 }
 
 .market-actions {
@@ -391,8 +400,8 @@
 
 .btn-link {
     padding: 8px 16px;
-    background: #ecf8ff;
-    color: #3498db;
+    background: var(--primary-light);
+    color: var(--primary-color);
     border-radius: 8px;
     text-decoration: none;
     font-size: 0.85rem;
@@ -404,7 +413,7 @@
 }
 
 .btn-link:hover {
-    background: #3498db;
+    background: var(--primary-color);
     color: white;
 }
 
@@ -461,9 +470,9 @@
 }
 
 .pagination-btn:hover:not(:disabled) {
-    border-color: #3498db;
-    color: #3498db;
-    background: #ecf8ff;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-light);
 }
 
 .pagination-btn:disabled {
@@ -494,15 +503,15 @@
 }
 
 .pagination-number:hover {
-    border-color: #3498db;
-    color: #3498db;
-    background: #ecf8ff;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-light);
 }
 
 .pagination-number.active {
-    background: #3498db;
+    background: var(--primary-color);
     color: white;
-    border-color: #3498db;
+    border-color: var(--primary-color);
 }
 
 /* ==================== favorite-count 스타일 추가 ==================== */
@@ -515,7 +524,7 @@
 }
 
 .favorite-count i {
-    color: #e74c3c;
+    color: var(--accent-color);
 }
 
 /* ==================== 반응형 디자인 ==================== */
