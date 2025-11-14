@@ -150,29 +150,69 @@ public class HomeController {
     }
     
     /**
-     * 검색 페이지
+     * 검색 페이지 - 시장, 가게, 상품 통합 검색
      */
     @GetMapping("/search")
     public String search(@org.springframework.web.bind.annotation.RequestParam("keyword") String keyword, Model model) {
         try {
-            log.info("검색 요청: {}", keyword);
-            
+            log.info("=== 통합 검색 시작 ===");
+            log.info("검색 키워드: {}", keyword);
+
             if (keyword != null && !keyword.trim().isEmpty()) {
-                // 검색 결과 조회 로직
-                // List<Market> marketResults = marketService.searchMarkets(keyword);
-                // List<Store> storeResults = storeService.searchStores(keyword);
-                // List<Product> productResults = productService.searchProducts(keyword);
-                
-                // model.addAttribute("marketResults", marketResults);
-                // model.addAttribute("storeResults", storeResults);
-                // model.addAttribute("productResults", productResults);
+                keyword = keyword.trim();
+
+                // 시장 검색 (이름, 주소 포함)
+                List<Market> marketResults = new ArrayList<>();
+                List<Market> marketsByName = marketService.searchMarketsByName(keyword);
+                List<Market> marketsByAddress = marketService.searchMarketsByAddress(keyword);
+                if (marketsByName != null) marketResults.addAll(marketsByName);
+                if (marketsByAddress != null) {
+                    for (Market market : marketsByAddress) {
+                        if (!marketResults.contains(market)) {
+                            marketResults.add(market);
+                        }
+                    }
+                }
+                log.info("시장 검색 결과: {} 개", marketResults.size());
+
+                // 가게 검색 (이름)
+                List<Store> storeResults = storeService.searchStoresByName(keyword);
+                if (storeResults == null) storeResults = new ArrayList<>();
+                log.info("가게 검색 결과: {} 개", storeResults.size());
+
+                // 상품 검색 (이름)
+                List<Product> productResults = productService.searchProductsByName(keyword);
+                if (productResults == null) productResults = new ArrayList<>();
+                log.info("상품 검색 결과: {} 개", productResults.size());
+
+                // 결과를 Model에 추가
                 model.addAttribute("keyword", keyword);
+                model.addAttribute("marketResults", marketResults);
+                model.addAttribute("storeResults", storeResults);
+                model.addAttribute("productResults", productResults);
+                model.addAttribute("totalResults", marketResults.size() + storeResults.size() + productResults.size());
+
+                log.info("총 검색 결과: {} 개", marketResults.size() + storeResults.size() + productResults.size());
+            } else {
+                log.warn("검색 키워드가 비어있습니다");
+                model.addAttribute("keyword", "");
+                model.addAttribute("marketResults", new ArrayList<>());
+                model.addAttribute("storeResults", new ArrayList<>());
+                model.addAttribute("productResults", new ArrayList<>());
+                model.addAttribute("totalResults", 0);
             }
-            
+
+            log.info("=== 통합 검색 완료 ===");
+
         } catch (Exception e) {
             log.error("검색 처리 중 오류 발생", e);
+            model.addAttribute("keyword", keyword != null ? keyword : "");
+            model.addAttribute("marketResults", new ArrayList<>());
+            model.addAttribute("storeResults", new ArrayList<>());
+            model.addAttribute("productResults", new ArrayList<>());
+            model.addAttribute("totalResults", 0);
         }
-        
+
         return "search/results";
     }
 }

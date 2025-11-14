@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색 결과 - LocalMarket</title>
+
+    <!-- CSS 파일 -->
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/search-results.css}">
+
+    <!-- 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 아이콘 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div th:replace="~{common/header}"></div>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="search-results-main">
+        <div class="search-container">
+            <!-- 검색 결과 헤더 -->
+            <div class="search-header">
+                <div class="search-header-content">
+                    <h1>검색 결과</h1>
+                    <p class="search-keyword">
+                        '<span th:text="${keyword}"></span>'
+                        <span class="result-count">총 <strong th:text="${totalResults}"></strong>개</span>
+                    </p>
+                </div>
+
+                <!-- 새로운 검색 -->
+                <div class="new-search-form">
+                    <form th:action="@{/search}" method="get" class="search-form">
+                        <input type="text" name="keyword" class="search-input"
+                               th:value="${keyword}" placeholder="다시 검색해보세요">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 검색 결과 섹션 -->
+            <div class="results-wrapper">
+                <!-- 1. 시장 영역 -->
+                <section class="result-section market-section" th:if="${!marketResults.isEmpty()}">
+                    <div class="section-header">
+                        <h2><i class="fas fa-map-marker-alt"></i> 전통시장 (<span th:text="${marketResults.size()}"></span>)</h2>
+                    </div>
+                    <div class="result-items">
+                        <div class="result-item market-item" th:each="market : ${marketResults}">
+                            <div class="item-image" th:if="${market.marketFilename != null and market.marketFilename != ''}">
+                                <img th:src="@{/images/markets/{filename}(filename=${market.marketFilename})}" alt="시장 이미지"
+                                     onerror="this.src='/images/default-market.png'">
+                                <div class="item-badge">시장</div>
+                            </div>
+                            <div class="item-image item-image-empty" th:if="${market.marketFilename == null or market.marketFilename == ''}">
+                                <i class="fas fa-image"></i>
+                                <div class="item-badge">시장</div>
+                            </div>
+                            <div class="item-content">
+                                <h3 class="item-title">
+                                    <a th:href="@{/markets/{id}(id=${market.marketId})}" th:text="${market.marketName}"></a>
+                                </h3>
+                                <p class="item-address">
+                                    <i class="fas fa-location-dot"></i>
+                                    <span th:text="${market.marketAddress}"></span>
+                                </p>
+                                <p class="item-description" th:text="${market.marketIntroduce}"></p>
+                                <div class="item-footer">
+                                    <span class="favorites-count" th:if="${market.favoriteCount != null and market.favoriteCount > 0}">
+                                        <i class="fas fa-heart"></i>
+                                        <span th:text="${market.favoriteCount}"></span>
+                                    </span>
+                                    <button class="view-btn"
+                                            th:onclick="'location.href=\'/markets/' + ${market.marketId} + '\''">
+                                        자세히 보기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. 가게 영역 -->
+                <section class="result-section store-section" th:if="${!storeResults.isEmpty()}">
+                    <div class="section-header">
+                        <h2><i class="fas fa-store-alt"></i> 가게 (<span th:text="${storeResults.size()}"></span>)</h2>
+                    </div>
+                    <div class="result-items">
+                        <div class="result-item store-item" th:each="store : ${storeResults}">
+                            <div class="item-image" th:if="${store.storeFilename != null and store.storeFilename != ''}">
+                                <img th:src="@{/images/stores/{filename}(filename=${store.storeFilename})}" alt="가게 이미지"
+                                     onerror="this.src='/images/default-store.png'">
+                                <div class="item-badge">가게</div>
+                            </div>
+                            <div class="item-image item-image-empty" th:if="${store.storeFilename == null or store.storeFilename == ''}">
+                                <i class="fas fa-image"></i>
+                                <div class="item-badge">가게</div>
+                            </div>
+                            <div class="item-content">
+                                <h3 class="item-title">
+                                    <a th:href="@{/stores/{id}(id=${store.storeId})}" th:text="${store.storeName}"></a>
+                                </h3>
+                                <p class="item-category">
+                                    <span class="category-badge" th:text="${store.storeCategory}"></span>
+                                </p>
+                                <p class="item-description" th:text="${store.marketName}"></p>
+                                <div class="item-footer">
+                                    <button class="view-btn"
+                                            th:onclick="'location.href=\'/products?storeId=' + ${store.storeId} + '\''">
+                                        상품보기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. 상품 영역 -->
+                <section class="result-section product-section" th:if="${!productResults.isEmpty()}">
+                    <div class="section-header">
+                        <h2><i class="fas fa-shopping-bag"></i> 상품 (<span th:text="${productResults.size()}"></span>)</h2>
+                    </div>
+                    <div class="result-items">
+                        <div class="result-item product-item" th:each="product : ${productResults}">
+                            <div class="item-image" th:if="${product.productFilename != null and product.productFilename != ''}">
+                                <img th:src="@{/images/products/{filename}(filename=${product.productFilename})}" alt="상품 이미지"
+                                     onerror="this.src='/images/default-product.png'">
+                                <div class="item-badge">상품</div>
+                            </div>
+                            <div class="item-image item-image-empty" th:if="${product.productFilename == null or product.productFilename == ''}">
+                                <i class="fas fa-image"></i>
+                                <div class="item-badge">상품</div>
+                            </div>
+                            <div class="item-content">
+                                <h3 class="item-title">
+                                    <a th:href="@{/products/{id}(id=${product.productId})}" th:text="${product.productName}"></a>
+                                </h3>
+                                <p class="item-store">
+                                    <i class="fas fa-store"></i>
+                                    <span th:text="${product.storeName}"></span>
+                                </p>
+                                <p class="item-price">
+                                    <strong th:text="${#numbers.formatInteger(product.productPrice, 3, 'COMMA')}"></strong>원
+                                </p>
+                                <div class="item-stats">
+                                    <span class="stock-status"
+                                          th:classappend="${product.productAmount > 0 ? 'in-stock' : 'out-of-stock'}">
+                                        <i th:class="${product.productAmount > 0 ? 'fas fa-check-circle' : 'fas fa-times-circle'}"></i>
+                                        <span th:text="${product.productAmount > 0 ? '재고 있음' : '재고 없음'}"></span>
+                                    </span>
+                                </div>
+                                <div class="item-footer">
+                                    <button class="view-btn"
+                                            th:onclick="'location.href=\'/products/' + ${product.productId} + '\''">
+                                        상세보기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 검색 결과 없음 메시지 -->
+                <div class="no-results" th:if="${totalResults == 0}">
+                    <div class="no-results-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h2>검색 결과가 없습니다</h2>
+                    <p>다른 검색어로 다시 시도해보세요</p>
+                    <a th:href="@{/}" class="back-home-btn">홈으로 돌아가기</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <div th:replace="~{common/footer}"></div>
+
+    <script>
+        $(document).ready(function() {
+            // 검색 폼 validation
+            $('.search-form').on('submit', function(e) {
+                const keyword = $(this).find('.search-input').val().trim();
+                if (keyword === '') {
+                    e.preventDefault();
+                    alert('검색어를 입력해주세요.');
+                    $(this).find('.search-input').focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
