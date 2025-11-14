@@ -39,18 +39,16 @@
                     <div class="card-badge">HOT</div>
                 </div>
                 <div class="card-content">
-                    <h3 class="card-title" th:text="${market.marketName}">남대문시장</h3>
-                    <p class="card-description" th:text="${market.marketIntroduce ?: '전통과 현대가 어우러진 대표 전통시장'}">
-                        전통과 현대가 어우러진 대표 전통시장
-                    </p>
+                    <h3 class="card-title" th:text="${market.marketName}"></h3>
+                    <p class="card-description" th:text="${market.marketIntroduce ?: '전통과 현대가 어우러진 대표 전통시장'}"></p>
                     <div class="card-meta">
                         <span class="card-location">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span th:text="${market.marketLocal}">서울특별시</span>
+                            <span th:text="${market.marketLocal}"></span>
                         </span>
                         <span class="favorite-count" th:if="${market.favoriteCount != null}">
                             <i class="fas fa-heart"></i>
-                            <span th:text="${market.favoriteCount}">24</span>
+                            <span th:text="${market.favoriteCount}"></span>
                         </span>
                     </div>
                 </div>
@@ -83,21 +81,19 @@
                         <p>이미지 없음</p>
                     </div>
                     
-                    <div class="card-badge" th:text="${store.storeCategory}">정육점</div>
+                    <div class="card-badge" th:text="${store.storeCategory}"></div>
                 </div>
                 <div class="card-content">
-                    <h3 class="card-title" th:text="${store.storeName}">김씨 한우전문점</h3>
-                    <p class="card-description" th:text="${store.storeCategory + ' - ' + (store.marketName ?: '전통시장')}">
-                        정육점 - 남대문시장
-                    </p>
+                    <h3 class="card-title" th:text="${store.storeName}"></h3>
+                    <p class="card-description" th:text="${store.storeCategory + ' - ' + (store.marketName ?: '전통시장')}"></p>
                     <div class="card-meta">
                         <span class="card-location">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span th:text="${store.marketLocal ?: '전통시장'}">서울특별시</span>
+                            <span th:text="${store.marketLocal ?: '전통시장'}"></span>
                         </span>
                         <span class="card-location">
                             <i class="fas fa-store"></i>
-                            <span th:text="${store.storeCategory}">정육점</span>
+                            <span th:text="${store.storeCategory}"></span>
                         </span>
                     </div>
                 </div>
@@ -130,10 +126,10 @@
                     </div>
                 </div>
                 <div class="product-info">
-                    <h4 class="product-name" th:text="${product.productName}">한우 등심</h4>
-                    <div class="product-price" th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA') + '원'}">45,000원</div>
+                    <h4 class="product-name" th:text="${product.productName}"></h4>
+                    <div class="product-price" th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA') + '원'}"></div>
                     <div class="product-store" th:if="${product.productAmount != null}">
-                        재고: <span th:text="${product.productAmount + '개'}">10개</span>
+                        재고: <span th:text="${product.productAmount + '개'}"></span>
                     </div>
                     <button class="add-to-cart" 
                             th:onclick="'location.href=\'/products/' + ${product.productId} + '\''">
@@ -153,7 +149,7 @@
 <section class="section" style="background-color: white; padding: 60px 0; margin-top: 0;">
     <div class="container">
         <div class="section-header">
-            <h2 class="section-title">공지사항 & 이벤트</h2>
+            <h2 class="section-title">공지사항 & 게시판</h2>
             <p class="section-subtitle">LocalMarket의 새로운 소식을 확인하세요</p>
         </div>
         
@@ -167,8 +163,8 @@
                 <ul style="list-style: none;">
                     <li th:each="notice : ${recentNotices}" style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
                         <a th:href="@{/notices/{id}(id=${notice.noticeId})}" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;" th:text="${notice.noticeTitle}">공지사항 제목</span>
-                            <span style="color: #7f8c8d; font-size: 0.9rem; margin-left: 10px;" th:text="${#temporals.format(notice.writeDate, 'MM-dd')}">11-10</span>
+                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;" th:text="${notice.noticeTitle}"></span>
+                            <span style="color: #7f8c8d; font-size: 0.9rem; margin-left: 10px;" th:text="${#temporals.format(notice.writeDate, 'MM-dd')}"></span>
                         </a>
                     </li>
                 </ul>
@@ -186,8 +182,8 @@
                 <ul style="list-style: none;">
                     <li th:each="board : ${recentBoards}" style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
                         <a th:href="@{/boards/{id}(id=${board.boardId})}" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;" th:text="${board.boardTitle}">게시글 제목</span>
-                            <span style="color: #7f8c8d; font-size: 0.9rem; margin-left: 10px;" th:text="${#temporals.format(board.writeDate, 'MM-dd')}">11-10</span>
+                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;" th:text="${board.boardTitle}"></span>
+                            <span style="color: #7f8c8d; font-size: 0.9rem; margin-left: 10px;" th:text="${#temporals.format(board.writeDate, 'MM-dd')}"></span>
                         </a>
                     </li>
                 </ul>
