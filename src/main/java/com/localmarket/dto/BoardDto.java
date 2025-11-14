@@ -15,4 +15,5 @@ public class BoardDto {
     private Integer memberNum;
     private Integer storeId;
     private Integer marketId;     // 시장 ID 추가
+    private String boardFilename; // 게시물 첨부 파일명
 }

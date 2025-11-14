@@ -147,6 +147,7 @@ CREATE TABLE board (
     updated_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     member_num INT NOT NULL,
     store_id INT,
+    board_filename VARCHAR(255),
     FOREIGN KEY (member_num) REFERENCES member(member_num) ON DELETE CASCADE,
     FOREIGN KEY (store_id) REFERENCES store(store_id) ON DELETE CASCADE
 );

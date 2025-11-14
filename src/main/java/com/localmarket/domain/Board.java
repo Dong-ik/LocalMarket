@@ -15,7 +15,8 @@ public class Board {
     private Integer memberNum;
     private Integer storeId;
     private Integer marketId;     // 시장 ID 추가
-    
+    private String boardFilename; // 게시물 첨부 파일명
+
     // JOIN 필드들 (조회 시 추가 정보)
     private String memberName;    // 작성자 이름
     private String storeName;     // 가게 이름
