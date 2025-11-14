@@ -36,7 +36,7 @@ main {
 .hero-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 120px 0 80px;
+    padding: 60px 0 40px;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -61,15 +61,15 @@ main {
 }
 
 .hero-content h2 {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     line-height: 1.2;
 }
 
 .hero-content p {
-    font-size: 1.3rem;
-    margin-bottom: 2.5rem;
+    font-size: 1rem;
+    margin-bottom: 0;
     opacity: 0.9;
     line-height: 1.6;
 }
