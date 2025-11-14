@@ -5,8 +5,7 @@ import com.localmarket.dto.MemberDto;
 import com.localmarket.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,19 +19,15 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
-
-    @Autowired
-    @Qualifier("passwordEncoder")
-    private Object passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     // 비밀번호 암호화 헬퍼 메서드
     private String encodePassword(String rawPassword) {
         try {
-            if (passwordEncoder != null) {
-                // 리플렉션을 이용한 encode 메서드 호출
-                java.lang.reflect.Method encodeMethod = passwordEncoder.getClass()
-                    .getMethod("encode", CharSequence.class);
-                return (String) encodeMethod.invoke(passwordEncoder, rawPassword);
+            if (passwordEncoder != null && rawPassword != null) {
+                String encoded = passwordEncoder.encode(rawPassword);
+                log.debug("비밀번호 암호화 성공");
+                return encoded;
             }
         } catch (Exception e) {
             log.error("비밀번호 암호화 실패", e);
@@ -43,16 +38,23 @@ public class MemberServiceImpl implements MemberService {
     // 비밀번호 검증 헬퍼 메서드
     private boolean matchPassword(String rawPassword, String encodedPassword) {
         try {
-            if (passwordEncoder != null && encodedPassword != null) {
-                // 리플렉션을 이용한 matches 메서드 호출
-                java.lang.reflect.Method matchesMethod = passwordEncoder.getClass()
-                    .getMethod("matches", CharSequence.class, String.class);
-                return (Boolean) matchesMethod.invoke(passwordEncoder, rawPassword, encodedPassword);
+            if (passwordEncoder != null && encodedPassword != null && rawPassword != null) {
+                log.debug("BCrypt 검증 시작");
+                log.debug("입력된 평문 비밀번호: {}", rawPassword);
+                log.debug("DB에 저장된 암호화된 비밀번호: {}", encodedPassword);
+
+                boolean result = passwordEncoder.matches(rawPassword, encodedPassword);
+
+                log.debug("BCrypt 검증 결과: {}", result);
+                return result;
+            } else {
+                log.warn("passwordEncoder, rawPassword 또는 encodedPassword가 null입니다. passwordEncoder: {}, rawPassword: {}, encodedPassword: {}",
+                    passwordEncoder != null, rawPassword != null, encodedPassword != null);
             }
         } catch (Exception e) {
             log.error("비밀번호 검증 실패", e);
         }
-        return rawPassword.equals(encodedPassword); // 실패 시 평문 비교
+        return false; // 실패 시 false 반환
     }
     
     @Override
@@ -271,15 +273,22 @@ public class MemberServiceImpl implements MemberService {
         try {
             // 현재 비밀번호 확인
             Member member = memberMapper.selectMemberByNum(memberNum);
-            if (member == null || !member.getPassword().equals(currentPassword)) {
+            if (member == null) {
+                log.warn("비밀번호 변경 실패: 존재하지 않는 회원 - {}", memberNum);
+                return false;
+            }
+
+            // BCrypt를 이용한 현재 비밀번호 검증
+            if (!matchPassword(currentPassword, member.getPassword())) {
                 log.warn("비밀번호 변경 실패: 현재 비밀번호 불일치 - {}", memberNum);
                 return false;
             }
-            
-            // 새 비밀번호로 업데이트
-            member.setPassword(newPassword);
+
+            // 새 비밀번호 암호화 후 업데이트
+            String encodedNewPassword = encodePassword(newPassword);
+            member.setPassword(encodedNewPassword);
             int result = memberMapper.updateMember(member);
-            
+
             if (result > 0) {
                 log.info("비밀번호 변경 성공: {}", memberNum);
                 return true;
