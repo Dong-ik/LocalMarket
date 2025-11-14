@@ -44,6 +44,13 @@
             </div>
         </div>
         
+        <!-- 이미지 -->
+        <div th:if="${board.boardFilename != null}" class="board-image" style="margin-bottom: 30px;">
+            <img th:src="@{/images/boards/{filename}(filename=${board.boardFilename})}"
+                 alt="게시글 이미지"
+                 style="max-width: 100%; max-height: 500px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+        </div>
+
         <!-- 본문 -->
         <div class="board-content" th:utext="${#strings.replace(#strings.replace(board.boardContent, '\n', '&lt;br&gt;'), '\r', '')}">
             게시글 내용

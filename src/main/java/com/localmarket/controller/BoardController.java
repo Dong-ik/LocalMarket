@@ -11,10 +11,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -441,6 +447,79 @@ public class BoardController {
             log.error("댓글 삭제 중 오류 발생: ", e);
             response.put("success", false);
             response.put("message", "댓글 삭제 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 게시글 이미지 업로드
+     * POST /api/boards/upload-image
+     */
+    @PostMapping("/upload-image")
+    public ResponseEntity<Map<String, Object>> uploadBoardImage(@RequestParam("file") MultipartFile file) {
+        log.info("게시글 이미지 업로드 요청 - 파일명: {}", file.getOriginalFilename());
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // 파일 검증
+            if (file.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "파일이 선택되지 않았습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // 허용된 파일 형식 확인
+            String filename = file.getOriginalFilename();
+            String fileExtension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+            String[] allowedExtensions = {"jpg", "jpeg", "png", "gif", "webp"};
+
+            boolean isAllowed = false;
+            for (String ext : allowedExtensions) {
+                if (fileExtension.equals(ext)) {
+                    isAllowed = true;
+                    break;
+                }
+            }
+
+            if (!isAllowed) {
+                response.put("success", false);
+                response.put("message", "허용된 파일 형식이 아닙니다. (jpg, jpeg, png, gif, webp만 가능)");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // 파일 크기 확인 (5MB 제한)
+            if (file.getSize() > 5 * 1024 * 1024) {
+                response.put("success", false);
+                response.put("message", "파일 크기가 5MB를 초과했습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // 저장 경로 생성
+            String uploadDir = "src/main/resources/static/images/boards";
+            File uploadDirFile = new File(uploadDir);
+            if (!uploadDirFile.exists()) {
+                uploadDirFile.mkdirs();
+            }
+
+            // 고유한 파일명 생성 (UUID + 원본 확장자)
+            String savedFilename = UUID.randomUUID().toString() + "." + fileExtension;
+            Path filePath = Paths.get(uploadDir, savedFilename);
+
+            // 파일 저장
+            Files.write(filePath, file.getBytes());
+
+            response.put("success", true);
+            response.put("message", "이미지가 성공적으로 업로드되었습니다.");
+            response.put("filename", savedFilename);
+            response.put("imageUrl", "/images/boards/" + savedFilename);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("이미지 업로드 중 오류 발생: ", e);
+            response.put("success", false);
+            response.put("message", "이미지 업로드 중 오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

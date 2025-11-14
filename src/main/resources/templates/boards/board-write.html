@@ -86,8 +86,8 @@
                 <label class="form-label">
                     내용<span class="required">*</span>
                 </label>
-                <textarea id="boardContent" 
-                          class="form-control" 
+                <textarea id="boardContent"
+                          class="form-control"
                           placeholder="내용을 입력하세요 (최대 2000자)"
                           maxlength="2000"
                           required></textarea>
@@ -95,6 +95,38 @@
                     <span id="contentCount">0</span> / 2000
                 </div>
                 <div class="error-message" id="contentError">내용을 입력해주세요.</div>
+            </div>
+
+            <!-- 이미지 업로드 -->
+            <div class="form-group">
+                <label class="form-label">
+                    이미지 첨부 (선택사항)
+                </label>
+                <div class="image-upload-box">
+                    <input type="file"
+                           id="imageFile"
+                           class="image-file-input"
+                           accept="image/*"
+                           style="display: none;">
+                    <button type="button" class="btn btn-outline" onclick="document.getElementById('imageFile').click()">
+                        <i class="fas fa-image"></i> 이미지 선택
+                    </button>
+                    <div id="imagePreview" class="image-preview" style="display: none; margin-top: 15px;">
+                        <img id="previewImg" src="" alt="미리보기" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                        <button type="button" class="btn btn-danger" onclick="removeImage()" style="margin-top: 10px;">
+                            <i class="fas fa-times"></i> 제거
+                        </button>
+                    </div>
+                    <div id="imageError" class="error-message" style="display: none;"></div>
+                    <div id="uploadingIndicator" style="display: none; color: #3498db; margin-top: 10px;">
+                        <i class="fas fa-spinner fa-spin"></i> 이미지 업로드 중...
+                    </div>
+                    <input type="hidden" id="boardFilename" value="">
+                </div>
+                <div class="help-text">
+                    <i class="fas fa-lightbulb"></i>
+                    JPG, PNG, GIF, WebP 형식만 가능하며 최대 5MB까지 업로드할 수 있습니다.
+                </div>
             </div>
             
             <!-- 버튼 -->
@@ -188,7 +220,91 @@
             document.getElementById('contentError').style.display = 'none';
         }
     });
-    
+
+    // 이미지 파일 선택 이벤트
+    const imageFile = document.getElementById('imageFile');
+    imageFile.addEventListener('change', async function() {
+        const file = this.files[0];
+        if (!file) return;
+
+        // 파일 크기 확인 (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showImageError('파일 크기가 5MB를 초과했습니다.');
+            return;
+        }
+
+        // 파일 형식 확인
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            showImageError('지원하지 않는 파일 형식입니다.');
+            return;
+        }
+
+        // 미리보기 표시
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('previewImg').src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+
+        // 이미지 업로드
+        await uploadImage(file);
+    });
+
+    // 이미지 업로드 함수
+    async function uploadImage(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        document.getElementById('uploadingIndicator').style.display = 'block';
+        document.getElementById('imageError').style.display = 'none';
+
+        try {
+            const response = await fetch('/api/boards/upload-image', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                document.getElementById('boardFilename').value = result.filename;
+                document.getElementById('uploadingIndicator').innerHTML = '<i class="fas fa-check"></i> 이미지 업로드 완료!';
+                document.getElementById('uploadingIndicator').style.color = '#10b981';
+            } else {
+                showImageError(result.message || '이미지 업로드에 실패했습니다.');
+                document.getElementById('imagePreview').style.display = 'none';
+                imageFile.value = '';
+            }
+        } catch (error) {
+            console.error('업로드 오류:', error);
+            showImageError('이미지 업로드 중 오류가 발생했습니다.');
+            document.getElementById('imagePreview').style.display = 'none';
+            imageFile.value = '';
+        } finally {
+            setTimeout(() => {
+                document.getElementById('uploadingIndicator').style.display = 'none';
+            }, 2000);
+        }
+    }
+
+    // 이미지 제거 함수
+    function removeImage() {
+        document.getElementById('imageFile').value = '';
+        document.getElementById('imagePreview').style.display = 'none';
+        document.getElementById('boardFilename').value = '';
+        document.getElementById('imageError').style.display = 'none';
+        document.getElementById('uploadingIndicator').style.display = 'none';
+    }
+
+    // 이미지 에러 표시 함수
+    function showImageError(message) {
+        document.getElementById('imageError').textContent = message;
+        document.getElementById('imageError').style.display = 'block';
+        document.getElementById('uploadingIndicator').style.display = 'none';
+    }
+
     // 폼 제출
     document.getElementById('boardForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -218,11 +334,13 @@
         
         // 데이터 준비
         const marketId = document.getElementById('marketId').value;
+        const boardFilename = document.getElementById('boardFilename').value;
         const boardData = {
             boardTitle: title,
             boardContent: content,
             storeId: storeId || null,
             marketId: marketId || null,
+            boardFilename: boardFilename || null,
             memberNum: memberNum  // 세션에서 가져온 회원번호
         };
         
