@@ -36,13 +36,14 @@ main {
 .hero-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 60px 0 40px;
+    padding: 40px 0;
     text-align: center;
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 200px;
 }
 
 .hero-section::before {
