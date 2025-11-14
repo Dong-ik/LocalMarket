@@ -35,26 +35,37 @@ public class MemberServiceImpl implements MemberService {
         return rawPassword; // 실패 시 원본 반환
     }
 
-    // 비밀번호 검증 헬퍼 메서드
+    // 비밀번호 검증 헬퍼 메서드 (BCrypt와 평문 모두 지원)
     private boolean matchPassword(String rawPassword, String encodedPassword) {
         try {
-            if (passwordEncoder != null && encodedPassword != null && rawPassword != null) {
+            if (encodedPassword == null || rawPassword == null) {
+                log.warn("rawPassword 또는 encodedPassword가 null입니다");
+                return false;
+            }
+
+            // BCrypt 해시인지 확인 (BCrypt 해시는 $2a$, $2b$, $2y$로 시작)
+            if (encodedPassword.matches("^\\$2[aby]\\$\\d{2}\\$.{53}$")) {
+                // BCrypt 해시로 검증
                 log.debug("BCrypt 검증 시작");
                 log.debug("입력된 평문 비밀번호: {}", rawPassword);
-                log.debug("DB에 저장된 암호화된 비밀번호: {}", encodedPassword);
+                log.debug("DB에 저장된 BCrypt 해시: {}", encodedPassword.substring(0, 20) + "...");
 
-                boolean result = passwordEncoder.matches(rawPassword, encodedPassword);
-
-                log.debug("BCrypt 검증 결과: {}", result);
-                return result;
+                if (passwordEncoder != null) {
+                    boolean result = passwordEncoder.matches(rawPassword, encodedPassword);
+                    log.debug("BCrypt 검증 결과: {}", result);
+                    return result;
+                }
             } else {
-                log.warn("passwordEncoder, rawPassword 또는 encodedPassword가 null입니다. passwordEncoder: {}, rawPassword: {}, encodedPassword: {}",
-                    passwordEncoder != null, rawPassword != null, encodedPassword != null);
+                // 평문 비밀번호로 검증 (마이그레이션 기간용)
+                log.debug("평문 비밀번호 검증 (마이그레이션 기간)");
+                boolean result = rawPassword.equals(encodedPassword);
+                log.debug("평문 비밀번호 검증 결과: {}", result);
+                return result;
             }
         } catch (Exception e) {
             log.error("비밀번호 검증 실패", e);
         }
-        return false; // 실패 시 false 반환
+        return false;
     }
     
     @Override
