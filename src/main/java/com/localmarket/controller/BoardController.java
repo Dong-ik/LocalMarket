@@ -236,15 +236,18 @@ public class BoardController {
     @PostMapping("/{boardId}/like")
     public ResponseEntity<Map<String, Object>> increaseLike(@PathVariable("boardId") Integer boardId) {
         log.info("게시글 좋아요 증가 요청 - ID: {}", boardId);
-        
+
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
             int result = boardService.increaseLikeCount(boardId);
-            
+
             if (result > 0) {
+                // 업데이트된 게시글 정보 조회
+                Board board = boardService.getBoardByIdWithoutHit(boardId);
                 response.put("success", true);
                 response.put("message", "좋아요가 증가되었습니다.");
+                response.put("likeCnt", board != null ? board.getLikeCnt() : 0);
                 return ResponseEntity.ok(response);
             } else {
                 response.put("success", false);
@@ -266,15 +269,18 @@ public class BoardController {
     @DeleteMapping("/{boardId}/like")
     public ResponseEntity<Map<String, Object>> decreaseLike(@PathVariable("boardId") Integer boardId) {
         log.info("게시글 좋아요 감소 요청 - ID: {}", boardId);
-        
+
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
             int result = boardService.decreaseLikeCount(boardId);
-            
+
             if (result > 0) {
+                // 업데이트된 게시글 정보 조회
+                Board board = boardService.getBoardByIdWithoutHit(boardId);
                 response.put("success", true);
                 response.put("message", "좋아요가 감소되었습니다.");
+                response.put("likeCnt", board != null ? board.getLikeCnt() : 0);
                 return ResponseEntity.ok(response);
             } else {
                 response.put("success", false);
