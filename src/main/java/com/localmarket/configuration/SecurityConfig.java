@@ -21,9 +21,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
-                // 공개 경로 - 로그인 없이 접근 가능
+                // 공개 경로 - 로그인 없이 접근 가능 (GET/POST 모두)
                 .requestMatchers("/", "/home", "/products/**", "/markets/**", "/stores/**", "/search/**").permitAll()
                 .requestMatchers("/members/login", "/members/register", "/members/signup", "/members/join").permitAll()
+                .requestMatchers("/members/registerMember", "/members/loginMember", "/member/register", "/member/login").permitAll()
                 .requestMatchers("/images/**", "/css/**", "/js/**", "/static/**").permitAll()
                 // 나머지는 인증 필요
                 .anyRequest().authenticated()
