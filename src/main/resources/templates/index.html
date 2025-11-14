@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-
+<head>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
 <body> 
 <!-- 헤더 Include -->
 <div th:replace="~{common/header}"></div>
@@ -145,50 +147,50 @@
     </div>
 </section>
 
-<!-- 이벤트/공지사항 섹션 -->
-<section class="section" style="background-color: white; padding: 60px 0; margin-top: 0;">
+<!-- 공지사항/게시판 섹션 -->
+<section class="section news-section">
     <div class="container">
         <div class="section-header">
             <h2 class="section-title">공지사항 & 게시판</h2>
             <p class="section-subtitle">LocalMarket의 새로운 소식을 확인하세요</p>
         </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+
+        <div class="news-grid">
             <!-- 공지사항 -->
-            <div style="background: #f8f9fa; padding: 30px; border-radius: 15px;">
-                <h3 style="color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center;">
-                    <i class="fas fa-bullhorn" style="margin-right: 10px; color: #3498db;"></i>
+            <div class="news-box">
+                <h3>
+                    <i class="fas fa-bullhorn"></i>
                     공지사항
                 </h3>
-                <ul style="list-style: none;">
-                    <li th:each="notice : ${recentNotices}" style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
-                        <a th:href="@{/notices/{id}(id=${notice.noticeId})}" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;" th:text="${notice.noticeTitle}"></span>
-                            <span style="color: #7f8c8d; font-size: 0.9rem; margin-left: 10px;" th:text="${#temporals.format(notice.writeDate, 'MM-dd')}"></span>
+                <ul>
+                    <li th:each="notice : ${recentNotices}">
+                        <a th:href="@{/notices/{id}(id=${notice.noticeId})}">
+                            <span th:text="${notice.noticeTitle}"></span>
+                            <span th:text="${#temporals.format(notice.writeDate, 'MM-dd')}"></span>
                         </a>
                     </li>
                 </ul>
-                <div style="text-align: right; margin-top: 15px;">
-                    <a href="/notices" style="color: #3498db; text-decoration: none; font-size: 0.9rem;">더보기 →</a>
+                <div class="more-link">
+                    <a href="/notices">더보기 →</a>
                 </div>
             </div>
-            
+
             <!-- 최신 게시글 -->
-            <div style="background: #f8f9fa; padding: 30px; border-radius: 15px;">
-                <h3 style="color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center;">
-                    <i class="fas fa-comments" style="margin-right: 10px; color: #e74c3c;"></i>
+            <div class="news-box">
+                <h3>
+                    <i class="fas fa-comments"></i>
                     최신 게시글
                 </h3>
-                <ul style="list-style: none;">
-                    <li th:each="board : ${recentBoards}" style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
-                        <a th:href="@{/boards/{id}(id=${board.boardId})}" style="color: #2c3e50; text-decoration: none; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;" th:text="${board.boardTitle}"></span>
-                            <span style="color: #7f8c8d; font-size: 0.9rem; margin-left: 10px;" th:text="${#temporals.format(board.writeDate, 'MM-dd')}"></span>
+                <ul>
+                    <li th:each="board : ${recentBoards}">
+                        <a th:href="@{/boards/{id}(id=${board.boardId})}">
+                            <span th:text="${board.boardTitle}"></span>
+                            <span th:text="${#temporals.format(board.writeDate, 'MM-dd')}"></span>
                         </a>
                     </li>
                 </ul>
-                <div style="text-align: right; margin-top: 15px;">
-                    <a href="/boards" style="color: #3498db; text-decoration: none; font-size: 0.9rem;">더보기 →</a>
+                <div class="more-link">
+                    <a href="/boards">더보기 →</a>
                 </div>
             </div>
         </div>
