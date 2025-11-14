@@ -203,7 +203,7 @@ public class OrderViewController {
      */
     @PutMapping("/{orderId}/status")
     public ResponseEntity<Map<String, Object>> updateOrderStatus(
-            @PathVariable Integer orderId,
+            @PathVariable("orderId") Integer orderId,
             @RequestBody Map<String, String> statusData,
             HttpSession session) {
 
