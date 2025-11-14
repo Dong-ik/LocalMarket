@@ -29,11 +29,7 @@ public class SecurityConfig {
                 // 나머지는 인증 필요
                 .anyRequest().authenticated()
             )
-            .formLogin(form -> form
-                .loginPage("/members/login")
-                .defaultSuccessUrl("/", true)
-                .permitAll()
-            )
+            .formLogin(form -> form.disable()) // Spring Security 자체 로그인 비활성화 (커스텀 로그인 사용)
             .logout(logout -> logout
                 .logoutUrl("/members/logout")
                 .logoutSuccessUrl("/")
