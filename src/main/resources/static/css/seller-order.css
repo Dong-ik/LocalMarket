@@ -279,6 +279,16 @@
     color: white;
 }
 
+.status-return {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.status-swap {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
 .status-cancelled {
     background: #f8d7da;
     color: #721c24;

@@ -120,6 +120,8 @@
                         <span th:if="${order.orderStatus == 'PROCESSING'}" class="status-badge status-preparing">배송준비</span>
                         <span th:if="${order.orderStatus == 'SHIPPED'}" class="status-badge status-shipping">배송중</span>
                         <span th:if="${order.orderStatus == 'DELIVERED'}" class="status-badge status-delivered">배송완료</span>
+                        <span th:if="${order.orderStatus == 'RETURN'}" class="status-badge status-return">반품신청</span>
+                        <span th:if="${order.orderStatus == 'SWAP'}" class="status-badge status-swap">교환신청</span>
                         <span th:if="${order.orderStatus == 'CANCELLED'}" class="status-badge payment-cancelled">주문취소</span>
                         <span th:if="${order.orderStatus == 'FAILED'}" class="status-badge payment-failed">결제실패</span>
                     </td>
