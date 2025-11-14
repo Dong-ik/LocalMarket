@@ -31,6 +31,28 @@ public class MemberController {
         response.put("exists", exists);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * 회원 전화번호 중복 체크 API
+     */
+    @PostMapping("/check-phone")
+    public ResponseEntity<Map<String, Object>> checkPhoneExists(@RequestParam(name = "phone") String phone) {
+        Map<String, Object> response = new HashMap<>();
+        boolean exists = memberService.checkPhoneExists(phone);
+        response.put("exists", exists);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 회원 이메일 중복 체크 API
+     */
+    @PostMapping("/check-email")
+    public ResponseEntity<Map<String, Object>> checkEmailExists(@RequestParam(name = "email") String email) {
+        Map<String, Object> response = new HashMap<>();
+        boolean exists = memberService.checkEmailExists(email);
+        response.put("exists", exists);
+        return ResponseEntity.ok(response);
+    }
     
     /**
      * 회원 삭제 API

@@ -6,27 +6,92 @@
     <title>회원가입 | LocalMarket</title>
     <link rel="stylesheet" th:href="@{/css/base.css}">
     <link rel="stylesheet" th:href="@{/css/member.css}">
+    <style>
+        .duplicate-check-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .duplicate-check-container input {
+            flex: 1;
+        }
+        .duplicate-check-container button {
+            padding: 8px 16px;
+            border: none;
+            background-color: #667eea;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .duplicate-check-container button:hover {
+            background-color: #5568d3;
+        }
+        .duplicate-message {
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .duplicate-message.error {
+            color: #dc3545;
+            display: block;
+        }
+        .duplicate-message.success {
+            color: #10b981;
+            display: block;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .input-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+        .input-icon.checking {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <main class="container member-form-container">
         <h2 class="text-center mb-40">회원가입</h2>
-        <form th:action="@{/members/register}" th:object="${memberDto}" method="post" autocomplete="off" class="register-form">
+        <form th:action="@{/members/register}" th:object="${memberDto}" method="post" autocomplete="off" class="register-form" id="registerForm">
+            <!-- 아이디 -->
             <div class="mb-20">
                 <label for="memberId">아이디</label>
-                <input type="text" id="memberId" th:field="*{memberId}" class="form-control" required>
+                <div class="duplicate-check-container">
+                    <input type="text" id="memberId" th:field="*{memberId}" class="form-control" required>
+                    <button type="button" onclick="checkMemberId()">중복확인</button>
+                </div>
+                <div class="duplicate-message" id="memberIdMessage"></div>
             </div>
+
+            <!-- 비밀번호 -->
             <div class="mb-20">
                 <label for="password">비밀번호</label>
                 <input type="password" id="password" th:field="*{password}" class="form-control" required>
             </div>
+
+            <!-- 이름 -->
             <div class="mb-20">
                 <label for="memberName">이름</label>
                 <input type="text" id="memberName" th:field="*{memberName}" class="form-control" required>
             </div>
+
+            <!-- 생년월일 -->
             <div class="mb-20">
                 <label for="birth">생년월일</label>
                 <input type="date" id="birth" th:field="*{birth}" class="form-control">
             </div>
+
+            <!-- 성별 -->
             <div class="mb-20">
                 <div class="btn-group w-100" role="group" aria-label="성별 선택">
                     <input type="radio" class="btn-check" id="genderM" name="gender" th:field="*{gender}" value="M" autocomplete="off">
@@ -35,6 +100,8 @@
                     <label class="btn" for="genderF">여자</label>
                 </div>
             </div>
+
+            <!-- 국적 -->
             <div class="mb-20">
                 <div class="btn-group w-100" role="group" aria-label="국적 선택">
                     <input type="radio" class="btn-check" id="nationalK" name="national" th:field="*{national}" value="내국인" autocomplete="off" required>
@@ -43,26 +110,188 @@
                     <label class="btn" for="nationalF">외국인</label>
                 </div>
             </div>
+
+            <!-- 전화번호 -->
             <div class="mb-20">
                 <label for="phone">전화번호</label>
-                <input type="text" id="phone" th:field="*{phone}" class="form-control">
+                <div class="duplicate-check-container">
+                    <input type="text" id="phone" th:field="*{phone}" class="form-control" placeholder="010-1234-5678">
+                    <button type="button" onclick="checkPhone()">중복확인</button>
+                </div>
+                <div class="duplicate-message" id="phoneMessage"></div>
             </div>
+
+            <!-- 주소 -->
             <div class="mb-20">
                 <label for="memberAddress">주소</label>
                 <input type="text" id="memberAddress" th:field="*{memberAddress}" class="form-control">
             </div>
+
+            <!-- 이메일 -->
             <div class="mb-20">
                 <label for="email">이메일</label>
-                <input type="email" id="email" th:field="*{email}" class="form-control" required>
+                <div class="duplicate-check-container">
+                    <input type="email" id="email" th:field="*{email}" class="form-control" required>
+                    <button type="button" onclick="checkEmail()">중복확인</button>
+                </div>
+                <div class="duplicate-message" id="emailMessage"></div>
             </div>
+
             <div th:if="${error}" class="alert alert-danger" role="alert">
                 <span th:text="${error}">회원가입에 실패했습니다.</span>
             </div>
-            <button type="submit" class="btn-member">회원가입</button>
+            <button type="submit" class="btn-member" id="submitBtn">회원가입</button>
         </form>
         <div class="text-center mt-20">
-            <a th:href="@{/member/login}" class="text-link">이미 계정이 있으신가요? 로그인</a>
+            <a th:href="@{/members/login}" class="text-link">이미 계정이 있으신가요? 로그인</a>
         </div>
     </main>
+
+    <script>
+        // 중복 체크 상태 관리
+        const duplicateCheckStatus = {
+            memberId: false,
+            phone: true,  // 선택사항이므로 기본값 true
+            email: false
+        };
+
+        // 아이디 중복 체크
+        async function checkMemberId() {
+            const memberId = document.getElementById('memberId').value.trim();
+            if (!memberId) {
+                alert('아이디를 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/members/check-id?memberId=${encodeURIComponent(memberId)}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                const messageEl = document.getElementById('memberIdMessage');
+
+                if (result.exists) {
+                    messageEl.textContent = '이미 사용 중인 아이디입니다.';
+                    messageEl.className = 'duplicate-message error';
+                    duplicateCheckStatus.memberId = false;
+                } else {
+                    messageEl.textContent = '✓ 사용 가능한 아이디입니다.';
+                    messageEl.className = 'duplicate-message success';
+                    duplicateCheckStatus.memberId = true;
+                }
+            } catch (error) {
+                console.error('아이디 중복 체크 오류:', error);
+                alert('아이디 중복 체크 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 전화번호 중복 체크
+        async function checkPhone() {
+            const phone = document.getElementById('phone').value.trim();
+            if (!phone) {
+                alert('전화번호를 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/members/check-phone?phone=${encodeURIComponent(phone)}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                const messageEl = document.getElementById('phoneMessage');
+
+                if (result.exists) {
+                    messageEl.textContent = '이미 사용 중인 전화번호입니다.';
+                    messageEl.className = 'duplicate-message error';
+                    duplicateCheckStatus.phone = false;
+                } else {
+                    messageEl.textContent = '✓ 사용 가능한 전화번호입니다.';
+                    messageEl.className = 'duplicate-message success';
+                    duplicateCheckStatus.phone = true;
+                }
+            } catch (error) {
+                console.error('전화번호 중복 체크 오류:', error);
+                alert('전화번호 중복 체크 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 이메일 중복 체크
+        async function checkEmail() {
+            const email = document.getElementById('email').value.trim();
+            if (!email) {
+                alert('이메일을 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/members/check-email?email=${encodeURIComponent(email)}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                const messageEl = document.getElementById('emailMessage');
+
+                if (result.exists) {
+                    messageEl.textContent = '이미 사용 중인 이메일입니다.';
+                    messageEl.className = 'duplicate-message error';
+                    duplicateCheckStatus.email = false;
+                } else {
+                    messageEl.textContent = '✓ 사용 가능한 이메일입니다.';
+                    messageEl.className = 'duplicate-message success';
+                    duplicateCheckStatus.email = true;
+                }
+            } catch (error) {
+                console.error('이메일 중복 체크 오류:', error);
+                alert('이메일 중복 체크 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 폼 제출 시 중복 체크 검증
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            if (!duplicateCheckStatus.memberId) {
+                e.preventDefault();
+                alert('아이디 중복확인을 해주세요.');
+                document.getElementById('memberId').focus();
+                return false;
+            }
+
+            const phone = document.getElementById('phone').value.trim();
+            if (phone && !duplicateCheckStatus.phone) {
+                e.preventDefault();
+                alert('전화번호 중복확인을 해주세요.');
+                document.getElementById('phone').focus();
+                return false;
+            }
+
+            if (!duplicateCheckStatus.email) {
+                e.preventDefault();
+                alert('이메일 중복확인을 해주세요.');
+                document.getElementById('email').focus();
+                return false;
+            }
+        });
+
+        // 입력값 변경 시 중복 체크 상태 초기화
+        document.getElementById('memberId').addEventListener('change', function() {
+            duplicateCheckStatus.memberId = false;
+            document.getElementById('memberIdMessage').className = 'duplicate-message';
+            document.getElementById('memberIdMessage').textContent = '';
+        });
+
+        document.getElementById('phone').addEventListener('change', function() {
+            if (this.value.trim()) {
+                duplicateCheckStatus.phone = false;
+                document.getElementById('phoneMessage').className = 'duplicate-message';
+                document.getElementById('phoneMessage').textContent = '';
+            } else {
+                duplicateCheckStatus.phone = true;
+            }
+        });
+
+        document.getElementById('email').addEventListener('change', function() {
+            duplicateCheckStatus.email = false;
+            document.getElementById('emailMessage').className = 'duplicate-message';
+            document.getElementById('emailMessage').textContent = '';
+        });
+    </script>
 </body>
 </html>
