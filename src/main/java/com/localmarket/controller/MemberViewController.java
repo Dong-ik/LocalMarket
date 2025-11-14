@@ -70,19 +70,29 @@ public class MemberViewController {
      * 로그인 처리
      */
     @PostMapping("/login")
-    public String login(@RequestParam("memberId") String memberId, 
-                       @RequestParam("password") String password, 
-                       Model model, 
+    public String login(@RequestParam("memberId") String memberId,
+                       @RequestParam("password") String password,
+                       Model model,
                        HttpSession session) {
+        // 아이디 존재 여부 먼저 확인
+        Member memberFound = memberService.getMemberById(memberId);
+        if (memberFound == null) {
+            model.addAttribute("error", "아이디가 틀립니다.");
+            return "members/login";
+        }
+
+        // 비밀번호 일치 여부 확인
         Member member = memberService.loginMember(memberId, password);
         if (member != null) {
             session.setAttribute("member", member);
             session.setAttribute("memberNum", member.getMemberNum());
             session.setAttribute("memberId", member.getMemberId());
             session.setAttribute("memberGrade", member.getMemberGrade());
+            log.info("로그인 성공: {}", memberId);
             return "redirect:/";
         } else {
-            model.addAttribute("error", "로그인에 실패했습니다.");
+            model.addAttribute("error", "비밀번호가 틀립니다.");
+            log.warn("비밀번호 오류 - 아이디: {}", memberId);
             return "members/login";
         }
     }
